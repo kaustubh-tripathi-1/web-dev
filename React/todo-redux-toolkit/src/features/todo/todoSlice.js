@@ -1,13 +1,20 @@
 import { createSlice, nanoid } from "@reduxjs/toolkit";
 
+/**
+ * The function `loadStateFromLocalStorage` retrieves and parses a serialized state from localStorage,
+ * handling errors gracefully.
+ * @returns The function `loadStateFromLocalStorage` is attempting to load and parse a serialized state
+ * from the localStorage with the key `todosState`. If successful, it returns the parsed state object.
+ * If there is no serialized state or an error occurs during the process, it returns `undefined`.
+ */
 function loadStateFromLocalStorage() {
     try {
-        const strigifiedState = localStorage.getItem(`todosState`);
-        if (!strigifiedState) {
+        const serializedState = localStorage.getItem(`todosState`);
+        if (!serializedState) {
             return undefined;
         }
 
-        return JSON.parse(strigifiedState);
+        return JSON.parse(serializedState);
     } catch (error) {
         console.error("Error loading state from localStorage:", err);
         return undefined;
