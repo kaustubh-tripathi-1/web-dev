@@ -1,9 +1,25 @@
 import { createSlice, nanoid } from "@reduxjs/toolkit";
 
-const initialState = {
+function loadStateFromLocalStorage() {
+    try {
+        const strigifiedState = localStorage.getItem(`todosState`);
+        if (!strigifiedState) {
+            return undefined;
+        }
+
+        return JSON.parse(strigifiedState);
+    } catch (error) {
+        console.error("Error loading state from localStorage:", err);
+        return undefined;
+    }
+}
+
+const defaultInitialState = {
     todos: {},
     order: [],
 };
+
+const initialState = loadStateFromLocalStorage() || defaultInitialState;
 
 const todoSlice = createSlice({
     name: "todos",
