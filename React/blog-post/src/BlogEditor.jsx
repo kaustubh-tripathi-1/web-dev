@@ -75,7 +75,7 @@ function BlogEditor({ initialValue, onContentChange }) {
                     license_key: "gpl",
                     skin: false,
                     content_css: false,
-                    base_url: "/node_modules/tinymce",
+                    base_url: "/tinymce",
                     suffix: ".min",
                 }}
             />
