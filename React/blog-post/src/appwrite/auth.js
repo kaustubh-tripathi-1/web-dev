@@ -8,8 +8,6 @@ class AuthError extends Error {
     constructor(message, code = null, originalError = null) {
         super(message);
         this.name = "AuthError";
-        this.code = code;
-        thise.originalError = originalError;
     }
 }
 
@@ -25,11 +23,7 @@ export default class AuthService {
 
             this.account = new Account(this.client);
         } catch (error) {
-            throw new AuthError(
-                "Failed to initialize Appwrite client",
-                null,
-                error
-            );
+            throw new AuthError("Failed to initialize Appwrite client");
         }
     }
 
@@ -86,15 +80,8 @@ export default class AuthService {
             name
         );
 
-        try {
-            await this.login(email, password);
-        } catch (error) {
-            throw new AuthError(
-                "User created but login failed. Please try logging in manually.",
-                error.code,
-                error
-            );
-        }
+        // Let erros propogate to the caller as the Appwrite errors are more detailed
+        await this.login(email, password);
 
         return user;
     }
