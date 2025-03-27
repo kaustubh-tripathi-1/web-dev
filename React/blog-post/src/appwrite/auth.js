@@ -1,5 +1,5 @@
 import conf from "../conf/config";
-import { Client, Account, ID } from "appwrite";
+import { Client, Account, ID, AppwriteException } from "appwrite";
 
 /**
  * The class `AuthError` is a custom error class in JavaScript that extends the built-in `Error` class
@@ -11,6 +11,9 @@ class AuthError extends Error {
     }
 }
 
+/**
+ * Service for handling user authentication with Appwrite.
+ */
 export default class AuthService {
     constructor() {
         this.client = new Client();
@@ -57,7 +60,7 @@ export default class AuthService {
 
     /**
      * The function `signUp` takes in email, password, and name as parameters, validates them, creates
-     * a new user account, and creates a session for the user with email and password.
+     * a new user account, and automatically creates a session for the user with email and password.
      * @param {String} email - The `email` parameter is the email address that the user wants to sign up with.
      * @param {String} password - The `password` parameter in the `signUp` function is a string that represents
      * the user's chosen password for their account.
@@ -112,6 +115,7 @@ export default class AuthService {
      * The `logout` function asynchronously deletes the current session for the account.
      * @returns The `logout` function is returning a promise that resolves when the `deleteSession`
      * method of the `account` object is called with the argument "current".
+     * @throws {AppwriteException} If the Appwrite API call fails.
      */
     async logout() {
         return this.account.deleteSession("current");
