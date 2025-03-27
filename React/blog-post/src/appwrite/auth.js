@@ -68,6 +68,8 @@ export default class AuthService {
      * session with the provided email, password, and name.
      */
     async signUp(email, password, name) {
+        email = email.trim();
+        name = name.trim();
         this.#validateCredentials(email, password, name);
         if (password.length < 8) {
             throw new AuthError(`Password must be at least 8 characters long`);
@@ -97,6 +99,7 @@ export default class AuthService {
      * as arguments.
      */
     async login(email, password) {
+        email = email.trim();
         this.#validateCredentials(email, password);
 
         return this.account.createEmailPasswordSession(
