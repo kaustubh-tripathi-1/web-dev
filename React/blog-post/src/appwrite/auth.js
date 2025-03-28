@@ -297,6 +297,32 @@ export default class AuthService {
 
         return this.#account.updatePassword(newPassword, currentPassword);
     }
+
+    /**
+     * -`checkSession`
+     *
+     * Checks if the current session is valid.
+     * @returns {Promise<boolean>} True if the session is valid, false otherwise.
+     */
+    async checkSession() {
+        try {
+            await this.#account.getSession("current");
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    /**
+     * -`refreshSession`
+     *
+     * Refreshes the current session to extend its lifetime.
+     * @returns {Promise<object>} The updated session object.
+     * @throws {AppwriteException} If the Appwrite API call fails.
+     */
+    async refreshSession() {
+        return this.#account.updateSession("current");
+    }
 }
 
 export const authService = new AuthService();
