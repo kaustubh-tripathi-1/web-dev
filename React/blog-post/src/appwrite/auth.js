@@ -354,6 +354,33 @@ export default class AuthService {
     async refreshSession() {
         return this.#account.updateSession("current");
     }
+
+    /**
+     * -`updatePreferences`
+     *
+     * Updates the preferences of the current user.
+     * @param {Object} preferences - The preferences to update (e.g., { theme: "dark", notifications: true }).
+     * @returns {Promise<object>} The updated preferences object.
+     * @throws {AuthError} If preferences are invalid.
+     * @throws {AppwriteException} If the Appwrite API call fails.
+     */
+    async updatePreferences(preferences) {
+        if (!preferences || typeof preferences !== "object") {
+            throw new AuthError("Preferences must be a non-empty object");
+        }
+        return this.#account.updatePrefs(preferences);
+    }
+
+    /**
+     * -`getPreferences`
+     *
+     * Gets the preferences of the current user.
+     * @returns {Promise<object>} The user's preferences object.
+     * @throws {AppwriteException} If the Appwrite API call fails.
+     */
+    async getPreferences() {
+        return this.#account.getPrefs();
+    }
 }
 
 export const authService = new AuthService();
