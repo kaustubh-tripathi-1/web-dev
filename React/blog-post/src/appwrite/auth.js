@@ -2,8 +2,8 @@ import conf from "../conf/config";
 import { Client, Account, ID, AppwriteException } from "appwrite";
 
 /**
- * The class `AuthError` is a custom error class in JavaScript that extends the built-in `Error` class
-and allows for additional properties like `code` and `originalError`. */
+ * The class `AuthError` is a custom error class for authentication-related errors that extends the built-in `Error` class
+ */
 class AuthError extends Error {
     constructor(message, code = null, originalError = null) {
         super(message);
@@ -31,15 +31,11 @@ export default class AuthService {
     }
 
     /**
-     * The function `validateCredentials` checks if email, password, and name are provided and are of
-     * type string, throwing an error if any condition is not met.
-     * @param {String} email - The `email` parameter is used to represent the email address provided by the user
-     * for authentication.
-     * @param {String} password - The `password` parameter is a required parameter for the `validateCredentials`
-     * function. It should be a string value.
-     * @param {String} [name=null] - The `name` parameter in the `validateCredentials` function is optional. If
-     * provided, it should be a string. If not provided, the function will still validate the `email`
-     * and `password` parameters.
+     * Validates email, password, and optionally name.
+     * @param {string} email - User's email address.
+     * @param {string} password - User's password.
+     * @param {string|null} [name=null] - User's name (optional, for signup).
+     * @throws {AuthError} If validation fails.
      */
     #validateCredentials(email, password, name = null) {
         if (!email || !password || (name !== null && !name)) {
@@ -59,16 +55,13 @@ export default class AuthService {
     }
 
     /**
-     * The function `signUp` takes in email, password, and name as parameters, validates them, creates
-     * a new user account, and automatically creates a session for the user with email and password.
-     * @param {String} email - The `email` parameter is the email address that the user wants to sign up with.
-     * @param {String} password - The `password` parameter in the `signUp` function is a string that represents
-     * the user's chosen password for their account.
-     * @param {String} name - The `name` parameter in the `signUp` function refers to the name of the user who
-     * is signing up for an account. It is a required field along with the email and password when
-     * creating a new account.
-     * @returns The `signUp` function returns the user object after creating a new account and
-     * session with the provided email, password, and name.
+     * Signs up a new user and automatically logs them in.
+     * @param {string} email - User's email address.
+     * @param {string} password - User's password (minimum 8 characters).
+     * @param {string} name - User's name.
+     * @returns {Promise<object>} The created user object.
+     * @throws {AuthError} If validation fails.
+     * @throws {AppwriteException} If the Appwrite API call fails.
      */
     async signUp(email, password, name) {
         email = email.trim();
@@ -77,8 +70,11 @@ export default class AuthService {
         if (password.length < 8) {
             throw new AuthError(`Password must be at least 8 characters long`);
         }
+        if (name.length > 128) {
+            throw new AuthError("Name must be less than 128 characters");
+        }
 
-        const user = this.account.create(
+        const user = await this.account.create(
             ID.unique(),
             email.toLowerCase(),
             password,
@@ -92,14 +88,12 @@ export default class AuthService {
     }
 
     /**
-     * The `login` function asynchronously validates the user's email and password credentials and
-     * creates a session using the provided email and password.
-     * @param {String} email - The `email` parameter is the email address entered by the user for logging in.
-     * @param {String} password - The `password` parameter in the `login` function is a string that represents
-     * the password entered by the user for authentication.
-     * @returns The `login` function is returning the result of calling
-     * `this.account.createEmailPasswordSession` with the email converted to lowercase and the password
-     * as arguments.
+     * Logs in a user with email and password.
+     * @param {string} email - User's email address.
+     * @param {string} password - User's password.
+     * @returns {Promise<object>} The session object.
+     * @throws {AuthError} If validation fails.
+     * @throws {AppwriteException} If the Appwrite API call fails.
      */
     async login(email, password) {
         email = email.trim();
@@ -112,9 +106,8 @@ export default class AuthService {
     }
 
     /**
-     * The `logout` function asynchronously deletes the current session for the account.
-     * @returns The `logout` function is returning a promise that resolves when the `deleteSession`
-     * method of the `account` object is called with the argument "current".
+     * Logs out the current user.
+     * @returns {Promise<void>}
      * @throws {AppwriteException} If the Appwrite API call fails.
      */
     async logout() {
@@ -122,13 +115,45 @@ export default class AuthService {
     }
 
     /**
-     * The `getCurrentUser` function is an asynchronous function that returns the current user's
-     * account information.
-     * @returns The `getCurrentUser` function is returning the result of calling the `get` method on
-     * the `account` object.
+     * Gets the current logged-in user.
+     * @returns {Promise<object>} The user object.
+     * @throws {AppwriteException} If the Appwrite API call fails.
      */
     async getCurrentUser() {
         return this.account.get();
+    }
+
+    /**
+     * Asynchronously requests a password reset by creating a
+     * recovery for the provided email address.
+     * @param {string} email - The user's email address.
+     * @param {string} [resetUrl] - The URL to redirect the user to for resetting their password. By default, if no `resetUrl` is
+     * provided, it will use the current window's origin followed by `/reset-password`.
+     * @returns {Promise<void>}
+     * @throws {AuthError} If validation fails.
+     * @throws {AppwriteException} If the Appwrite API call fails.
+     */
+    async requestPasswordReset(
+        email,
+        resetURL = `${window.location.origin}/reset-password`
+    ) {
+        email = email.trim();
+        this.#validateCredentials(email, "dummy-password"); // Reuse validation for email
+        return this.account.createRecovery(email.toLowerCase(), resetURL);
+    }
+
+    /**
+     * Requests an email verification link for the current user using the provided URL.
+     * @param {String} verifyURL - The `verifyURL` parameter is the URL where the verification email will be
+     * sent for the user to verify their email address.
+     * @returns {Promise<void>} The `requestEmailVerification` function is returning a promise that resolves to the
+     * result of calling the `createVerification` method on the `account` object with the `verifyURL`
+     * parameter.
+     */
+    async requestEmailVerification(
+        verifyURL = `${window.location.origin}/verify-email`
+    ) {
+        return this.account.createVerification(verifyURL);
     }
 }
 
