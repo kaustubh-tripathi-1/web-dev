@@ -43,7 +43,7 @@ export default class AuthService {
      *
      * Validates email and optionally name and password.
      * @param {string} email - User's email address.
-     * @param {string} password - User's password.
+     * @param {string} password - User's password (optional if only validating email).
      * @param {string|null} [name=null] - User's name (optional, for signup).
      * @throws {AuthError} If validation fails.
      */
@@ -105,8 +105,15 @@ export default class AuthService {
             name
         );
 
-        // Let erros propogate to the caller as the Appwrite errors are more detailed
-        await this.login(email, password);
+        try {
+            await this.login(email, password);
+        } catch (error) {
+            throw new AuthError(
+                "User created but login failed. Please try logging in manually.",
+                error.code,
+                error
+            );
+        }
 
         return user;
     }
@@ -159,7 +166,7 @@ export default class AuthService {
      * Asynchronously requests a password reset by creating a
      * recovery for the provided email address.
      * @param {string} email - The user's email address.
-     * @param {string} [resetUrl] - The URL to redirect the user to for resetting their password. By default, if no `resetUrl` is
+     * @param {string} [resetURL] - The URL to redirect the user to for resetting their password. By default, if no `resetUrl` is
      * provided, it will use the current window's origin followed by `/reset-password`.
      * @returns {Promise<void>}
      * @throws {AuthError} If validation fails.
@@ -180,6 +187,9 @@ export default class AuthService {
      * @param {string} userID - The current logged in user's userID which will be added to url query string
      * @param {string} secretKey - The secret key received by the user in their email, also added to url query string
      * @param {string} newPassword - The new password to be updated
+     * @returns {Promise<void>}
+     * @throws {AuthError} If validation fails.
+     * @throws {AppwriteException} If the Appwrite API call fails.
      */
     async completePasswordReset(userID, secretKey, newPassword) {
         if (!userID || !secretKey || !newPassword) {
@@ -210,17 +220,40 @@ export default class AuthService {
     /**
      * -`requestEmailVerification`
      *
-     * Requests an email verification link for the current user using the provided URL.
-     * @param {string} verifyURL - The `verifyURL` parameter is the URL where the verification email will be
-     * sent for the user to verify their email address.
-     * @returns {Promise<void>} Returns a **promise** that resolves to the
-     * result of calling the `createVerification` method on the `account` object with the `verifyURL`
-     * parameter.
+     * Requests an email verification link for the current user.
+     * @param {string} [verifyURL] - The URL to redirect the user to for verifying their email (defaults to "/verify-email").
+     * @returns {Promise<void>}
+     * @throws {AppwriteException} If the Appwrite API call fails.
      */
     async requestEmailVerification(
         verifyURL = `${window.location.origin}/verify-email`
     ) {
         return this.#account.createVerification(verifyURL);
+    }
+
+    /**
+     * -`completeEmailVerification`
+     *
+     * Completes the email verification process.
+     * @param {string} userID - The user ID from the verification email.
+     * @param {string} secretKey - The secret key from the verification email.
+     * @returns {Promise<void>}
+     * @throws {AuthError} If validation fails.
+     * @throws {AppwriteException} If the Appwrite API call fails.
+     */
+    async completeEmailVerification(userID, secretKey) {
+        if (!userID || !secretKey) {
+            throw new AuthError(
+                "User ID and secret key are required to complete email verification"
+            );
+        }
+        if (typeof userID !== "string") {
+            throw new AuthError("User ID must be a string");
+        }
+        if (typeof secretKey !== "string") {
+            throw new AuthError("Secret key must be a string");
+        }
+        return this.#account.updateVerification(userID, secretKey);
     }
 
     /**
@@ -270,7 +303,7 @@ export default class AuthService {
     }
 
     /**
-     * -`updatePasswrod`
+     * -`updatePassword`
      *
      * Updates the password of the current user
      * @param {string} newPassword - The password to be updated for the user
@@ -281,13 +314,11 @@ export default class AuthService {
      */
     async updatePassword(newPassword, currentPassword) {
         if (!newPassword || typeof newPassword !== `string`) {
-            throw new AuthError(
-                `New Password is required to update password. Duhhh!`
-            );
+            throw new AuthError(`New Password is required to update password`);
         }
-        if (!currentPassword) {
+        if (!currentPassword || typeof currentPassword !== `string`) {
             throw new AuthError(
-                `Current Password is required to update password. Duhhh!`
+                `Current Password is required to update password`
             );
         }
 
