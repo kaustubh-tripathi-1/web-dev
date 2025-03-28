@@ -238,6 +238,8 @@ export default class AuthService {
      * @throws {AppwriteException} If the Appwrite API call fails.
      */
     async updateName(nameToUpdate) {
+        nameToUpdate = nameToUpdate.trim();
+
         if (!nameToUpdate) {
             throw new AuthError(`Name is required to update name`);
         }
