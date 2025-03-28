@@ -7,7 +7,10 @@ import { Client, Account, ID, AppwriteException } from "appwrite";
  * The class `AuthError` is a custom error class for authentication-related errors that extends the built-in `Error` class
  */
 class AuthError extends Error {
-    constructor(message, code = null, originalError = null) {
+    /**
+     * @param {string} message - The error message.
+     */
+    constructor(message) {
         super(message);
         this.name = "AuthError";
     }
@@ -19,16 +22,17 @@ class AuthError extends Error {
  * Service for handling user authentication with Appwrite.
  */
 export default class AuthService {
-    constructor() {
-        this.client = new Client();
-        this.account = null;
+    #client;
+    #account;
 
+    constructor() {
+        this.#client = new Client();
         try {
-            this.client
+            this.#client
                 .setEndpoint(conf.appwriteEndpoint)
                 .setProject(conf.appwriteProjectID);
 
-            this.account = new Account(this.client);
+            this.#account = new Account(this.#client);
         } catch (error) {
             throw new AuthError("Failed to initialize Appwrite client");
         }
@@ -37,7 +41,7 @@ export default class AuthService {
     /**
      * -`validateCredentials` - Private method
      *
-     * Validates email, password, and optionally name.
+     * Validates email and optionally name and password.
      * @param {string} email - User's email address.
      * @param {string} password - User's password.
      * @param {string|null} [name=null] - User's name (optional, for signup).
@@ -94,7 +98,7 @@ export default class AuthService {
             throw new AuthError("Name must be less than 128 characters");
         }
 
-        const user = await this.account.create(
+        const user = await this.#account.create(
             ID.unique(),
             email.toLowerCase(),
             password,
@@ -184,6 +188,18 @@ export default class AuthService {
             );
         }
 
+        if (typeof userID !== "string") {
+            throw new AuthError(`UserID must be string`);
+        }
+
+        if (typeof secretKey !== "string") {
+            throw new AuthError(`Secret Key must be string`);
+        }
+
+        if (typeof newPassword !== "string") {
+            throw new AuthError(`New Password must be string`);
+        }
+
         if (newPassword.length < 8 || newPassword.length > 256) {
             throw new AuthError("Password must be between 8 to 256 characters");
         }
@@ -222,7 +238,7 @@ export default class AuthService {
         this.#validateCredentials(email);
         if (!currentPassword || typeof currentPassword !== "string") {
             throw new AuthError(
-                `Current password is required to update the email`
+                `Current password is required to update the email and must be string`
             );
         }
         return this.account.updateEmail(email.toLowerCase(), currentPassword);
@@ -240,8 +256,10 @@ export default class AuthService {
     async updateName(nameToUpdate) {
         nameToUpdate = nameToUpdate.trim();
 
-        if (!nameToUpdate) {
-            throw new AuthError(`Name is required to update name`);
+        if (!nameToUpdate || typeof nameToUpdate !== "string") {
+            throw new AuthError(
+                `Name is required to update name and must be string`
+            );
         }
 
         if (nameToUpdate.length > 127) {
@@ -256,20 +274,20 @@ export default class AuthService {
      *
      * Updates the password of the current user
      * @param {string} newPassword - The password to be updated for the user
-     * @param {string} oldPassword - The current password of the user
+     * @param {string} currentPassword - The current password of the user
      * @returns {Promise<object>} - The updated user object
      * @throws {AuthError} If validation fails.
      * @throws {AppwriteException} If the Appwrite API call fails.
      */
-    async updatePassword(newPassword, oldPassword) {
-        if (!newPassword) {
+    async updatePassword(newPassword, currentPassword) {
+        if (!newPassword || typeof newPassword !== `string`) {
             throw new AuthError(
                 `New Password is required to update password. Duhhh!`
             );
         }
-        if (!oldPassword) {
+        if (!currentPassword) {
             throw new AuthError(
-                `Old Password is required to update password. Duhhh!`
+                `Current Password is required to update password. Duhhh!`
             );
         }
 
@@ -277,7 +295,7 @@ export default class AuthService {
             throw new AuthError("Password must be between 8 to 256 characters");
         }
 
-        return this.account.updatePassword(newPassword, oldPassword);
+        return this.account.updatePassword(newPassword, currentPassword);
     }
 }
 
