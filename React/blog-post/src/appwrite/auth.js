@@ -1,4 +1,4 @@
-import conf from "../conf/config";
+import appwriteConfig from "../conf/appwriteConfig";
 import { Client, Account, ID, AppwriteException } from "appwrite";
 
 /**
