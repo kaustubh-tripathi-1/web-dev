@@ -29,8 +29,8 @@ export default class AuthService {
         this.#client = new Client();
         try {
             this.#client
-                .setEndpoint(conf.appwriteEndpoint)
-                .setProject(conf.appwriteProjectID);
+                .setEndpoint(appwriteConfig.appwriteEndpoint)
+                .setProject(appwriteConfig.appwriteProjectID);
 
             this.#account = new Account(this.#client);
         } catch (error) {
