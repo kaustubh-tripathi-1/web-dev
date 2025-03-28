@@ -125,7 +125,7 @@ export default class AuthService {
         email = email.trim();
         this.#validateCredentials(email, password);
 
-        return this.account.createEmailPasswordSession(
+        return this.#account.createEmailPasswordSession(
             email.toLowerCase(),
             password
         );
@@ -139,7 +139,7 @@ export default class AuthService {
      * @throws {AppwriteException} If the Appwrite API call fails.
      */
     async logout() {
-        return this.account.deleteSession("current");
+        return this.#account.deleteSession("current");
     }
 
     /**
@@ -150,7 +150,7 @@ export default class AuthService {
      * @throws {AppwriteException} If the Appwrite API call fails.
      */
     async getCurrentUser() {
-        return this.account.get();
+        return this.#account.get();
     }
 
     /**
@@ -171,7 +171,7 @@ export default class AuthService {
     ) {
         email = email.trim();
         this.#validateCredentials(email); // Reuse validation for email
-        return this.account.createRecovery(email.toLowerCase(), resetURL);
+        return this.#account.createRecovery(email.toLowerCase(), resetURL);
     }
 
     /**
@@ -204,7 +204,7 @@ export default class AuthService {
             throw new AuthError("Password must be between 8 to 256 characters");
         }
 
-        return this.account.updateRecovery(userID, secretKey, newPassword);
+        return this.#account.updateRecovery(userID, secretKey, newPassword);
     }
 
     /**
@@ -220,7 +220,7 @@ export default class AuthService {
     async requestEmailVerification(
         verifyURL = `${window.location.origin}/verify-email`
     ) {
-        return this.account.createVerification(verifyURL);
+        return this.#account.createVerification(verifyURL);
     }
 
     /**
@@ -241,7 +241,7 @@ export default class AuthService {
                 `Current password is required to update the email and must be string`
             );
         }
-        return this.account.updateEmail(email.toLowerCase(), currentPassword);
+        return this.#account.updateEmail(email.toLowerCase(), currentPassword);
     }
 
     /**
@@ -266,7 +266,7 @@ export default class AuthService {
             throw new AuthError("Name must be less than 128 characters");
         }
 
-        return this.account.updateName(nameToUpdate);
+        return this.#account.updateName(nameToUpdate);
     }
 
     /**
@@ -295,7 +295,7 @@ export default class AuthService {
             throw new AuthError("Password must be between 8 to 256 characters");
         }
 
-        return this.account.updatePassword(newPassword, currentPassword);
+        return this.#account.updatePassword(newPassword, currentPassword);
     }
 }
 
