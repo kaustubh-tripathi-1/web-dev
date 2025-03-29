@@ -1,17 +1,30 @@
 import appwriteConfig from "../conf/appwriteConfig";
-import { Client, Account, ID, AppwriteException, Storage } from "appwrite";
+import { Client, Storage, ID, AppwriteException } from "appwrite";
 
+/**
+ * Custom error class for storage-related errors.
+ */
 class StorageError extends Error {
+    /**
+     * @param {string} message - The error message.
+     */
     constructor(message) {
         super(message);
         this.name = "StorageError";
     }
 }
 
-class StorageService {
+/**
+ * Service for handling file storage operations with Appwrite.
+ */
+export class StorageService {
     #client;
     #storage;
 
+    /**
+     * Initializes the Appwrite client and Storage service.
+     * @throws {StorageError} If the Appwrite client fails to initialize.
+     */
     constructor() {
         this.#client = new Client();
 
@@ -25,4 +38,104 @@ class StorageService {
             throw new StorageError("Failed to initialize Appwrite client");
         }
     }
+
+    /**
+     * Uploads a file to the Appwrite storage bucket.
+     * @param {File} file - The file to upload (must be a File object).
+     * @returns {Promise<object>} Returns a promise that resolves to the created file object (e.g., { $id: "file-id", name: "filename", ... }).
+     * @throws {StorageError} If validation fails.
+     * @throws {AppwriteException} If the Appwrite API call fails.
+     */
+    async uploadFile(file) {
+        if (!file) {
+            throw new StorageError(`No file provided for upload`);
+        }
+
+        if (!(file instanceof File)) {
+            throw new StorageError("File must be a valid File object");
+        }
+
+        const maxSize = 10 * 1024 * 1024; // 20MB in bytes
+        if (file.size > maxSize) {
+            throw new StorageError(
+                "File size exceeds the maximum limit of 20MB"
+            );
+        }
+
+        return this.#storage.createFile(
+            appwriteConfig.appwriteBucketID,
+            ID.unique(),
+            file
+        );
+    }
+
+    /**
+     * Generates a preview URL for a file in the Appwrite storage bucket.
+     * @param {string} fileID - The ID of the file to generate a preview for.
+     * @returns {string} Returns the URL (string) for the file preview.
+     * @throws {StorageError} If validation fails.
+     */
+    getFilePreview(fileID) {
+        if (!fileID || typeof fileID !== `string`) {
+            throw new StorageError(`File ID must be a non-empty string`);
+        }
+
+        return this.#storage.getFilePreview(
+            appwriteConfig.appwriteBucketID,
+            fileID
+        );
+    }
+
+    /**
+     * Retrieves metadata for a file in the Appwrite storage bucket.
+     * @param {string} fileID - The ID of the file to retrieve.
+     * @returns {Promise<object>} Returns a promise that resolves to the file metadata object (e.g., { $id: "file-id", name: "filename", ... }).
+     * @throws {StorageError} If validation fails.
+     * @throws {AppwriteException} If the Appwrite API call fails.
+     */
+    async getFile(fileID) {
+        if (!fileID || typeof fileID !== "string") {
+            throw new StorageError("File ID must be a non-empty string");
+        }
+
+        return this.#storage.getFile(appwriteConfig.appwriteBucketID, fileID);
+    }
+
+    /**
+     * Downloads a file from the Appwrite storage bucket.
+     * @param {string} fileID - The ID of the file to download.
+     * @returns {Promise<Blob>} Returns a promise that resolves to the file content as a Blob.
+     * @throws {StorageError} If validation fails.
+     * @throws {AppwriteException} If the Appwrite API call fails.
+     */
+    async downloadFile(fileID) {
+        if (!fileID || typeof fileID !== "string") {
+            throw new StorageError("File ID must be a non-empty string");
+        }
+
+        return this.#storage.getFileDownload(
+            appwriteConfig.appwriteBucketID,
+            fileID
+        );
+    }
+
+    /**
+     * Deletes a file from the Appwrite storage bucket.
+     * @param {string} fileID - The ID of the file to delete.
+     * @returns {Promise<void>} Returns a promise that resolves when the file is deleted.
+     * @throws {StorageError} If validation fails.
+     * @throws {AppwriteException} If the Appwrite API call fails.
+     */
+    async deleteFile(fileID) {
+        if (!fileID || typeof fileID !== `string`) {
+            throw new StorageError(`File ID must be a non-empty string`);
+        }
+
+        return this.#storage.deleteFile(
+            appwriteConfig.appwriteBucketID,
+            fileID
+        );
+    }
 }
+
+export const storageService = new StorageService();
