@@ -13,13 +13,13 @@ Welcome to my Web Development Learning repository! 🚀 This repo serves as a co
 ---
 
 ## 📂 **Project and Folder Structure**
-| Folder/File           | Description                                                                 |
-|---------------------  |-----------------------------------------------------------------------------|
-| `/HTML`               | Basic HTML examples, semantic tags, and best practices.                    |
-| `/CSS`                | Styling exercises including flexbox, grid, and animations.                 |
-| `/JavaScript`         | Examples and mini-projects exploring core JS concepts and the DOM.         |
-| `/JavaScript/Projects`| Small projects combining all technologies.|
-| `/React`              | React projects including stateful components, hooks, and single-page apps. |
+| Folder/File                                                                                    | Description                                                                 |
+|------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------|
+| [`/HTML`](https://github.com/kaustubh-tripathi-1/web-dev/tree/main/HTML)                       | Basic HTML examples, semantic tags, and best practices.                     |
+| [`/CSS`](https://github.com/kaustubh-tripathi-1/web-dev/tree/main/CSS)                         | Styling exercises including flexbox, grid, and animations.                  |
+| [`/JavaScript`](https://github.com/kaustubh-tripathi-1/web-dev/tree/main/JS)                   | Examples and mini-projects exploring core JS concepts and the DOM.          |
+| [`/JavaScript/Projects`](https://github.com/kaustubh-tripathi-1/web-dev/tree/main/JS/Projects) | Small projects combining all technologies.                                  |
+| [`/React`](https://github.com/kaustubh-tripathi-1/web-dev/tree/main/React)                     | React projects including stateful components, hooks, and single-page apps.  |
 
 ---
 
