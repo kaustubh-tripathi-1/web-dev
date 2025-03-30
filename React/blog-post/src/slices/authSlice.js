@@ -13,7 +13,7 @@ const authSlice = createSlice({
     reducers: {
         login: (state, action) => {
             state.authStatus = true;
-            state.userData = action.payload.userData;
+            state.userData = action.payload;
             state.loading = false;
             state.error = null;
         },
@@ -24,12 +24,12 @@ const authSlice = createSlice({
             state.error = null;
         },
         setLoading: (state, action) => {
-            state.loading = action.payload.loading;
+            state.loading = action.payload;
             state.error = null;
         },
         setError: (state, action) => {
             state.loading = false;
-            state.error = action.payload.error;
+            state.error = action.payload;
         },
     },
 });
