@@ -4,6 +4,7 @@ import postsReducer from "./slices/postsSlice";
 import postEditorReducer from "./slices/postEditorSlice";
 import storageReducer from "./slices/storageSlice";
 import uiReducer from "./slices/uiSlice";
+import userReducer from "./slices/userSlice";
 
 export const store = configureStore({
     reducer: {
@@ -12,5 +13,6 @@ export const store = configureStore({
         postsEditor: postEditorReducer,
         storage: storageReducer,
         ui: uiReducer,
+        user: userReducer,
     },
 });
