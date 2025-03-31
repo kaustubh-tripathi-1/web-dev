@@ -74,6 +74,10 @@ export default class AuthService {
                     : "Email must be a string"
             );
         }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            throw new AuthError("Invalid email format");
+        }
     }
 
     /**
