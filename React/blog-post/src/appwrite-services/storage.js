@@ -55,10 +55,10 @@ export class StorageService {
             throw new StorageError("File must be a valid File object");
         }
 
-        const maxSize = 10 * 1024 * 1024; // 20MB in bytes
+        const maxSize = 10 * 1024 * 1024; // 10MB in bytes
         if (file.size > maxSize) {
             throw new StorageError(
-                "File size exceeds the maximum limit of 20MB"
+                "File size exceeds the maximum allowed limit of 10MB"
             );
         }
 
