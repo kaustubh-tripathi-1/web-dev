@@ -3,7 +3,7 @@ import { databaseService } from "../appwrite-services/database";
 import { storageService } from "../appwrite-services/storage";
 
 /**
- * Creates a new post in the database.
+ * Creates a new post in the database with a unique slug.
  * @param {Object} postData - The post data to create.
  * @param {string} postData.title - The post title.
  * @param {string} postData.slug - The post slug.
@@ -17,7 +17,31 @@ export const createPost = createAsyncThunk(
     `postEditor/createPost`,
     async (postData, { dispatch, rejectWithValue }) => {
         try {
-            const post = await databaseService.createPost(postData);
+            // Validation
+            if (!postData.title || !postData.content) {
+                throw new Error("Title and content are required");
+            }
+
+            // Ensure the slug is unique
+            let uniqueSlug = postData.slug;
+            let suffix = 1;
+            while (true) {
+                try {
+                    // Check if a post with this slug already exists
+                    await databaseService.getPost(uniqueSlug);
+                    // If the above call succeeds, the slug exists, so append a suffix
+                    uniqueSlug = `${postData.slug}-${suffix}`;
+                    suffix++;
+                } catch (error) {
+                    // If the slug doesn't exist, we can use it
+                    break;
+                }
+            }
+
+            // Update the postData with the unique slug
+            const finalPostData = { ...postData, slug: uniqueSlug };
+
+            const post = await databaseService.createPost(finalPostData);
             dispatch(resetEditor());
             return post;
         } catch (error) {
@@ -27,7 +51,7 @@ export const createPost = createAsyncThunk(
 );
 
 /**
- * Updates an existing post in the database.
+ * Updates an existing post in the database with a unique slug.
  * @param {Object} postData - The post data to update.
  * @param {string} postData.slug - The slug of the post to update.
  * @param {string} postData.title - The post title.
@@ -40,9 +64,42 @@ export const updatePost = createAsyncThunk(
     `postEditor/updatePost`,
     async (postData, { dispatch, rejectWithValue }) => {
         try {
+            // Validation
+            if (!postData.title || !postData.content) {
+                throw new Error("Title and content are required");
+            }
+            // Ensure the slug is unique (but skip if the slug hasn't changed)
+            const originalPost = await databaseService.getPost(postData.slug);
+            let uniqueSlug = postData.slug;
+            if (originalPost.slug !== postData.slug) {
+                // Slug has changed, so check for uniqueness
+                let suffix = 1;
+                while (true) {
+                    try {
+                        const existingPost = await databaseService.getPost(
+                            uniqueSlug
+                        );
+                        // If the existing post is not the one we're updating, append a suffix
+                        if (existingPost.$id !== originalPost.$id) {
+                            uniqueSlug = `${postData.slug}-${suffix}`;
+                            suffix++;
+                        } else {
+                            break;
+                        }
+                    } catch (error) {
+                        // If the slug doesn't exist, we can use it
+                        break;
+                    }
+                }
+            }
+
+            // Update the postData with the unique slug
+            const finalPostData = { ...postData, slug: uniqueSlug };
+
+            // Update the post
             const updatedPost = await databaseService.updatePost(
                 postData.slug,
-                postData
+                finalPostData
             );
             dispatch(resetEditor());
             return updatedPost;
@@ -57,7 +114,7 @@ export const updatePost = createAsyncThunk(
  * @param {File} file - The image file to upload.
  * @returns {Promise<string>} The ID of the uploaded file.
  */
-const uploadFeatureImage = createAsyncThunk(
+export const uploadFeatureImage = createAsyncThunk(
     `postEditor/uploadFeatureImage`,
     async (file, { rejectWithValue }) => {
         try {
@@ -164,6 +221,7 @@ const postEditorSlice = createSlice({
          * @param {Object} state - The current state.
          */
         resetEditor: (state) => {
+            state.slug = ``;
             state.title = ``;
             state.content = ``;
             state.featureImage = ``;
