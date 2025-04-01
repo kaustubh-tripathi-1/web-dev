@@ -1,17 +1,29 @@
-import { useState } from "react";
-import BlogEditor from "./BlogEditor";
+import { createBrowserRouter, RouterProvider } from "react-router";
+import Layout from "./components/layout/Layout";
+import { Home, Login, Signup } from "./components/exportCompos";
+
+const router = createBrowserRouter([
+    {
+        path: "/",
+        element: <Layout />,
+        children: [
+            {
+                path: "",
+                index: true,
+                element: <Home />,
+            },
+            {
+                path: "login",
+                element: <Login />,
+            },
+            {
+                path: "signup",
+                element: <Signup />,
+            },
+        ],
+    },
+]);
 
 export default function App() {
-    const [content, setContent] = useState("");
-    return (
-        <>
-            <div>
-                <BlogEditor onContentChange={setContent} />
-                <div>
-                    <h2>Preview:</h2>
-                    <div dangerouslySetInnerHTML={{ __html: content }} />
-                </div>
-            </div>
-        </>
-    );
+    return <RouterProvider router={router} />;
 }
