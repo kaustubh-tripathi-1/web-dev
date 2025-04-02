@@ -7,19 +7,35 @@ const router = createBrowserRouter([
         path: "/",
         element: <Layout />,
         children: [
+            { path: "", index: true, element: <Home /> },
+            { path: "login", element: <Login /> },
+            { path: "signup", element: <Signup /> },
+            { path: "posts/:slug", element: <PostDetail /> },
             {
-                path: "",
-                index: true,
-                element: <Home />,
+                path: "create-post",
+                element: (
+                    <ProtectedRoute>
+                        <PostEditorForm />
+                    </ProtectedRoute>
+                ),
             },
             {
-                path: "login",
-                element: <Login />,
+                path: "edit-post/:slug",
+                element: (
+                    <ProtectedRoute>
+                        <PostEditorForm />
+                    </ProtectedRoute>
+                ),
             },
             {
-                path: "signup",
-                element: <Signup />,
+                path: "profile",
+                element: (
+                    <ProtectedRoute>
+                        <UserProfile />
+                    </ProtectedRoute>
+                ),
             },
+            { path: "*", element: <NotFound /> },
         ],
     },
 ]);
