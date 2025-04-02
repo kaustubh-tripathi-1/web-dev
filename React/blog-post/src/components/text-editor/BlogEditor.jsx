@@ -24,8 +24,8 @@ import "tinymce/plugins/help";
 import "tinymce/plugins/wordcount";
 // Import skins
 import "tinymce/skins/ui/oxide/skin.min.css";
-import "tinymce/skins/ui/oxide/content.min.css";
-import "tinymce/skins/content/default/content.min.css";
+// import "tinymce/skins/ui/oxide/content.min.css";
+// import "tinymce/skins/content/default/content.min.css";
 
 function BlogEditor({ initialValue, onContentChange }) {
     const editorRef = useRef(null);
@@ -70,8 +70,63 @@ function BlogEditor({ initialValue, onContentChange }) {
                         "undo redo | formatselect | bold italic backcolor | " +
                         "alignleft aligncenter alignright alignjustify | " +
                         "bullist numlist outdent indent | link image table | removeformat | help",
-                    content_style:
-                        "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                    content_style: `
+                        body {
+                            font-family: Helvetica, Arial, sans-serif;
+                            font-size: 14px;
+                            margin: 0;
+                            line-height: 1.4;
+                        }
+                        table {
+                            border-collapse: collapse;
+                        }
+                        table:not([cellpadding]) td,
+                        table:not([cellpadding]) th {
+                            padding: 0.4rem;
+                        }
+                        table[border]:not([border="0"]):not([style*="border-width"]) td,
+                        table[border]:not([border="0"]):not([style*="border-width"]) th {
+                            border-width: 1px;
+                        }
+                        table[border]:not([border="0"]):not([style*="border-style"]) td,
+                        table[border]:not([border="0"]):not([style*="border-style"]) th {
+                            border-style: solid;
+                        }
+                        table[border]:not([border="0"]):not([style*="border-color"]) td,
+                        table[border]:not([border="0"]):not([style*="border-color"]) th {
+                            border-color: #ccc;
+                        }
+                        figure {
+                            display: table;
+                            margin: 1rem auto;
+                        }
+                        figure figcaption {
+                            color: #999;
+                            display: block;
+                            margin-top: 0.25rem;
+                            text-align: center;
+                        }
+                        hr {
+                            border-color: #ccc;
+                            border-style: solid;
+                            border-width: 1px 0 0 0;
+                        }
+                        code {
+                            background-color: #e8e8e8;
+                            border-radius: 3px;
+                            padding: 0.1rem 0.2rem;
+                        }
+                        .mce-content-body:not([dir="rtl"]) blockquote {
+                            border-left: 2px solid #ccc;
+                            margin-left: 1.5rem;
+                            padding-left: 1rem;
+                        }
+                        .mce-content-body[dir="rtl"] blockquote {
+                            border-right: 2px solid #ccc;
+                            margin-right: 1.5rem;
+                            padding-right: 1rem;
+                        }
+                    `,
                     license_key: "gpl",
                     skin: false,
                     content_css: false,
