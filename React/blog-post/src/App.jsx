@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
 import Layout from "./components/layout/Layout";
-import { Home, Login, Signup } from "./components/exportCompos";
+import { Home, Login, Signup, About, Contact } from "./components/exportCompos";
 
 const router = createBrowserRouter([
     {
@@ -10,32 +10,34 @@ const router = createBrowserRouter([
             { path: "", index: true, element: <Home /> },
             { path: "login", element: <Login /> },
             { path: "signup", element: <Signup /> },
-            { path: "posts/:slug", element: <PostDetail /> },
-            {
-                path: "create-post",
-                element: (
-                    <ProtectedRoute>
-                        <PostEditorForm />
-                    </ProtectedRoute>
-                ),
-            },
-            {
-                path: "edit-post/:slug",
-                element: (
-                    <ProtectedRoute>
-                        <PostEditorForm />
-                    </ProtectedRoute>
-                ),
-            },
-            {
-                path: "profile",
-                element: (
-                    <ProtectedRoute>
-                        <UserProfile />
-                    </ProtectedRoute>
-                ),
-            },
-            { path: "*", element: <NotFound /> },
+            { path: "about", element: <About /> },
+            { path: "contact", element: <Contact /> },
+            // { path: "posts/:slug", element: <PostDetail /> },
+            // {
+            //     path: "create-post",
+            //     element: (
+            //         <ProtectedRoute>
+            //             <PostEditorForm />
+            //         </ProtectedRoute>
+            //     ),
+            // },
+            // {
+            //     path: "edit-post/:slug",
+            //     element: (
+            //         <ProtectedRoute>
+            //             <PostEditorForm />
+            //         </ProtectedRoute>
+            //     ),
+            // },
+            // {
+            //     path: "profile",
+            //     element: (
+            //         <ProtectedRoute>
+            //             <UserProfile />
+            //         </ProtectedRoute>
+            //     ),
+            // },
+            // { path: "*", element: <NotFound /> },
         ],
     },
 ]);
