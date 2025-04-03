@@ -7,6 +7,7 @@ import Signup from "./signup/Singup.jsx";
 import BlogEditor from "./text-editor/BlogEditor.jsx";
 import About from "./about/About.jsx";
 import Contact from "./contact/Contact.jsx";
+import HomeSkeleton from "./skeletons/HomeSkeleton.jsx";
 
 export {
     Header,
@@ -18,4 +19,5 @@ export {
     BlogEditor,
     About,
     Contact,
+    HomeSkeleton,
 };
