@@ -17,13 +17,13 @@ export default function Layout() {
     }, [theme]);
 
     return (
-        <>
+        <div className="flex flex-col min-h-screen">
             <Header />
-            <main>
+            <main className="flex-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
                 <Outlet />
             </main>
             {/* {isModalOpen && <Modal />} */}
             <Footer />
-        </>
+        </div>
     );
 }
