@@ -1,6 +1,6 @@
 export default function About() {
     return (
-        <div className="container mx-auto px-4 py-6">
+        <div className="w-full min-h-full px-4 py-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
             <h1 className="text-3xl font-bold mb-6">About MyBlog</h1>
             <p className="text-lg mb-4">
                 Welcome to MyBlog, a platform for sharing ideas, stories, and
