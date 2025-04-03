@@ -1,6 +1,6 @@
 export default function Contact() {
     return (
-        <div className="container mx-auto px-4 py-6">
+        <div className="min-h-full mx-auto px-4 py-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
             <h1 className="text-3xl font-bold mb-6">Contact Us</h1>
             <p className="text-lg mb-4">
                 We’d love to hear from you! Whether you have feedback,
@@ -10,7 +10,7 @@ export default function Contact() {
                 Email us at:{" "}
                 <a
                     href="mailto:support@myblog.com"
-                    className="text-blue-500 hover:underline"
+                    className="text-blue-500 dark:text-blue-400 hover:underline focus:underline focus:outline-none hover:text-blue-600 dark:hover:text-blue-300 focus:text-blue-600 dark:focus:text-blue-300"
                 >
                     support@myblog.com
                 </a>
@@ -21,20 +21,20 @@ export default function Contact() {
             <ul className="list-disc list-inside mt-2">
                 <li>
                     <a
-                        href="https://twitter.com"
+                        href="https://twitter.com/07_kaustubh"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-500 hover:underline"
+                        className="text-blue-500 dark:text-blue-400 hover:underline focus:underline focus:outline-none hover:text-blue-600 dark:hover:text-blue-300 focus:text-blue-600 dark:focus:text-blue-300"
                     >
                         Twitter
                     </a>
                 </li>
                 <li>
                     <a
-                        href="https://github.com"
+                        href="https://github.com/kaustubh-tripathi-1"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-500 hover:underline"
+                        className="text-blue-500 dark:text-blue-400 hover:underline focus:underline focus:outline-none hover:text-blue-600 dark:hover:text-blue-300 focus:text-blue-600 dark:focus:text-blue-300"
                     >
                         GitHub
                     </a>
