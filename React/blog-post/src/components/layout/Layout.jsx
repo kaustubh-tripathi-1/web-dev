@@ -23,7 +23,7 @@ export default function Layout() {
     return (
         <div className="flex flex-col min-h-screen">
             {!hideHeaderFooter && <Header />}
-            <main className="flex-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
+            <main className="flex-1 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-200">
                 <Outlet />
             </main>
             {/* {isModalOpen && <Modal />} */}
