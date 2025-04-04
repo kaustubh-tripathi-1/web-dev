@@ -55,7 +55,7 @@ export const logoutUser = createAsyncThunk(
         } catch (error) {
             dispatch(
                 addNotification({
-                    message: error.message || "Logout failed",
+                    message: error.message || "Logout failed, please try again",
                     type: "error",
                 })
             );
