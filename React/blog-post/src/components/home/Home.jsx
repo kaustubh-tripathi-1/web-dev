@@ -20,7 +20,7 @@ export default function Home() {
             {/* Loading State with Skeleton */}
             {loading && (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {/* Show 3 skeleton cards as placeholders */}
+                    {/* Show 6 skeleton cards as placeholders */}
                     <HomeSkeleton />
                     <HomeSkeleton />
                     <HomeSkeleton />
