@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router";
@@ -10,6 +10,8 @@ export default function Signup() {
     const { authStatus, loading, error } = useSelector((state) => state.auth);
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const [isPasswordShowing, setIsPasswordShowing] = useState(false);
+
     const {
         register,
         handleSubmit,
@@ -53,6 +55,10 @@ export default function Signup() {
             }
             console.error("Signup failed:", error, error.code, error.type);
         }
+    }
+
+    function togglePasswordVisibility() {
+        setIsPasswordShowing((prevIsPasswordShowing) => !prevIsPasswordShowing);
     }
 
     return (
@@ -131,40 +137,86 @@ export default function Signup() {
                         )}
                     </div>
 
-                    {/* Password Field */}
+                    {/* Password Field with eye icons*/}
                     <div>
                         <label
                             htmlFor="password"
                             className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300"
                             title="Password - required field"
                         >
-                            Password{" "}
-                            <sup
-                                className="text-red-600"
-                                title="required field"
-                            >
-                                *
-                            </sup>
+                            Password <sup className="text-red-600">*</sup>
                         </label>
-                        <input
-                            id="password"
-                            type="password"
-                            {...register("password", {
-                                required: "Password is required",
-                                minLength: {
-                                    value: 8,
-                                    message:
-                                        "Password must be at least 8 characters",
-                                },
-                                maxLength: {
-                                    value: 256,
-                                    message:
-                                        "Password must be less than 256 characters",
-                                },
-                            })}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 focus:border-transparent"
-                            disabled={loading}
-                        />
+                        <div className="relative">
+                            {" "}
+                            {/* Nested div for input + button */}
+                            <input
+                                id="password"
+                                type={isPasswordShowing ? "text" : "password"}
+                                {...register("password", {
+                                    required: "Password is required",
+                                    minLength: {
+                                        value: 8,
+                                        message:
+                                            "Password must be at least 8 characters",
+                                    },
+                                    maxLength: {
+                                        value: 256,
+                                        message:
+                                            "Password must be less than 256 characters",
+                                    },
+                                })}
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 focus:border-transparent"
+                                disabled={loading}
+                            />
+                            <button
+                                type="button"
+                                onClick={togglePasswordVisibility}
+                                className="absolute top-1/2 -translate-y-1/2 right-0 flex items-center pr-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none cursor-pointer"
+                                aria-label={
+                                    isPasswordShowing
+                                        ? "Hide password"
+                                        : "Show password"
+                                }
+                            >
+                                {!isPasswordShowing ? (
+                                    <svg
+                                        className="w-5 h-5"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                        />
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                        />
+                                    </svg>
+                                ) : (
+                                    <svg
+                                        className="w-5 h-5"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                                        />
+                                    </svg>
+                                )}
+                            </button>
+                        </div>
                         {errors.password && (
                             <p className="mt-1 text-sm text-red-500 dark:text-red-400">
                                 {errors.password.message}
@@ -217,150 +269,5 @@ export default function Signup() {
                 </p>
             </div>
         </div>
-        // <div className="min-h-full flex items-center justify-center px-4 py-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
-        //     <div className="w-full max-w-md">
-        //         <h1 className="text-3xl font-bold mb-6 text-center">Sign Up</h1>
-
-        //         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        //             {/* Name Field */}
-        //             <div>
-        //                 <label
-        //                     htmlFor="name"
-        //                     className="block text-sm font-medium mb-1"
-        //                 >
-        //                     Name{" "}
-        //                     <sup
-        //                         className="text-red-600"
-        //                         title="required field"
-        //                     >
-        //                         *
-        //                     </sup>
-        //                 </label>
-        //                 <input
-        //                     id="name"
-        //                     type="text"
-        //                     {...register("name", {
-        //                         required: "Name is required",
-        //                         maxLength: {
-        //                             value: 127,
-        //                             message:
-        //                                 "Name must be less than 128 characters",
-        //                         },
-        //                     })}
-        //                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        //                     disabled={loading}
-        //                     autoComplete="on"
-        //                 />
-        //                 {errors.name && (
-        //                     <p className="mt-1 text-sm text-red-500 dark:text-red-400">
-        //                         {errors.name.message}
-        //                     </p>
-        //                 )}
-        //             </div>
-
-        //             {/* Email Field */}
-        //             <div>
-        //                 <label
-        //                     htmlFor="email"
-        //                     className="block text-sm font-medium mb-1"
-        //                 >
-        //                     Email{" "}
-        //                     <sup
-        //                         className="text-red-600"
-        //                         title="required field"
-        //                     >
-        //                         *
-        //                     </sup>
-        //                 </label>
-        //                 <input
-        //                     id="email"
-        //                     type="email"
-        //                     {...register("email", {
-        //                         required: "Email is required",
-        //                         pattern: {
-        //                             value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-        //                             message: "Invalid email format",
-        //                         },
-        //                     })}
-        //                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        //                     disabled={loading}
-        //                     autoComplete="on"
-        //                 />
-        //                 {errors.email && (
-        //                     <p className="mt-1 text-sm text-red-500 dark:text-red-400">
-        //                         {errors.email.message}
-        //                     </p>
-        //                 )}
-        //             </div>
-
-        //             {/* Password Field */}
-        //             <div>
-        //                 <label
-        //                     htmlFor="password"
-        //                     className="block text-sm font-medium mb-1"
-        //                 >
-        //                     Password{" "}
-        //                     <sup
-        //                         className="text-red-600"
-        //                         title="required field"
-        //                     >
-        //                         *
-        //                     </sup>
-        //                 </label>
-        //                 <input
-        //                     id="password"
-        //                     type="password"
-        //                     {...register("password", {
-        //                         required: "Password is required",
-        //                         minLength: {
-        //                             value: 8,
-        //                             message:
-        //                                 "Password must be at least 8 characters",
-        //                         },
-        //                         maxLength: {
-        //                             value: 256,
-        //                             message:
-        //                                 "Password must be less than 256 characters",
-        //                         },
-        //                     })}
-        //                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        //                     disabled={loading}
-        //                 />
-        //                 {errors.password && (
-        //                     <p className="mt-1 text-sm text-red-500 dark:text-red-400">
-        //                         {errors.password.message}
-        //                     </p>
-        //                 )}
-        //             </div>
-
-        //             {/* Error from Redux */}
-        //             {error && (
-        //                 <p className="text-center text-red-500 dark:text-red-400">
-        //                     {error}
-        //                 </p>
-        //             )}
-
-        //             {/* Submit Button */}
-        //             <button
-        //                 type="submit"
-        //                 className="w-full bg-blue-500 hover:bg-blue-600 focus:bg-blue-600 text-white py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-gray-400 dark:disabled:bg-gray-600 cursor-pointer"
-        //                 disabled={loading}
-        //             >
-        //                 {loading ? "Signing Up..." : "Sign Up"}
-        //             </button>
-        //         </form>
-
-        //         {/* Login Link */}
-        //         <p className="mt-4 text-center text-sm">
-        //             Already have an account?{" "}
-        //             <NavLink
-        //                 to="/login"
-        //                 className="text-blue-500 dark:text-blue-400 hover:underline focus:underline focus:outline-none"
-        //             >
-        //                 Log In
-        //             </NavLink>
-        //         </p>
-        //     </div>
-        // </div>
     );
 }
