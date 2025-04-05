@@ -1,7 +1,11 @@
-export default function Spinner({ size = "5", color = "currentColor" }) {
+export default function Spinner({
+    size = "4",
+    color = "currentColor",
+    className = ``,
+}) {
     return (
         <svg
-            className={`w-${size} h-${size} animate-spin`}
+            className={`w-${size} h-${size} animate-spin ${className}`}
             fill="none"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
