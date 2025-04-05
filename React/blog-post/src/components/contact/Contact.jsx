@@ -9,10 +9,10 @@ export default function Contact() {
             <p className="text-lg mb-4">
                 Email us at:{" "}
                 <a
-                    href="mailto:support@myblog.com"
+                    href="mailto:kt400@gmail.com"
                     className="text-blue-500 dark:text-blue-400 hover:underline focus:underline focus:outline-none hover:text-blue-600 dark:hover:text-blue-300 focus:text-blue-600 dark:focus:text-blue-300"
                 >
-                    support@myblog.com
+                    kt400@gmail.com
                 </a>
             </p>
             <p className="text-lg">
