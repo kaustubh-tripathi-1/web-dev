@@ -44,10 +44,7 @@ export default function Signup() {
 
             navigate(`/`);
         } catch (error) {
-            if (
-                error.message ===
-                `A user with the same id, email, or phone already exists in this project.`
-            ) {
+            if (error.type === `user_already_exists`) {
                 dispatch(
                     setError(`A user already exists with the same email!`)
                 );
