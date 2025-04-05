@@ -1,26 +1,27 @@
 div {
-  height: 200px;
-  width: 200px;
-  margin: 200px;
-  text-align: center;
-  border-top: 10px dotted tomato;
-  border-radius: 50%;
-  /* background-color: #ffc0cb; */
-  /* transition: 2s ease-in-out 1s; */
-  animation: anime 1s ease-in-out 0s infinite;
+    height: 200px;
+    width: 200px;
+    margin: 200px;
+    box-sizing: border-box;
+    text-align: center;
+    border-top: 10px dotted tomato;
+    border-radius: 50%;
+    /* background-color: #ffc0cb; */
+    /* transition: 2s ease-in-out 1s; */
+    animation: anime 1s ease-in-out 0s infinite;
 }
 
 @keyframes anime {
-  from {
-    /* background-color: ffc0cb; */
-    rotate: 0deg;
-    font-size: 10px;
-  }
-  to {
-    /* background-color: cornflowerblue; */
-    rotate: 360deg;
-    font-size: 100px;
-  }
+    from {
+        /* background-color: #ffc0cb; */
+        rotate: 0deg;
+        font-size: 10px;
+    }
+    to {
+        /* background-color: cornflowerblue; */
+        rotate: 360deg;
+        font-size: 100px;
+    }
 }
 /* div:hover {
    background-color: purple;
