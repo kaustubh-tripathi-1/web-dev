@@ -1,5 +1,5 @@
 export default function Spinner({
-    size = `small`,
+    size = `1`,
     color = "currentColor",
     className = ``,
 }) {
