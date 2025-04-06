@@ -21,10 +21,11 @@ export default function Signup() {
     });
 
     useEffect(() => {
+        dispatch(setError(null)); // Clear errors on mount
         if (authStatus) {
             navigate(`/`);
         }
-    }, [authStatus, navigate]);
+    }, [authStatus, navigate, dispatch]);
 
     async function signupOnSubmit(data) {
         dispatch(setLoading(true));
@@ -36,15 +37,18 @@ export default function Signup() {
                 data.password,
                 data.name
             );
-            dispatch(
-                login({
-                    $id: user.$id,
-                    email: user.email,
-                    name: user.name,
-                })
-            );
 
-            navigate(`/`);
+            if (user) {
+                dispatch(
+                    login({
+                        $id: user.$id,
+                        email: user.email,
+                        name: user.name,
+                    })
+                );
+
+                navigate(`/`);
+            }
         } catch (error) {
             if (error.type === `user_already_exists`) {
                 dispatch(
@@ -62,7 +66,7 @@ export default function Signup() {
     }
 
     return (
-        <div className="w-full min-h-screen flex items-center justify-center px-4 py-6 bg-gray-100 dark:bg-gray-900">
+        <section className="w-full min-h-screen flex items-center justify-center px-4 py-6 bg-gray-100 dark:bg-gray-900">
             <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-all duration-300 hover:shadow-lg animate-fade-in">
                 <h1 className="text-3xl font-bold mb-6 text-center text-gray-900 dark:text-gray-100">
                     Sign Up
@@ -225,31 +229,33 @@ export default function Signup() {
                     </div>
 
                     {/* Error from Redux */}
-                    {error && (
-                        <p className="italic text-center text-red-500 dark:text-red-400">
-                            {error}{" "}
-                            {error ===
-                                `A user already exists with the same email!` && (
-                                <NavLink
-                                    to="/login"
-                                    className="text-blue-500 dark:text-blue-400 hover:underline focus:underline focus:outline-none transition-colors duration-200 hover:text-blue-600 dark:hover:text-blue-300"
-                                >
-                                    Log In instead
-                                </NavLink>
-                            )}
-                        </p>
-                    )}
+                    {error &&
+                        error !==
+                            `User (role: guests) missing scope (account)` && (
+                            <p className="italic text-center text-red-500 dark:text-red-400">
+                                {error}{" "}
+                                {error ===
+                                    `A user already exists with the same email!` && (
+                                    <NavLink
+                                        to="/login"
+                                        className="text-blue-500 dark:text-blue-400 hover:underline focus:underline focus:outline-none transition-colors duration-200 hover:text-blue-600 dark:hover:text-blue-300"
+                                    >
+                                        Log In instead
+                                    </NavLink>
+                                )}
+                            </p>
+                        )}
 
                     {/* Submit Button */}
                     <button
                         type="submit"
-                        className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-gray-400 dark:disabled:bg-gray-600 transition-all duration-200 hover:scale-105 cursor-pointer flex items-center justify-center"
+                        className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-gray-400 dark:disabled:bg-gray-600 transition-all duration-200 hover:scale-105 cursor-pointer flex items-center justify-center"
                         disabled={loading}
                     >
                         {loading ? (
                             <>
                                 Signing Up...{" "}
-                                <Spinner size="4" className="ml-2" />
+                                <Spinner size="1" className="ml-2" />
                             </>
                         ) : (
                             `Sign Up`
@@ -268,6 +274,6 @@ export default function Signup() {
                     </NavLink>
                 </p>
             </div>
-        </div>
+        </section>
     );
 }
