@@ -9,6 +9,7 @@ import About from "./about/About.jsx";
 import Contact from "./contact/Contact.jsx";
 import HomeSkeleton from "./skeletons/HomeSkeleton.jsx";
 import Spinner from "./spinner/Spinner.jsx";
+import ProtectedRoute from "./ProtectedRoute.jsx";
 
 export {
     Header,
@@ -22,4 +23,5 @@ export {
     Contact,
     HomeSkeleton,
     Spinner,
+    ProtectedRoute,
 };
