@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { NavLink } from "react-router";
 import { setTheme } from "../../slices/uiSlice";
-import { logoutUser } from "../../slices/authSlice";
+import { logoutUser, logout } from "../../slices/authSlice";
+import { Spinner } from "../exportCompos";
 // import Notifications from "../Notifications/Notifications";
 
 export default function Header() {
@@ -25,8 +26,9 @@ export default function Header() {
         },
     ];
 
-    function handleLogout() {
+    async function handleLogout() {
         dispatch(logoutUser());
+        dispatch(logout());
         setIsMobileMenuOpen(false); // Close mobile menu on logout
     }
 
@@ -56,12 +58,7 @@ export default function Header() {
                                     key={item.name}
                                     to={item.slug}
                                     className={({ isActive }) =>
-                                        `md:py-1 md:px-2 ${
-                                            item.name === `Create Post` ||
-                                            item.slug === `/profile`
-                                                ? `md:text-sm`
-                                                : ``
-                                        } lg:py-1.5 lg:px-3 lg:text-base hover:underline focus:underline hover:decoration-white focus:decoration-white hover:text-white hover:bg-blue-800  rounded-md  focus:text-white focus:bg-blue-800 focus:outline-2 focus:outline-offset-2 focus:outline-blue-800 active:bg-blue-800  ${
+                                        `md:py-2 md:px-3 md:text-sm lg:py-2.5 lg:px-4 lg:text-base hover:underline focus:underline hover:decoration-white focus:decoration-white hover:text-white hover:bg-blue-800  rounded-md  focus:text-white focus:bg-blue-800 focus:outline-2 focus:outline-offset-2 focus:outline-blue-800 active:bg-blue-800  ${
                                             isActive
                                                 ? "text-blue-500 dark:text-blue-400 font-semibold"
                                                 : ""
