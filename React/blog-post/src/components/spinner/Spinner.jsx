@@ -1,11 +1,15 @@
 export default function Spinner({
-    size = "4",
+    size = `small`,
     color = "currentColor",
     className = ``,
 }) {
     return (
         <svg
-            className={`w-${size} h-${size} animate-spin ${className}`}
+            className={`animate-spin ${className}`}
+            style={{
+                width: `${size}rem`,
+                height: `${size}rem`,
+            }}
             fill="none"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
