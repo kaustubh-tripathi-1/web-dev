@@ -17,7 +17,9 @@ export const loginUser = createAsyncThunk(
             if (!credentials.email || !credentials.password) {
                 throw new Error("Email and password are required");
             }
-            const userData = await authService.login(credentials);
+            await authService.login(credentials.email, credentials.password);
+
+            const userData = await authService.getCurrentUser();
             dispatch(
                 addNotification({
                     message: "Logged in successfully",
@@ -26,6 +28,16 @@ export const loginUser = createAsyncThunk(
             );
             return userData;
         } catch (error) {
+            console.log(error, error.message, error.type, error.code);
+
+            if (error.code === 429) {
+                return rejectWithValue(
+                    `Too many login attempts. Please try again after some time`
+                );
+            }
+            if (error.code === 400 || error.code === 401) {
+                return rejectWithValue("Invalid email or password");
+            }
             dispatch(
                 addNotification({
                     message: error.message || "Login failed",
@@ -52,7 +64,18 @@ export const logoutUser = createAsyncThunk(
                     type: "success",
                 })
             );
+            return;
         } catch (error) {
+            if (error.code === 401) {
+                // Session already gone, treat as success
+                dispatch(
+                    addNotification({
+                        message: "Logged out successfully",
+                        type: "success",
+                    })
+                );
+                return;
+            }
             dispatch(
                 addNotification({
                     message: error.message || "Logout failed, please try again",
@@ -92,6 +115,7 @@ const initialState = {
     authStatus: false,
     userData: null,
     loading: false,
+    initialLoading: false, // For initial auth check
     error: null,
 };
 
@@ -132,6 +156,10 @@ const authSlice = createSlice({
          */
         setLoading: (state, action) => {
             state.loading = action.payload;
+            state.error = null;
+        },
+        setInitialLoading: (state, action) => {
+            state.initialLoading = action.payload;
             state.error = null;
         },
         /**
@@ -179,11 +207,11 @@ const authSlice = createSlice({
             })
             // Check Auth Status
             .addCase(checkAuthStatus.pending, (state) => {
-                state.loading = true;
+                state.initialLoading = true;
                 state.error = null;
             })
             .addCase(checkAuthStatus.fulfilled, (state, action) => {
-                state.loading = false;
+                state.initialLoading = false;
                 if (action.payload) {
                     state.authStatus = true;
                     state.userData = action.payload;
@@ -193,7 +221,7 @@ const authSlice = createSlice({
                 }
             })
             .addCase(checkAuthStatus.rejected, (state, action) => {
-                state.loading = false;
+                state.initialLoading = false;
                 state.authStatus = false;
                 state.userData = null;
                 state.error = action.payload;
@@ -201,5 +229,6 @@ const authSlice = createSlice({
     },
 });
 
-export const { login, logout, setLoading, setError } = authSlice.actions;
+export const { login, logout, setLoading, setInitialLoading, setError } =
+    authSlice.actions;
 export default authSlice.reducer;
