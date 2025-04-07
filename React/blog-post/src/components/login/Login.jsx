@@ -29,13 +29,9 @@ export default function Login() {
         dispatch(setLoading(true));
 
         try {
-            const user = dispatch(
+            const user = await dispatch(
                 loginUser({ email: data.email, password: data.password })
-            );
-
-            if (error) {
-                throw new Error({ message: `${error}` });
-            }
+            ).unwrap();
 
             if (user) {
                 dispatch(
@@ -49,9 +45,9 @@ export default function Login() {
                 navigate(`/`);
             }
         } catch (error) {
-            dispatch(setError(error.message || "Login failed"));
+            dispatch(setError(error || "Login failed"));
 
-            console.error("Login failed:", error);
+            console.error("Login failed:", error.code);
         }
     }
 
