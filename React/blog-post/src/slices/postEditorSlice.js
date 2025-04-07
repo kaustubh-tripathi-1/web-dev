@@ -69,7 +69,14 @@ export const updatePost = createAsyncThunk(
                 throw new Error("Title and content are required");
             }
             // Ensure the slug is unique (but skip if the slug hasn't changed)
-            const originalPost = await databaseService.getPost(postData.slug);
+            const originalPost = await databaseService
+                .getPost(postData.slug)
+                .catch(() => null);
+
+            if (!originalPost) {
+                throw new Error(`Post not found`);
+            }
+
             let uniqueSlug = postData.slug;
             if (originalPost.slug !== postData.slug) {
                 // Slug has changed, so check for uniqueness
@@ -101,7 +108,6 @@ export const updatePost = createAsyncThunk(
                 postData.slug,
                 finalPostData
             );
-            dispatch(resetEditor());
             return updatedPost;
         } catch (error) {
             return rejectWithValue(error.message);
