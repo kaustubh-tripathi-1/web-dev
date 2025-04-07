@@ -10,6 +10,7 @@ import Contact from "./contact/Contact.jsx";
 import HomeSkeleton from "./skeletons/HomeSkeleton.jsx";
 import Spinner from "./spinner/Spinner.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
+import PostEditorForm from "./post-editor-form/PostEditorForm.jsx";
 
 export {
     Header,
@@ -24,4 +25,5 @@ export {
     HomeSkeleton,
     Spinner,
     ProtectedRoute,
+    PostEditorForm,
 };
