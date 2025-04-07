@@ -9,7 +9,7 @@ export const fetchAllPosts = createAsyncThunk(
     `posts/fetchAllPosts`,
     async (_, { rejectWithValue }) => {
         try {
-            const posts = await databaseService.getAllPostsList();
+            const posts = await databaseService.getAllPosts();
             return posts.documents;
         } catch (error) {
             return rejectWithValue(error.message);
@@ -45,6 +45,10 @@ export const fetchPostBySlug = createAsyncThunk(
             const post = await databaseService.getPost(slug);
             return post;
         } catch (error) {
+            if (error.code === `404`) {
+                return rejectWithValue(`Post not found`);
+            }
+
             return rejectWithValue(error.message);
         }
     }
