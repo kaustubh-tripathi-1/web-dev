@@ -10,7 +10,7 @@ export const store = configureStore({
     reducer: {
         auth: authReducer,
         posts: postsReducer,
-        postsEditor: postEditorReducer,
+        postEditor: postEditorReducer,
         storage: storageReducer,
         ui: uiReducer,
         user: userReducer,
