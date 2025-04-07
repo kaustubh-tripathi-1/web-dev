@@ -146,7 +146,7 @@ export class DatabaseService {
      * @returns {Promise<object>} Returns a promise that resolves to an object containing a list of documents (e.g., { documents: [...] }).
      * @throws {AppwriteException} If the Appwrite API call fails.
      */
-    async getAllPostsList() {
+    async getAllPosts() {
         return this.#databases.listDocuments(
             appwriteConfig.appwriteDatabaseID,
             appwriteConfig.appwriteCollectionID
