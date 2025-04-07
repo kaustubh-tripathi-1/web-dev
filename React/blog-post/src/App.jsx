@@ -7,6 +7,8 @@ import {
     About,
     Contact,
     Spinner,
+    ProtectedRoute,
+    PostEditorForm,
 } from "./components/exportCompos";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,22 +25,22 @@ const router = createBrowserRouter([
             { path: "about", element: <About /> },
             { path: "contact", element: <Contact /> },
             // { path: "posts/:slug", element: <PostDetail /> },
-            // {
-            //     path: "create-post",
-            //     element: (
-            //         <ProtectedRoute>
-            //             <PostEditorForm />
-            //         </ProtectedRoute>
-            //     ),
-            // },
-            // {
-            //     path: "edit-post/:slug",
-            //     element: (
-            //         <ProtectedRoute>
-            //             <PostEditorForm />
-            //         </ProtectedRoute>
-            //     ),
-            // },
+            {
+                path: "create-post",
+                element: (
+                    <ProtectedRoute>
+                        <PostEditorForm />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: "edit-post/:slug",
+                element: (
+                    <ProtectedRoute>
+                        <PostEditorForm />
+                    </ProtectedRoute>
+                ),
+            },
             // {
             //     path: "profile",
             //     element: (
