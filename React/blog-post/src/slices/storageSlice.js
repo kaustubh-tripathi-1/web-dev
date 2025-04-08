@@ -14,7 +14,7 @@ export const uploadFile = createAsyncThunk(
                 throw new Error("A valid file is required for upload");
             }
             const uploadedFile = await storageService.uploadFile(file);
-            return uploadedFile.$id; // Return the file ID
+            return { id: uploadedFile.$id, name: uploadedFile.name }; // Return the file ID
         } catch (error) {
             return rejectWithValue(error.message);
         }
