@@ -33,14 +33,14 @@ const router = createBrowserRouter([
                     </ProtectedRoute>
                 ),
             },
-            {
-                path: "edit-post/:slug",
-                element: (
-                    <ProtectedRoute>
-                        <PostEditorForm />
-                    </ProtectedRoute>
-                ),
-            },
+            // {
+            //     path: "edit-post/:slug",
+            //     element: (
+            //         <ProtectedRoute>
+            //             <PostEditorForm />
+            //         </ProtectedRoute>
+            //     ),
+            // },
             // {
             //     path: "profile",
             //     element: (
