@@ -1,5 +1,8 @@
-import React, { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { Editor } from "@tinymce/tinymce-react";
+import { useSelector, useDispatch } from "react-redux";
+import { Controller } from "react-hook-form";
+import { setContent } from "../../slices/postEditorSlice";
 
 // Import TinyMCE core and plugins
 import "tinymce/tinymce";
@@ -24,118 +27,153 @@ import "tinymce/plugins/help";
 import "tinymce/plugins/wordcount";
 // Import skins
 import "tinymce/skins/ui/oxide/skin.min.css";
+
 // import "tinymce/skins/ui/oxide/content.min.css";
 // import "tinymce/skins/content/default/content.min.css";
 
-function BlogEditor({ initialValue, onContentChange }) {
+export default function BlogEditor({
+    name = `content`,
+    initialValue,
+    control,
+    ...props
+}) {
     const editorRef = useRef(null);
+    const dispatch = useDispatch();
+    const { theme } = useSelector((state) => state.ui);
 
-    const handleEditorChange = (content, editor) => {
-        if (onContentChange) {
-            onContentChange(content);
+    // Cleanup and reinitialize editor on theme change
+    useEffect(() => {
+        if (editorRef.current) {
+            editorRef.current.remove(); // Destroy existing editor
+            editorRef.current = null; // Reset ref
         }
-    };
+    }, [theme]);
 
     return (
         <div>
-            <Editor
-                onInit={(evt, editor) => (editorRef.current = editor)}
-                initialValue={
-                    initialValue || "<p>Write your blog post here...</p>"
-                }
-                onEditorChange={handleEditorChange}
-                init={{
-                    height: 300,
-                    menubar: true,
-                    plugins: [
-                        "advlist",
-                        "autolink",
-                        "lists",
-                        "link",
-                        "image",
-                        "charmap",
-                        "preview",
-                        "anchor",
-                        "searchreplace",
-                        "visualblocks",
-                        "code",
-                        "fullscreen",
-                        "insertdatetime",
-                        "media",
-                        "table",
-                        "help",
-                        "wordcount",
-                    ],
-                    toolbar:
-                        "undo redo | formatselect | bold italic backcolor | " +
-                        "alignleft aligncenter alignright alignjustify | " +
-                        "bullist numlist outdent indent | link image table | removeformat | help",
-                    content_style: `
-                        body {
-                            font-family: Helvetica, Arial, sans-serif;
-                            font-size: 14px;
-                            margin: 0;
-                            line-height: 1.4;
-                        }
-                        table {
-                            border-collapse: collapse;
-                        }
-                        table:not([cellpadding]) td,
-                        table:not([cellpadding]) th {
-                            padding: 0.4rem;
-                        }
-                        table[border]:not([border="0"]):not([style*="border-width"]) td,
-                        table[border]:not([border="0"]):not([style*="border-width"]) th {
-                            border-width: 1px;
-                        }
-                        table[border]:not([border="0"]):not([style*="border-style"]) td,
-                        table[border]:not([border="0"]):not([style*="border-style"]) th {
-                            border-style: solid;
-                        }
-                        table[border]:not([border="0"]):not([style*="border-color"]) td,
-                        table[border]:not([border="0"]):not([style*="border-color"]) th {
-                            border-color: #ccc;
-                        }
-                        figure {
-                            display: table;
-                            margin: 1rem auto;
-                        }
-                        figure figcaption {
-                            color: #999;
-                            display: block;
-                            margin-top: 0.25rem;
-                            text-align: center;
-                        }
-                        hr {
-                            border-color: #ccc;
-                            border-style: solid;
-                            border-width: 1px 0 0 0;
-                        }
-                        code {
-                            background-color: #e8e8e8;
-                            border-radius: 3px;
-                            padding: 0.1rem 0.2rem;
-                        }
-                        .mce-content-body:not([dir="rtl"]) blockquote {
-                            border-left: 2px solid #ccc;
-                            margin-left: 1.5rem;
-                            padding-left: 1rem;
-                        }
-                        .mce-content-body[dir="rtl"] blockquote {
-                            border-right: 2px solid #ccc;
-                            margin-right: 1.5rem;
-                            padding-right: 1rem;
-                        }
-                    `,
-                    license_key: "gpl",
-                    skin: false,
-                    content_css: false,
-                    base_url: "/tinymce",
-                    suffix: ".min",
-                }}
+            <Controller
+                name={name || "content"}
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                    <Editor
+                        onInit={(_evt, editor) => (editorRef.current = editor)}
+                        key={theme}
+                        value={value}
+                        onEditorChange={(newContent, editor) => {
+                            onChange(newContent); // Update form state
+                            // dispatch(setContent(newContent)); // Update Redux state
+                        }}
+                        {...props}
+                        init={{
+                            height: 300,
+                            menubar: true,
+                            branding: false,
+                            promotion: false,
+                            placeholder: `Write your content here...`,
+                            plugins: [
+                                "advlist",
+                                "autolink",
+                                "lists",
+                                "link",
+                                "image",
+                                "charmap",
+                                "preview",
+                                "anchor",
+                                "searchreplace",
+                                "visualblocks",
+                                "code",
+                                "fullscreen",
+                                "insertdatetime",
+                                "media",
+                                "table",
+                                "help",
+                                "wordcount",
+                            ],
+                            toolbar:
+                                "undo redo | formatselect | bold italic backcolor | " +
+                                "alignleft aligncenter alignright alignjustify | " +
+                                "bullist numlist outdent indent | link image table | removeformat | help",
+                            content_style: `
+                                    body {
+                                        font-family: Helvetica, Arial, sans-serif;
+                                        font-size: 14px;
+                                        padding:10px;
+                                        margin: 0;
+                                        line-height: 1.4;
+                                    }
+                                    table {
+                                        border-collapse: collapse;
+                                    }
+                                    table:not([cellpadding]) td,
+                                    table:not([cellpadding]) th {
+                                        padding: 0.4rem;
+                                    }
+                                    table[border]:not([border="0"]):not([style*="border-width"]) td,
+                                    table[border]:not([border="0"]):not([style*="border-width"]) th {
+                                        border-width: 1px;
+                                    }
+                                    table[border]:not([border="0"]):not([style*="border-style"]) td,
+                                    table[border]:not([border="0"]):not([style*="border-style"]) th {
+                                        border-style: solid;
+                                    }
+                                    table[border]:not([border="0"]):not([style*="border-color"]) td,
+                                    table[border]:not([border="0"]):not([style*="border-color"]) th {
+                                        border-color: #ccc;
+                                    }
+                                    figure {
+                                        display: table;
+                                        margin: 1rem auto;
+                                    }
+                                    figure figcaption {
+                                        color: #999;
+                                        display: block;
+                                        margin-top: 0.25rem;
+                                        text-align: center;
+                                    }
+                                    hr {
+                                        border-color: #ccc;
+                                        border-style: solid;
+                                        border-width: 1px 0 0 0;
+                                    }
+                                    code {
+                                        background-color: #35302a;
+                                        color: #faca81;
+                                        border-radius: 3px;
+                                        padding: 0.1rem 0.2rem;
+                                    }
+                                    .mce-content-body:not([dir="rtl"]) blockquote {
+                                        border-left: 2px solid #ccc;
+                                        margin-left: 1.5rem;
+                                        padding-left: 1rem;
+                                    }
+                                    .mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {
+                                        padding-left: 0.8rem;
+                                        padding-top: 0.9rem;
+                                        color : ${
+                                            theme === "dark"
+                                                ? "#fff"
+                                                : "#343434"
+                                        }
+                                    }
+                                    .mce-content-body[dir="rtl"] blockquote {
+                                        border-right: 2px solid #ccc;
+                                        margin-right: 1.5rem;
+                                        padding-right: 1rem;
+                                    }
+                                `,
+                            license_key: "gpl",
+                            skin: `${
+                                theme === "dark" ? "oxide-dark" : "oxide"
+                            }`,
+                            content_css: `${
+                                theme === "dark" ? "dark" : "default"
+                            }`,
+                            base_url: "/tinymce",
+                            suffix: ".min",
+                        }}
+                    />
+                )}
             />
         </div>
     );
 }
-
-export default BlogEditor;
