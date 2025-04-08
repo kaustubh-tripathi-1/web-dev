@@ -94,7 +94,7 @@ const postsSlice = createSlice({
          * @param {Array} action.payload - Array of all posts.
          */
         setPosts: (state, action) => {
-            state.posts = action.payload;
+            state.posts.push(action.payload);
             state.loading = false;
             state.error = null;
         },
@@ -105,7 +105,7 @@ const postsSlice = createSlice({
          * @param {Array} action.payload - Array of active posts.
          */
         setActivePosts: (state, action) => {
-            state.activePosts = action.payload;
+            state.activePosts.push(action.payload);
             state.loading = false;
             state.error = null;
         },
