@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchActivePosts } from "../../slices/postsSlice";
+import { fetchActivePosts, fetchAllPosts } from "../../slices/postsSlice";
 import { NavLink } from "react-router";
 import { HomeSkeleton } from "../exportCompos";
 
@@ -11,6 +11,7 @@ export default function Home() {
 
     useEffect(() => {
         dispatch(fetchActivePosts());
+        dispatch(fetchAllPosts());
     }, [dispatch]);
 
     return (
@@ -41,23 +42,26 @@ export default function Home() {
             {!loading && !error && activePosts.length > 0 && (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {activePosts.map((post) => (
-                        <div
-                            key={post.slug}
-                            className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md"
+                        <NavLink
+                            key={post.$id}
+                            to={`/posts/${post.$id}`}
+                            className=""
                         >
-                            <h2 className="text-xl font-semibold mb-2">
-                                {post.title}
-                            </h2>
-                            <p className="text-gray-700 dark:text-gray-300 mb-4">
-                                {post.content.slice(0, 100)}...
-                            </p>
-                            <NavLink
-                                to={`/posts/${post.slug}`}
-                                className="text-blue-500 dark:text-blue-400 hover:underline focus:underline focus:outline-none"
-                            >
-                                Read More
-                            </NavLink>
-                        </div>
+                            <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md">
+                                <h2 className="text-xl font-semibold mb-2">
+                                    {post.title}
+                                </h2>
+                                <p className="text-gray-700 dark:text-gray-300 mb-4">
+                                    {post.content.slice(0, 100)}...
+                                </p>
+                                <span
+                                    to={`/posts/${post.$id}`}
+                                    className="text-blue-500 dark:text-blue-400 hover:underline focus:underline focus:outline-none"
+                                >
+                                    Read More
+                                </span>
+                            </div>
+                        </NavLink>
                     ))}
                 </div>
             )}
