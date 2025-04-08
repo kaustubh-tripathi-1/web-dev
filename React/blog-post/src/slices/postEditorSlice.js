@@ -124,6 +124,9 @@ export const uploadFeatureImage = createAsyncThunk(
     `postEditor/uploadFeatureImage`,
     async (file, { rejectWithValue }) => {
         try {
+            if (!file || !(file instanceof File)) {
+                throw new Error("A valid file is required for upload");
+            }
             const uploadedFile = await storageService.uploadFile(file);
             return uploadedFile.$id; // Return the file ID
         } catch (error) {
