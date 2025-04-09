@@ -12,6 +12,8 @@ export default function Login() {
     const [isPasswordShowing, setIsPasswordShowing] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    // const from = location.state?.from || "/"; // Default to "/" if no intended route
+    const lastPath = sessionStorage.getItem(`lastPath`) || `/`;
     const {
         register,
         handleSubmit,
@@ -21,9 +23,9 @@ export default function Login() {
     useEffect(() => {
         dispatch(setError(null)); // Clear errors on mount
         if (authStatus) {
-            navigate(`/`);
+            navigate(lastPath);
         }
-    }, [authStatus, navigate, dispatch]);
+    }, [dispatch, navigate, authStatus]);
 
     async function loginOnSubmit(data) {
         dispatch(setLoading(true));
@@ -42,12 +44,10 @@ export default function Login() {
                     })
                 );
 
-                navigate(`/`);
+                navigate(lastPath);
             }
         } catch (error) {
             dispatch(setError(error || "Login failed"));
-
-            console.error("Login failed:", error.code);
         }
     }
 
