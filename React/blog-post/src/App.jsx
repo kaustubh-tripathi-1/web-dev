@@ -9,6 +9,7 @@ import {
     Spinner,
     ProtectedRoute,
     PostEditorForm,
+    PostDetail,
 } from "./components/exportCompos";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -44,7 +45,7 @@ const router = createBrowserRouter([
                     </ProtectedRoute>
                 ),
             },
-            // { path: "posts/:slug", element: <PostDetail /> },
+            { path: "posts/:slug", element: <PostDetail /> },
             // {
             //     path: "edit-post/:slug",
             //     element: (
