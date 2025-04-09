@@ -28,8 +28,6 @@ export const loginUser = createAsyncThunk(
             );
             return userData;
         } catch (error) {
-            console.log(error, error.message, error.type, error.code);
-
             if (error.code === 429) {
                 return rejectWithValue(
                     `Too many login attempts. Please try again after some time`
