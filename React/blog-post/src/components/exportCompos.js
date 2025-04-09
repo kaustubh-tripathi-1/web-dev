@@ -11,6 +11,7 @@ import HomeSkeleton from "./skeletons/HomeSkeleton.jsx";
 import Spinner from "./spinner/Spinner.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import PostEditorForm from "./post-editor-form/PostEditorForm.jsx";
+import PostDetail from "./post-detail/PostDetail.jsx";
 
 export {
     Header,
@@ -26,4 +27,5 @@ export {
     Spinner,
     ProtectedRoute,
     PostEditorForm,
+    PostDetail,
 };
