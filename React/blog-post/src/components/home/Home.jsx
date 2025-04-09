@@ -48,12 +48,12 @@ export default function Home() {
                             className=""
                         >
                             <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md">
-                                <h2 className="text-xl font-semibold mb-2">
+                                <h2 className="text-xl font-semibold mb-4">
                                     {post.title}
                                 </h2>
-                                <p className="text-gray-700 dark:text-gray-300 mb-4">
+                                {/* <p className="text-gray-700 dark:text-gray-300 mb-4">
                                     {post.content.slice(0, 100)}...
-                                </p>
+                                </p> */}
                                 <span
                                     to={`/posts/${post.$id}`}
                                     className="text-blue-500 dark:text-blue-400 hover:underline focus:underline focus:outline-none"
