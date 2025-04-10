@@ -7,11 +7,13 @@ import Signup from "./signup/Singup.jsx";
 import BlogEditor from "./blog-editor/BlogEditor.jsx";
 import About from "./about/About.jsx";
 import Contact from "./contact/Contact.jsx";
-import HomeSkeleton from "./skeletons/HomeSkeleton.jsx";
+import HomePostCardSkeleton from "./skeletons/HomePostCardSkeleton.jsx";
 import Spinner from "./spinner/Spinner.jsx";
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import PostEditorForm from "./post-editor-form/PostEditorForm.jsx";
 import PostDetail from "./post-detail/PostDetail.jsx";
+import PostDetailSkeleton from "./skeletons/PostDetailSkeleton.jsx";
+import NotFound from "./not-found/NotFound.jsx";
 
 export {
     Header,
@@ -23,9 +25,11 @@ export {
     BlogEditor,
     About,
     Contact,
-    HomeSkeleton,
+    HomePostCardSkeleton,
     Spinner,
     ProtectedRoute,
     PostEditorForm,
     PostDetail,
+    PostDetailSkeleton,
+    NotFound,
 };
