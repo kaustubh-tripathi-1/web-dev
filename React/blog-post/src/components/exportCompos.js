@@ -14,6 +14,7 @@ import PostEditorForm from "./post-editor-form/PostEditorForm.jsx";
 import PostDetail from "./post-detail/PostDetail.jsx";
 import PostDetailSkeleton from "./skeletons/PostDetailSkeleton.jsx";
 import NotFound from "./not-found/NotFound.jsx";
+import ErrorBoundaryInRouter from "./error-boundary/ErrorBoundaryInRouter.jsx";
 import ErrorBoundary from "./error-boundary/ErrorBoundary.jsx";
 
 export {
@@ -33,5 +34,6 @@ export {
     PostDetail,
     PostDetailSkeleton,
     NotFound,
+    ErrorBoundaryInRouter,
     ErrorBoundary,
 };
