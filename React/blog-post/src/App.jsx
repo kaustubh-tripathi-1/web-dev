@@ -11,7 +11,7 @@ import {
     PostEditorForm,
     PostDetail,
     NotFound,
-    ErrorBoundary,
+    ErrorBoundaryInRouter,
 } from "./components/exportCompos";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -31,13 +31,13 @@ const router = createBrowserRouter([
         path: "/",
         element: (
             <>
-                <ErrorBoundary>
+                <ErrorBoundaryInRouter>
                     <PathPersistor />
                     <Layout />
-                </ErrorBoundary>
+                </ErrorBoundaryInRouter>
             </>
         ),
-        errorElement: <ErrorBoundary />, // Root fallback
+        errorElement: <ErrorBoundaryInRouter />, // Root fallback
         children: [
             { path: "", index: true, element: <Home /> },
             { path: "about", element: <About /> },
@@ -70,8 +70,16 @@ const router = createBrowserRouter([
             { path: "*", element: <NotFound /> },
         ],
     },
-    { path: "login", element: <Login />, errorElement: <ErrorBoundary /> },
-    { path: "signup", element: <Signup />, errorElement: <ErrorBoundary /> },
+    {
+        path: "login",
+        element: <Login />,
+        errorElement: <ErrorBoundaryInRouter />,
+    },
+    {
+        path: "signup",
+        element: <Signup />,
+        errorElement: <ErrorBoundaryInRouter />,
+    },
 ]);
 
 export default function App() {
