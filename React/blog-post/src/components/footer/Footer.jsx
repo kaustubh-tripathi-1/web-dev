@@ -6,11 +6,11 @@ export default function Footer() {
 
     return (
         <footer className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 py-6">
-            <div className="container mx-auto px-4 text-center">
+            <div className="mx-auto px-4 text-center">
                 <p className="text-sm md:text-base">
                     © {new Date().getFullYear()} MyBlog. All rights reserved.
                 </p>
-                <div className="mt-4 flex justify-center space-x-6">
+                <div className="mt-4 grid grid-cols-2 md:flex md:flex-row justify-center md:space-x-6">
                     <NavLink
                         to="/"
                         className={({ isActive }) =>
