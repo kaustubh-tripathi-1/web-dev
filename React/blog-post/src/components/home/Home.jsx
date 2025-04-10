@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchActivePosts, fetchAllPosts } from "../../slices/postsSlice";
 import { NavLink } from "react-router";
-import { HomeSkeleton } from "../exportCompos";
+import { HomePostCardSkeleton } from "../exportCompos";
 
 export default function Home() {
     const { activePosts, loading, error } = useSelector((state) => state.posts);
@@ -22,12 +22,12 @@ export default function Home() {
             {loading && (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {/* Show 6 skeleton cards as placeholders */}
-                    <HomeSkeleton />
-                    <HomeSkeleton />
-                    <HomeSkeleton />
-                    <HomeSkeleton />
-                    <HomeSkeleton />
-                    <HomeSkeleton />
+                    <HomePostCardSkeleton />
+                    <HomePostCardSkeleton />
+                    <HomePostCardSkeleton />
+                    <HomePostCardSkeleton />
+                    <HomePostCardSkeleton />
+                    <HomePostCardSkeleton />
                 </div>
             )}
 
