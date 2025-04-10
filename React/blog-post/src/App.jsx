@@ -37,6 +37,7 @@ const router = createBrowserRouter([
                 </ErrorBoundary>
             </>
         ),
+        errorElement: <ErrorBoundary />, // Root fallback
         children: [
             { path: "", index: true, element: <Home /> },
             { path: "about", element: <About /> },
