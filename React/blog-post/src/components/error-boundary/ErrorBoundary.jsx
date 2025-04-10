@@ -1,6 +1,7 @@
 import { Component } from "react";
 import { Link } from "react-router";
 
+// Classic Class based Error Boundary
 export default class ErrorBoundary extends Component {
     state = { hasError: false, error: null };
 
@@ -47,9 +48,9 @@ export default class ErrorBoundary extends Component {
     }
 }
 
-/* import { useRouteError } from "react-router";
+// Alternate React-Router functional Error Boundary
 
-export default function ErrorBoundary() {
+/* export default function ErrorBoundary() {
     const error = useRouteError(); // Get the error from React Router
 
     console.error("Caught by ErrorBoundary:", error); // Log it
