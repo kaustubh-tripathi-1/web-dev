@@ -1,5 +1,4 @@
 import { Component } from "react";
-import { Link } from "react-router";
 
 // Classic Class based Error Boundary
 export default class ErrorBoundary extends Component {
@@ -26,7 +25,7 @@ export default class ErrorBoundary extends Component {
                         <p className="mb-6 text-red-500">
                             {this.state.error?.message || "Unknown error"}
                         </p>
-                        <Link to="/">
+                        <a href={window.location.origin}>
                             <button
                                 onClick={() =>
                                     this.setState({
@@ -38,7 +37,7 @@ export default class ErrorBoundary extends Component {
                             >
                                 Go To Home
                             </button>
-                        </Link>
+                        </a>
                     </div>
                 </div>
             );
