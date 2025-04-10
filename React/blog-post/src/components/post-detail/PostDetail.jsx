@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPostBySlug, setCurrentPost } from "../../slices/postsSlice";
@@ -11,11 +11,15 @@ export default function PostDetail() {
     const dispatch = useDispatch();
     const { currentPost, loading, error } = useSelector((state) => state.posts);
     const { authStatus, userData } = useSelector((state) => state.auth);
+    const [isLoading, setisLoading] = useState(true);
 
     // Fetch post on mount or slug change
     useEffect(() => {
+        setisLoading(true);
         if (slug) {
-            dispatch(fetchPostBySlug(slug));
+            dispatch(fetchPostBySlug(slug)).finally(() => {
+                setisLoading(false);
+            });
         }
 
         // Cleanup on unmount
@@ -26,20 +30,39 @@ export default function PostDetail() {
 
     // Check if current user is the post author
     const isAuthor = authStatus && userData?.$id === currentPost?.userID;
-    console.log(error, loading, currentPost);
 
-    if (loading || currentPost) {
+    if (loading || isLoading) {
         return <PostDetailSkeleton />;
     }
 
     if (error) {
         return (
-            <div className="min-h-screen py-10 align-middle flex items-center justify-center bg-gray-100 dark:bg-gray-800 text-red-600 dark:text-red-400">
-                <p className="text-xl">
+            <div className="min-h-screen py-10 align-middle flex flex-col items-center justify-center gap-20 bg-gray-100 dark:bg-gray-800 text-red-600 dark:text-red-400">
+                <p className="text-3xl">
                     {error === "Post not found"
                         ? "Post not found"
                         : "Error loading post"}
                 </p>
+                <Link
+                    to="/"
+                    className="cursor-pointer text-2xl text-blue-500 dark:text-blue-500 hover:text-blue-700 hover:underline focus:text-blue-700 focus:outline-none"
+                >
+                    Return to Home Page
+                </Link>
+            </div>
+        );
+    }
+
+    if (!currentPost) {
+        return (
+            <div className="min-h-screen py-10 align-middle flex flex-col items-center justify-center gap-20 bg-gray-100 dark:bg-gray-800 text-red-600 dark:text-red-400">
+                <p className="text-3xl">"Post not found"</p>
+                <Link
+                    to="/"
+                    className="cursor-pointer text-2xl text-blue-500 dark:text-blue-500 hover:text-blue-700 hover:underline focus:text-blue-700 focus:outline-none"
+                >
+                    Return to Home Page
+                </Link>
             </div>
         );
     }
