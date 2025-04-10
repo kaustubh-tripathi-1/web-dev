@@ -5,6 +5,7 @@ export default function NotFound() {
     return (
         <div className="min-h-screen w-screen bg-white text-red-600 text-2xl dark:bg-gray-800 dark:text-red-400 flex flex-col justify-center items-center">
             <img src={image404} alt="not-found-404" className="w-80" />
+            {/* Attribution */}
             <a
                 href="https://www.freepik.com/free-vector/oops-404-error-with-broken-robot-concept-illustration_13315300.htm#fromView=keyword&page=1&position=0&uuid=d7de2c0b-baee-45c3-af52-66e080ec7db7&query=404+Page+Found"
                 target="_blank"
