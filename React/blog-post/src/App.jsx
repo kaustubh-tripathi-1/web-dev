@@ -10,6 +10,7 @@ import {
     ProtectedRoute,
     PostEditorForm,
     PostDetail,
+    NotFound,
 } from "./components/exportCompos";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -62,11 +63,11 @@ const router = createBrowserRouter([
             //         </ProtectedRoute>
             //     ),
             // },
-            // { path: "*", element: <NotFound /> },
         ],
     },
     { path: "login", element: <Login /> },
     { path: "signup", element: <Signup /> },
+    { path: "*", element: <NotFound /> },
 ]);
 
 export default function App() {
