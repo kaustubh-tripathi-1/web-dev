@@ -122,8 +122,7 @@ export default function PostEditorForm({ post }) {
                     dispatch(setActivePosts(createdPost));
                 }
             }
-            navigate(`/`);
-            // navigate(`/posts/:slug`); // Or redirect to post detail page later
+            navigate(`/posts/${data.slug}`); // Or redirect to post detail page later
         } catch (error) {
             console.error(error);
         }
