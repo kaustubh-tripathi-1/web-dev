@@ -45,7 +45,7 @@ export const fetchPostBySlug = createAsyncThunk(
             const post = await databaseService.getPost(slug);
             return post;
         } catch (error) {
-            if (error.code === `404`) {
+            if (error.code === 404) {
                 return rejectWithValue(`Post not found`);
             }
 
