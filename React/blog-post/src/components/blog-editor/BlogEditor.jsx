@@ -140,7 +140,13 @@ export default function BlogEditor({
                                         color: #faca81;
                                         border-radius: 3px;
                                         padding: 0.1rem 0.2rem;
+                                        user-select : text;
                                     }
+                                    [data-mce-selected="inline-boundary"] {
+                                        background-color: #35302a !important;
+                                        color: #faca81 !important;
+                                        outline: none !important;
+                                    }    
                                     .mce-content-body:not([dir="rtl"]) blockquote {
                                         border-left: 2px solid #ccc;
                                         margin-left: 1.5rem;
