@@ -5,7 +5,6 @@ import { useNavigate, useParams } from "react-router";
 import {
     createPost,
     updatePost,
-    uploadFeatureImage,
     setTitle,
     setContent,
     setStatus,
@@ -15,7 +14,7 @@ import {
     setError,
     setLoading,
 } from "../../slices/postEditorSlice";
-import { uploadFile, addUploadedFile } from "../../slices/storageSlice";
+import { uploadFeaturedImage } from "../../slices/storageSlice";
 import {
     fetchPostBySlug,
     setActivePosts,
@@ -23,7 +22,7 @@ import {
 } from "../../slices/postsSlice";
 import { Spinner, BlogEditor } from "../exportCompos";
 
-export default function PostEditorForm({ post }) {
+export default function PostEditorForm() {
     const { authStatus, userData } = useSelector((state) => state.auth);
     const {
         slug: initialSlug,
@@ -36,6 +35,7 @@ export default function PostEditorForm({ post }) {
         error,
     } = useSelector((state) => state.postEditor);
     const { profile: userProfile } = useSelector((state) => state.user);
+    const { uploading } = useSelector((state) => state.storage);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { slug } = useParams(); // For editing mode
@@ -49,11 +49,11 @@ export default function PostEditorForm({ post }) {
     } = useForm({
         mode: "onChange",
         defaultValues: {
-            slug: post?.slug || initialSlug || "",
-            title: post?.title || title || "",
-            content: post?.content || content || "",
-            featureImage: post?.featureImage || featureImage || "",
-            status: post?.status || status || "active",
+            slug: initialSlug || "",
+            title: title || "",
+            content: content || "",
+            featureImage: featureImage.$id || "",
+            status: status || "active",
         },
     });
 
@@ -101,14 +101,15 @@ export default function PostEditorForm({ post }) {
                 title: data.title,
                 slug: data.slug,
                 content: data.content,
-                featureImage: featureImage || "",
+                featureImage: data.featureImage,
                 status: data.status,
                 userID: userData.$id,
+                authorName: userData.name,
             };
 
             dispatch(setTitle(data.title));
             dispatch(setContent(data.content));
-            dispatch(setFeatureImage(data.featureImage || ""));
+            dispatch(setFeatureImage(data.featureImage));
             dispatch(setStatus(data.status));
 
             if (isEditing) {
@@ -132,10 +133,11 @@ export default function PostEditorForm({ post }) {
         const file = event.target.files[0];
         if (file) {
             try {
-                const fileId = await dispatch(uploadFile(file)).unwrap();
-                dispatch(setFeatureImage(fileId.name));
-                dispatch(addUploadedFile(fileId.id));
-                setValue("featureImage", fileId.id);
+                const fileData = await dispatch(
+                    uploadFeaturedImage(file)
+                ).unwrap();
+                dispatch(setFeatureImage(fileData));
+                setValue("featureImage", fileData.$id);
             } catch (error) {
                 console.error("File upload error:", error);
                 dispatch(setError(error.message || "Failed to upload image"));
@@ -272,9 +274,17 @@ export default function PostEditorForm({ post }) {
                             className="w-fit px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 cursor-pointer file:mr-[20%] file:rounded-lg file:bg-gray-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-gray-800 hover:file:bg-gray-300 dark:file:bg-gray-800 dark:file:text-violet-100 dark:hover:file:bg-gray-500"
                             disabled={loading}
                         />
+                        {uploading && (
+                            <span className="w-3/24 flex justify-between items-center mt-1">
+                                <p className=" text-sm text-gray-600 dark:text-gray-400">
+                                    Uploading...
+                                </p>
+                                <Spinner size="1" />
+                            </span>
+                        )}
                         {featureImage && (
                             <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                                Uploaded: {featureImage}
+                                Uploaded: {featureImage.name}
                             </p>
                         )}
                     </div>
