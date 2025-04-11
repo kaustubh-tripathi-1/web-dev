@@ -70,9 +70,9 @@ export class StorageService {
     }
 
     /**
-     * Generates a preview URL for a file in the Appwrite storage bucket.
+     * Generates a preview URL for a file in the Appwrite storage bucket with tranformation. (Available in paid plan of Appwrite)
      * @param {string} fileID - The ID of the file to generate a preview for.
-     * @returns {string} Returns the URL (string) for the file preview.
+     * @returns {string} Returns the URL (object) for the file preview with the href property being the actual url.
      * @throws {StorageError} If validation fails.
      */
     getFilePreview(fileID) {
@@ -81,6 +81,22 @@ export class StorageService {
         }
 
         return this.#storage.getFilePreview(
+            appwriteConfig.appwriteBucketID,
+            fileID
+        );
+    }
+
+    /**
+     * Generates a preview URL for a file in the Appwrite storage bucket.
+     * @param {string} fileID - The ID of the file to generate a preview for.
+     * @returns {object} Returns the raw file data without tranformations.
+     * @throws {StorageError} If validation fails.
+     */
+    getFileView(fileID) {
+        if (!fileID || typeof fileID !== "string") {
+            throw new StorageError("File ID must be a non-empty string");
+        }
+        return this.#storage.getFileView(
             appwriteConfig.appwriteBucketID,
             fileID
         );
