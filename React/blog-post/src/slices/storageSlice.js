@@ -6,15 +6,15 @@ import { storageService } from "../appwrite-services/storage";
  * @param {File} file - The file to upload.
  * @returns {Promise<string>} The ID of the uploaded file.
  */
-export const uploadFile = createAsyncThunk(
-    "storage/uploadFile",
+export const uploadFeaturedImage = createAsyncThunk(
+    "storage/uploadFeaturedImage",
     async (file, { rejectWithValue }) => {
         try {
             if (!file || !(file instanceof File)) {
                 throw new Error("A valid file is required for upload");
             }
             const uploadedFile = await storageService.uploadFile(file);
-            return { id: uploadedFile.$id, name: uploadedFile.name }; // Return the file ID
+            return uploadedFile; // Return the file data
         } catch (error) {
             return rejectWithValue(error.message);
         }
@@ -47,7 +47,7 @@ export const downloadFile = createAsyncThunk(
 const initialState = {
     uploading: false,
     downloading: false,
-    uploadedFiles: [], // Array of file IDs
+    uploadedFiles: [], // Array of file data
     error: null,
 };
 
@@ -105,15 +105,15 @@ const storageSlice = createSlice({
     extraReducers: (builder) => {
         builder
             // Upload File
-            .addCase(uploadFile.pending, (state) => {
+            .addCase(uploadFeaturedImage.pending, (state) => {
                 state.uploading = true;
                 state.error = null;
             })
-            .addCase(uploadFile.fulfilled, (state, action) => {
+            .addCase(uploadFeaturedImage.fulfilled, (state, action) => {
                 state.uploading = false;
                 state.uploadedFiles.push(action.payload); // Add the file ID to uploadedFiles
             })
-            .addCase(uploadFile.rejected, (state, action) => {
+            .addCase(uploadFeaturedImage.rejected, (state, action) => {
                 state.uploading = false;
                 state.error = action.payload;
             })
