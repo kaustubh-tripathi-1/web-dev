@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { databaseService } from "../appwrite-services/database";
+import { storageService } from "../appwrite-services/storage";
 
 /**
  * Fetches all posts from the database.
@@ -64,6 +65,28 @@ export const deletePostFromDB = createAsyncThunk(
         } catch (error) {
             // Revert the optimistic update on failure
             dispatch(fetchAllPosts()); // Refetch posts to restore the state
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+/**
+ * Get the meta data of a featured image of the post.
+ * @param {string} fileID - The file id of the image in the appwrite bucket.
+ * @returns {Promise<object>} The meta data of the requested file.
+ */
+export const getFeaturedImageMetaData = createAsyncThunk(
+    `postEditor/getFeaturedImageMetaData`,
+    async (fileID, { rejectWithValue }) => {
+        try {
+            if (!fileID || typeof fileID !== "string") {
+                throw new Error("File ID must be a non-empty string");
+            }
+
+            const imageMetaData = await storageService.getFile(fileID);
+
+            return imageMetaData;
+        } catch (error) {
             return rejectWithValue(error.message);
         }
     }
@@ -221,6 +244,19 @@ const postsSlice = createSlice({
                 state.loading = false;
             })
             .addCase(deletePostFromDB.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            // Get Featured Image meta data
+            .addCase(getFeaturedImageMetaData.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getFeaturedImageMetaData.fulfilled, (state, action) => {
+                state.featureImage = action.payload;
+                state.loading = false;
+            })
+            .addCase(getFeaturedImageMetaData.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });
