@@ -120,7 +120,7 @@ export const updatePost = createAsyncThunk(
  * @param {File} file - The image file to upload.
  * @returns {Promise<string>} The ID of the uploaded file.
  */
-export const uploadFeatureImage = createAsyncThunk(
+/* export const uploadFeatureImage = createAsyncThunk(
     `postEditor/uploadFeatureImage`,
     async (file, { rejectWithValue }) => {
         try {
@@ -128,12 +128,12 @@ export const uploadFeatureImage = createAsyncThunk(
                 throw new Error("A valid file is required for upload");
             }
             const uploadedFile = await storageService.uploadFile(file);
-            return uploadedFile.$id; // Return the file ID
+            return uploadedFile; // Return the file data
         } catch (error) {
             return rejectWithValue(error.message);
         }
     }
-);
+); */
 
 /**
  * Initial State for the post editor slice
@@ -265,9 +265,9 @@ const postEditorSlice = createSlice({
             .addCase(updatePost.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
-            })
-            // Upload Feature Image
-            .addCase(uploadFeatureImage.pending, (state) => {
+            });
+        // Upload Feature Image
+        /* .addCase(uploadFeatureImage.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
@@ -278,7 +278,7 @@ const postEditorSlice = createSlice({
             .addCase(uploadFeatureImage.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
-            });
+            }); */
     },
 });
 
