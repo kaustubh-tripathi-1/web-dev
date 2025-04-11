@@ -83,7 +83,7 @@ export const getFeaturedImageMetaData = createAsyncThunk(
                 throw new Error("File ID must be a non-empty string");
             }
 
-            const imageMetaData = await storageService.getFile(fileID);
+            const imageMetaData = await storageService.getFileData(fileID);
 
             return imageMetaData;
         } catch (error) {
