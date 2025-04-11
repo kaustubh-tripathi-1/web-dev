@@ -109,7 +109,7 @@ export class StorageService {
      * @throws {StorageError} If validation fails.
      * @throws {AppwriteException} If the Appwrite API call fails.
      */
-    async getFile(fileID) {
+    async getFileData(fileID) {
         if (!fileID || typeof fileID !== "string") {
             throw new StorageError("File ID must be a non-empty string");
         }
