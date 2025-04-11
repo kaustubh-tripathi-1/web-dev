@@ -23,7 +23,7 @@ export default class ErrorBoundary extends Component {
                         <h1 className="text-4xl font-bold mb-6">
                             Something went wrong!
                         </h1>
-                        <p className="mb-6 text-red-500">
+                        <p className="mb-6 text-red-500 dark:text-red-400">
                             {this.state.error?.message || "Unknown error"}
                         </p>
                         <Link to="/">
