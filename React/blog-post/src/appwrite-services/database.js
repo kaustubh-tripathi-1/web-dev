@@ -56,7 +56,15 @@ export class DatabaseService {
      * @throws {DatabaseError} If validation fails.
      * @throws {AppwriteException} If the Appwrite API call fails.
      */
-    async createPost({ title, slug, content, featureImage, status, userID }) {
+    async createPost({
+        title,
+        slug,
+        content,
+        featureImage,
+        status,
+        userID,
+        authorName,
+    }) {
         //$ Validations
         if (!slug || typeof slug !== "string") {
             throw new DatabaseError("Slug must be a non-empty string");
@@ -78,6 +86,11 @@ export class DatabaseService {
                 "Feature image must be a string if provided"
             );
         }
+        if (authorName && typeof authorName !== "string") {
+            throw new DatabaseError(
+                "Author name image must be a string if provided"
+            );
+        }
 
         return this.#databases.createDocument(
             appwriteConfig.appwriteDatabaseID,
@@ -89,6 +102,7 @@ export class DatabaseService {
                 featureImage,
                 status,
                 userID,
+                authorName,
             }
         );
     }
@@ -106,7 +120,7 @@ export class DatabaseService {
      * @throws {DatabaseError} If validation fails.
      * @throws {AppwriteException} If the Appwrite API call fails.
      */
-    async updatePost(slug, { title, content, featureImage, status, userID }) {
+    async updatePost(slug, { title, content, featureImage, status }) {
         //$ Validations
         if (!slug || typeof slug !== "string") {
             throw new DatabaseError(
