@@ -33,8 +33,28 @@ export const downloadFile = createAsyncThunk(
             if (!fileID || typeof fileID !== "string") {
                 throw new Error("A valid file ID is required for download");
             }
-            const fileUrl = await storageService.getFile(fileID);
+            const fileUrl = await storageService.getFileData(fileID);
             return fileUrl; // Return the file URL
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+/**
+ * Delete a file from Appwrite storage.
+ * @param {string} fileID - The ID of the file to download.
+ * @returns {void} nothing
+ */
+export const deleteFile = createAsyncThunk(
+    "storage/deleteFile",
+    async (fileID, { rejectWithValue }) => {
+        try {
+            if (!fileID || typeof fileID !== "string") {
+                throw new Error("A valid file ID is required for download");
+            }
+            const imageData = await storageService.deleteFile(fileID);
+            return imageData; // Return the file URL
         } catch (error) {
             return rejectWithValue(error.message);
         }
@@ -47,6 +67,7 @@ export const downloadFile = createAsyncThunk(
 const initialState = {
     uploading: false,
     downloading: false,
+    deleting: false,
     uploadedFiles: [], // Array of file data
     error: null,
 };
@@ -75,6 +96,15 @@ const storageSlice = createSlice({
          */
         setDownloading: (state, action) => {
             state.downloading = action.payload;
+        },
+        /**
+         * Sets the deleting state.
+         * @param {Object} state - The current state.
+         * @param {Object} action - The action with payload.
+         * @param {boolean} action.payload - The deleting state.
+         */
+        setDeleting: (state, action) => {
+            state.deleting = action.payload;
         },
         /**
          * Adds a file ID to the uploadedFiles array.
@@ -128,6 +158,18 @@ const storageSlice = createSlice({
             .addCase(downloadFile.rejected, (state, action) => {
                 state.downloading = false;
                 state.error = action.payload;
+            })
+            // Delete File
+            .addCase(deleteFile.pending, (state) => {
+                state.deleting = true;
+                state.error = null;
+            })
+            .addCase(deleteFile.fulfilled, (state) => {
+                state.deleting = false;
+            })
+            .addCase(deleteFile.rejected, (state, action) => {
+                state.deleting = false;
+                state.error = action.payload;
             });
     },
 });
@@ -135,6 +177,7 @@ const storageSlice = createSlice({
 export const {
     setUploading,
     setDownloading,
+    setDeleting,
     addUploadedFile,
     setError,
     clearUploadedFiles,
