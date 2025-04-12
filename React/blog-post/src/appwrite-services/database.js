@@ -44,6 +44,19 @@ export class DatabaseService {
     }
 
     /**
+     * Private method to validate a string
+     * @param {string} string - The string to validate
+     * @returns {boolean} Returns a boolean value, true if the string failed validation and false otherwise
+     */
+    #validateString(string) {
+        if (!string || typeof string !== "string") {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Creates a new post document in the database.
      * @param {Object} postData - The post data to create.
      * @param {string} postData.title - The title of the post.
@@ -66,29 +79,29 @@ export class DatabaseService {
         authorName,
     }) {
         //$ Validations
-        if (!slug || typeof slug !== "string" || slug.length > 36) {
+        if (this.#validateString(slug) || slug.length > 36) {
             throw new DatabaseError(
                 "Slug must be a non-empty string and lest than 36 characters as per Appwrite docs"
             );
         }
-        if (!title || typeof title !== "string") {
+        if (this.#validateString(title)) {
             throw new DatabaseError("Title must be a non-empty string");
         }
-        if (!content || typeof content !== "string") {
+        if (this.#validateString(content)) {
             throw new DatabaseError("Content must be a non-empty string");
         }
-        if (!status || typeof status !== "string") {
+        if (this.#validateString(status)) {
             throw new DatabaseError("Status must be a non-empty string");
         }
-        if (!userID || typeof userID !== "string") {
+        if (this.#validateString(userID)) {
             throw new DatabaseError("User ID must be a non-empty string");
         }
-        if (featureImage && typeof featureImage !== "string") {
+        if (this.#validateString(featureImage)) {
             throw new DatabaseError(
                 "Feature image must be a string if provided"
             );
         }
-        if (authorName && typeof authorName !== "string") {
+        if (this.#validateString(authorName)) {
             throw new DatabaseError(
                 "Author name image must be a string if provided"
             );
@@ -124,23 +137,23 @@ export class DatabaseService {
      */
     async updatePost(slug, { title, content, featureImage, status }) {
         //$ Validations
-        if (!slug || typeof slug !== "string") {
+        if (this.#validateString(slug) || slug.length > 36) {
             throw new DatabaseError(
                 "Document ID/slug must be a non-empty string"
             );
         }
-        if (title && typeof title !== "string") {
+        if (this.#validateString(title)) {
             throw new DatabaseError("Title must be a string if provided");
         }
-        if (content && typeof content !== "string") {
+        if (this.#validateString(content)) {
             throw new DatabaseError("Content must be a string if provided");
         }
-        if (featureImage && typeof featureImage !== "string") {
+        if (this.#validateString(featureImage)) {
             throw new DatabaseError(
                 "Feature image must be a string if provided"
             );
         }
-        if (status && typeof status !== "string") {
+        if (this.#validateString(status)) {
             throw new DatabaseError("Status must be a string if provided");
         }
 
