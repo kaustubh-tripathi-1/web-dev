@@ -17,7 +17,10 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { checkAuthStatus, setInitialLoading } from "./slices/authSlice";
 
-// Path persistor component
+/**
+ * Persists the current route path in sessionStorage for redirect handling.
+ * @returns {null} Renders nothing.
+ */
 function PathPersistor() {
     const location = useLocation();
     useEffect(() => {
@@ -82,6 +85,10 @@ const router = createBrowserRouter([
     },
 ]);
 
+/**
+ * Root component that sets up routing, auth checks, and theme toggling.
+ * @returns {JSX.Element} The router provider or a loading spinner.
+ */
 export default function App() {
     const dispatch = useDispatch();
     const { authStatus, initialLoading } = useSelector((state) => state.auth);
