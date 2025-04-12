@@ -1,8 +1,11 @@
 import { Outlet } from "react-router";
 import { Footer, Header } from "../exportCompos";
-import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
+/**
+ * Renders the main app layout with header, footer, and child routes.
+ * @returns {JSX.Element} The layout structure with Outlet for child routes.
+ */
 export default function Layout() {
     const { isModalOpen } = useSelector((state) => state.ui);
 
