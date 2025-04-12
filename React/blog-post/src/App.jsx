@@ -13,7 +13,7 @@ import {
     NotFound,
     ErrorBoundaryInRouter,
 } from "./components/exportCompos";
-import { useEffect, useState } from "react";
+import { useEffect, useState /* lazy, Suspense */ } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { checkAuthStatus, setInitialLoading } from "./slices/authSlice";
 
@@ -29,6 +29,9 @@ function PathPersistor() {
     return null;
 }
 
+// Tried Lazy loading of compo
+// const About = lazy(() => import("./components/about/About"));
+
 const router = createBrowserRouter([
     {
         path: "/",
@@ -43,7 +46,21 @@ const router = createBrowserRouter([
         errorElement: <ErrorBoundaryInRouter />, // Root fallback
         children: [
             { path: "", index: true, element: <Home /> },
-            { path: "about", element: <About /> },
+            {
+                path: "about",
+                element: (
+                    // <Suspense
+                    //     fallback={
+                    //         <div className="w-full min-h-dvh flex justify-center items-center">
+                    //             {" "}
+                    //             <Spinner size="4" />
+                    //         </div>
+                    //     }
+                    // >
+                    <About />
+                    // </Suspense>
+                ),
+            },
             { path: "contact", element: <Contact /> },
             {
                 path: "create-post",
