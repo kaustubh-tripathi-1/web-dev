@@ -1,8 +1,7 @@
 import { useRef, useEffect } from "react";
 import { Editor } from "@tinymce/tinymce-react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { Controller } from "react-hook-form";
-import { setContent } from "../../slices/postEditorSlice";
 
 // Import TinyMCE core and plugins
 import "tinymce/tinymce";
