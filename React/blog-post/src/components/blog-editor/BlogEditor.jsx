@@ -38,7 +38,6 @@ export default function BlogEditor({
     ...props
 }) {
     const editorRef = useRef(null);
-    const dispatch = useDispatch();
     const { theme } = useSelector((state) => state.ui);
 
     // Cleanup and reinitialize editor on theme change
