@@ -190,7 +190,7 @@ export class DatabaseService {
      * @throws {AppwriteException} If the Appwrite API call fails.
      */
     async getPost(slug) {
-        if (!slug || typeof slug !== `string`) {
+        if (this.#validateString(slug)) {
             throw new DatabaseError(
                 `Document ID/slug provided must be a non-empty string`
             );
@@ -211,7 +211,7 @@ export class DatabaseService {
      * @throws {AppwriteException} If the Appwrite API call fails.
      */
     async deletePost(slug) {
-        if (!slug || typeof slug !== "string") {
+        if (this.#validateString(slug)) {
             throw new DatabaseError(
                 "Document ID/slug must be a non-empty string"
             );
