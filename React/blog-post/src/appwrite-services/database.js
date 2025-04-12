@@ -66,8 +66,10 @@ export class DatabaseService {
         authorName,
     }) {
         //$ Validations
-        if (!slug || typeof slug !== "string") {
-            throw new DatabaseError("Slug must be a non-empty string");
+        if (!slug || typeof slug !== "string" || slug.length > 36) {
+            throw new DatabaseError(
+                "Slug must be a non-empty string and lest than 36 characters as per Appwrite docs"
+            );
         }
         if (!title || typeof title !== "string") {
             throw new DatabaseError("Title must be a non-empty string");
