@@ -236,6 +236,19 @@ export class DatabaseService {
             [Query.equal("status", "active")]
         );
     }
+
+    /**
+     * Retrieves a list of posts of a user from the database.
+     * @returns {Promise<object>} Returns a promise that resolves to an object containing a list of user documents (e.g., { documents: [...] }).
+     * @throws {AppwriteException} If the Appwrite API call fails.
+     */
+    async getUserPosts(userID) {
+        return this.#databases.listDocuments(
+            appwriteConfig.appwriteDatabaseID,
+            appwriteConfig.appwriteCollectionID,
+            [Query.equal("userID", userID)]
+        );
+    }
 }
 
 export const databaseService = new DatabaseService();
