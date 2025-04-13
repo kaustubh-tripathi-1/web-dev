@@ -16,6 +16,7 @@ import PostDetailSkeleton from "./skeletons/PostDetailSkeleton.jsx";
 import NotFound from "./not-found/NotFound.jsx";
 import ErrorBoundaryInRouter from "./error-boundary/ErrorBoundaryInRouter.jsx";
 import ErrorBoundary from "./error-boundary/ErrorBoundary.jsx";
+import CodeBlock from "./codeblock/CodeBlock.jsx";
 
 export {
     Header,
@@ -36,4 +37,5 @@ export {
     NotFound,
     ErrorBoundaryInRouter,
     ErrorBoundary,
+    CodeBlock,
 };
