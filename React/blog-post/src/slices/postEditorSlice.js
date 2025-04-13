@@ -77,6 +77,14 @@ export const updatePost = createAsyncThunk(
                 throw new Error(`Post not found`);
             }
 
+            // Delete the existing feature image from DB
+            if (
+                postData.featureImage &&
+                originalPost.featureImage !== postData.featureImage
+            ) {
+                await storageService.deleteFile(originalPost.featureImage);
+            }
+
             let uniqueSlug = postData.slug;
             if (originalPost.slug !== postData.slug) {
                 // Slug has changed, so check for uniqueness
@@ -134,6 +142,28 @@ export const updatePost = createAsyncThunk(
         }
     }
 ); */
+
+/**
+ * Get the meta data of a featured image of the post.
+ * @param {string} fileID - The file id of the image in the appwrite bucket.
+ * @returns {Promise<object>} The meta data of the requested file.
+ */
+export const getFeatureImageMetaData = createAsyncThunk(
+    `postEditor/getFeatureImageMetaData`,
+    async (fileID, { rejectWithValue }) => {
+        try {
+            if (!fileID || typeof fileID !== "string") {
+                throw new Error("File ID must be a non-empty string");
+            }
+
+            const imageMetaData = await storageService.getFileData(fileID);
+
+            return imageMetaData;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
 
 /**
  * Initial State for the post editor slice
@@ -263,6 +293,19 @@ const postEditorSlice = createSlice({
                 state.loading = false;
             })
             .addCase(updatePost.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            // Get Featured Image meta data
+            .addCase(getFeatureImageMetaData.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getFeatureImageMetaData.fulfilled, (state, action) => {
+                state.featureImage = action.payload;
+                state.loading = false;
+            })
+            .addCase(getFeatureImageMetaData.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });
