@@ -55,38 +55,30 @@ export const fetchPostBySlug = createAsyncThunk(
     }
 );
 
+/**
+ * Deletes a post from the database.
+ * @param {string} slug - The slug of the post to delete.
+ * @returns {Promise<string>} The deleted post's slug.
+ */
 export const deletePostFromDB = createAsyncThunk(
     "posts/deletePostFromDB",
-    async (slug, { rejectWithValue, dispatch }) => {
-        dispatch(deletePost({ slug })); // Optimistically remove the post
+    async (slug, { rejectWithValue, dispatch, getState }) => {
+        // Store the post locally before optimistically deleting it
+        const state = getState();
+        const post =
+            state.posts.posts.find((p) => p.slug === slug) ||
+            state.posts.currentPost;
+
+        dispatch(deletePost(slug)); // Optimistically remove the post
         try {
             await databaseService.deletePost(slug);
+            if (post?.featureImage) {
+                await storageService.deleteFile(post.featureImage);
+            }
             return slug;
         } catch (error) {
-            // Revert the optimistic update on failure
-            dispatch(fetchAllPosts()); // Refetch posts to restore the state
-            return rejectWithValue(error.message);
-        }
-    }
-);
-
-/**
- * Get the meta data of a featured image of the post.
- * @param {string} fileID - The file id of the image in the appwrite bucket.
- * @returns {Promise<object>} The meta data of the requested file.
- */
-export const getFeaturedImageMetaData = createAsyncThunk(
-    `postEditor/getFeaturedImageMetaData`,
-    async (fileID, { rejectWithValue }) => {
-        try {
-            if (!fileID || typeof fileID !== "string") {
-                throw new Error("File ID must be a non-empty string");
-            }
-
-            const imageMetaData = await storageService.getFileData(fileID);
-
-            return imageMetaData;
-        } catch (error) {
+            // Revert the optimistic update on failure by restoring the state
+            dispatch(revertDeletePost(post));
             return rejectWithValue(error.message);
         }
     }
@@ -175,13 +167,13 @@ const postsSlice = createSlice({
             state.error = null;
         },
         /**
-         * Removes a post from the state by its slug.
+         * Removes a post from the state by its slug for optimistic deletion.
          * @param {Object} state - The current state.
          * @param {Object} action - The action with payload.
          * @param {string} action.payload - The slug of the post to remove.
          */
         deletePost: (state, action) => {
-            const { slug } = action.payload;
+            const slug = action.payload;
             state.posts = state.posts.filter((post) => post.slug !== slug);
             state.activePosts = state.activePosts.filter(
                 (post) => post.slug !== slug
@@ -192,6 +184,27 @@ const postsSlice = createSlice({
             }
             state.loading = false;
             state.error = null;
+        },
+        /**
+         * Reverts an optimistic deletion by restoring the post.
+         * @param {Object} state - The current state.
+         * @param {Object} action - The action with payload.
+         * @param {Object} action.payload.post - The post to restore.
+         */
+        revertDeletePost: (state, action) => {
+            const post = action.payload;
+            if (post) {
+                state.posts.push(post);
+                if (post.status === "active") {
+                    state.activePosts.push(post);
+                }
+                if (
+                    state.currentPost === null &&
+                    post.slug === state.currentPost?.slug
+                ) {
+                    state.currentPost = post;
+                }
+            }
         },
     },
     extraReducers: (builder) => {
@@ -244,19 +257,6 @@ const postsSlice = createSlice({
                 state.loading = false;
             })
             .addCase(deletePostFromDB.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-            })
-            // Get Featured Image meta data
-            .addCase(getFeaturedImageMetaData.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(getFeaturedImageMetaData.fulfilled, (state, action) => {
-                state.featureImage = action.payload;
-                state.loading = false;
-            })
-            .addCase(getFeaturedImageMetaData.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });
