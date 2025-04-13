@@ -6,8 +6,8 @@ import { storageService } from "../appwrite-services/storage";
  * @param {File} file - The file to upload.
  * @returns {Promise<string>} The ID of the uploaded file.
  */
-export const uploadFeaturedImage = createAsyncThunk(
-    "storage/uploadFeaturedImage",
+export const uploadFeatureImage = createAsyncThunk(
+    "storage/uploadFeatureImage",
     async (file, { rejectWithValue }) => {
         try {
             if (!file || !(file instanceof File)) {
@@ -33,8 +33,8 @@ export const downloadFile = createAsyncThunk(
             if (!fileID || typeof fileID !== "string") {
                 throw new Error("A valid file ID is required for download");
             }
-            const fileUrl = await storageService.getFileData(fileID);
-            return fileUrl; // Return the file URL
+            const blob = await storageService.downloadFile(fileID);
+            return URL.createObjectURL(blob);
         } catch (error) {
             return rejectWithValue(error.message);
         }
@@ -43,18 +43,20 @@ export const downloadFile = createAsyncThunk(
 
 /**
  * Delete a file from Appwrite storage.
- * @param {string} fileID - The ID of the file to download.
- * @returns {void} nothing
+ * @param {string} fileID - The ID of the deleted file.
+ * @returns {Promise<string>} The deleted file ID.
  */
 export const deleteFile = createAsyncThunk(
     "storage/deleteFile",
     async (fileID, { rejectWithValue }) => {
         try {
             if (!fileID || typeof fileID !== "string") {
-                throw new Error("A valid file ID is required for download");
+                throw new Error(
+                    "A valid file ID is required to delete the file"
+                );
             }
-            const imageData = await storageService.deleteFile(fileID);
-            return imageData; // Return the file URL
+            await storageService.deleteFile(fileID);
+            return fileID; // Return the file URL
         } catch (error) {
             return rejectWithValue(error.message);
         }
@@ -116,6 +118,17 @@ const storageSlice = createSlice({
             state.uploadedFiles.push(action.payload);
         },
         /**
+         * Deletes a file ID to the uploadedFiles array.
+         * @param {Object} state - The current state.
+         * @param {Object} action - The action with payload.
+         * @param {string} action.payload - The file ID to delete.
+         */
+        deleteUploadedFile: (state, action) => {
+            state.uploadedFiles = state.uploadedFiles.filter(
+                (file) => file.$id !== action.payload
+            );
+        },
+        /**
          * Sets an error message.
          * @param {Object} state - The current state.
          * @param {Object} action - The action with payload.
@@ -135,15 +148,15 @@ const storageSlice = createSlice({
     extraReducers: (builder) => {
         builder
             // Upload File
-            .addCase(uploadFeaturedImage.pending, (state) => {
+            .addCase(uploadFeatureImage.pending, (state) => {
                 state.uploading = true;
                 state.error = null;
             })
-            .addCase(uploadFeaturedImage.fulfilled, (state, action) => {
+            .addCase(uploadFeatureImage.fulfilled, (state, action) => {
                 state.uploading = false;
                 state.uploadedFiles.push(action.payload); // Add the file ID to uploadedFiles
             })
-            .addCase(uploadFeaturedImage.rejected, (state, action) => {
+            .addCase(uploadFeatureImage.rejected, (state, action) => {
                 state.uploading = false;
                 state.error = action.payload;
             })
@@ -166,6 +179,9 @@ const storageSlice = createSlice({
             })
             .addCase(deleteFile.fulfilled, (state) => {
                 state.deleting = false;
+                state.uploadedFiles = state.uploadedFiles.filter(
+                    (file) => file.$id !== action.payload
+                );
             })
             .addCase(deleteFile.rejected, (state, action) => {
                 state.deleting = false;
@@ -181,6 +197,7 @@ export const {
     addUploadedFile,
     setError,
     clearUploadedFiles,
+    deleteUploadedFile,
 } = storageSlice.actions;
 
 export default storageSlice.reducer;
