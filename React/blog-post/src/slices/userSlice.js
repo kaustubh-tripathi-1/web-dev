@@ -100,7 +100,7 @@ export const getUserPosts = createAsyncThunk(
     "user/getUserPosts",
     async (userID, { rejectWithValue }) => {
         try {
-            const posts = await databaseService.getAllPosts(userID);
+            const posts = await databaseService.getUserPosts(userID);
             return posts.documents;
         } catch (error) {
             return rejectWithValue(error.message);
