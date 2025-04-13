@@ -92,11 +92,29 @@ export const updatePreferences = createAsyncThunk(
 );
 
 /**
+ * Fetches the user's posts from Appwrite.
+ * @param {string} userID - The ID of the user.
+ * @returns {Promise<Array>} Array of the user's posts.
+ */
+export const getUserPosts = createAsyncThunk(
+    "user/getUserPosts",
+    async (userID, { rejectWithValue }) => {
+        try {
+            const posts = await databaseService.getAllPosts(userID);
+            return posts.documents;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+/**
  * Initial State for the user slice
  */
 const initialState = {
     profile: null, // e.g., { name: "John Doe", email: "john@example.com" }
     preferences: null, // e.g., { theme: "dark", notifications: true }
+    userPosts: [],
     loading: false,
     error: null,
 };
@@ -143,6 +161,14 @@ const userSlice = createSlice({
          */
         setError: (state, action) => {
             state.error = action.payload;
+        },
+        /**
+         * Clears all posts from userPosts state.
+         * @param {Object} state - The current state.
+         * @param {Object} action - The action with payload.
+         */
+        clearUserPosts: (state, action) => {
+            state.userPosts = [];
         },
     },
     extraReducers: (builder) => {
@@ -201,17 +227,36 @@ const userSlice = createSlice({
                 state.error = action.payload;
                 state.preferences = initialState.preferences; // Roll back on failure
             })
+            // Get User Posts
+            .addCase(getUserPosts.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getUserPosts.fulfilled, (state, action) => {
+                state.loading = false;
+                state.userPosts = action.payload;
+            })
+            .addCase(getUserPosts.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
             // Reset state on logout (from authSlice)
-            .addCase("auth/logout", (state) => {
+            .addCase("auth/logoutUser", (state) => {
                 state.profile = null;
                 state.preferences = null;
+                state.userPosts = [];
                 state.loading = false;
                 state.error = null;
             });
     },
 });
 
-export const { setProfile, setPreferences, setLoading, setError } =
-    userSlice.actions;
+export const {
+    setProfile,
+    setPreferences,
+    setLoading,
+    setError,
+    clearUserPosts,
+} = userSlice.actions;
 
 export default userSlice.reducer;
