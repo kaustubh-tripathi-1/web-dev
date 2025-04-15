@@ -62,7 +62,7 @@ export const createPost = createAsyncThunk(
  */
 export const updatePost = createAsyncThunk(
     `postEditor/updatePost`,
-    async (postData, { dispatch, rejectWithValue }) => {
+    async (postData, { rejectWithValue }) => {
         try {
             // Validation
             if (!postData.title || !postData.content) {
@@ -197,9 +197,19 @@ const postEditorSlice = createSlice({
             // Auto-generate slug from title
             state.slug = state.title
                 .toLowerCase()
-                .replace(/[^a-z0-9\s-]/g, "") // Remove special characters
+                .replace(/[^a-z0-9-]/g, "-") // Remove special characters
                 .trim()
-                .replace(/\s+/g, "-"); // Replace spaces with hyphens
+                .replace(/-+/g, "-") // Replace spaces with hyphens
+                .trim("-");
+        },
+        /**
+         * Sets the post slug.
+         * @param {Object} state - The current state.
+         * @param {Object} action - The action with payload.
+         * @param {string} action.payload - The post slug.
+         */
+        setSlug: (state, action) => {
+            state.slug = action.payload;
         },
         /**
          * Sets the post content.
@@ -217,6 +227,10 @@ const postEditorSlice = createSlice({
          * @param {string} action.payload - The featured image ID.
          */
         setFeatureImage: (state, action) => {
+            // state.featureImage =
+            //     typeof action.payload === `string`
+            //         ? action.payload
+            //         : action.payload?.$id || "";
             state.featureImage = action.payload;
         },
         /**
@@ -334,6 +348,7 @@ export const {
     setLoading,
     setError,
     resetEditor,
+    setSlug,
 } = postEditorSlice.actions;
 
 export default postEditorSlice.reducer;
