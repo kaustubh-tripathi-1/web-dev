@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
@@ -12,16 +12,24 @@ import {
     setIsEditing,
     resetEditor,
     setError,
-    setLoading,
 } from "../../slices/postEditorSlice";
-import { uploadFeaturedImage } from "../../slices/storageSlice";
+import {
+    clearUploadedFiles,
+    deleteFile,
+    uploadFeatureImage,
+} from "../../slices/storageSlice";
 import {
     fetchPostBySlug,
-    setActivePosts,
-    setPosts,
+    deletePostFromDB,
+    setCurrentPost,
 } from "../../slices/postsSlice";
 import { Spinner, BlogEditor } from "../exportCompos";
+import { storageService } from "../../appwrite-services/storage";
 
+/**
+ * Form for creating or editing blog posts with Appwrite.
+ * @returns {JSX.Element} The post editor form.
+ */
 export default function PostEditorForm() {
     const { authStatus, userData } = useSelector((state) => state.auth);
     const {
@@ -34,66 +42,82 @@ export default function PostEditorForm() {
         loading,
         error,
     } = useSelector((state) => state.postEditor);
-    const { profile: userProfile } = useSelector((state) => state.user);
     const { uploading } = useSelector((state) => state.storage);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { slug } = useParams(); // For editing mode
+    const [isDeleting, setIsDeleting] = useState(false);
+
     const {
         register,
         handleSubmit,
         setValue,
         control,
         trigger,
+        watch,
+        reset,
         formState: { errors },
     } = useForm({
         mode: "onChange",
         defaultValues: {
-            slug: initialSlug || "",
-            title: title || "",
-            content: content || "",
-            featureImage: featureImage.$id || "",
-            status: status || "active",
+            slug: isEditing ? initialSlug : "",
+            title: "",
+            content: "",
+            featureImage: "",
+            status: "active",
         },
     });
 
     useEffect(() => {
         if (!authStatus) {
             navigate(`/login`);
+            return;
         }
+
         if (slug) {
             // Editing mode
             dispatch(setIsEditing(true));
             dispatch(fetchPostBySlug(slug)).then((action) => {
                 if (action.meta.requestStatus === "fulfilled") {
                     const fetchedPost = action.payload;
+                    // Update Redux
                     dispatch(setTitle(fetchedPost.title));
                     dispatch(setContent(fetchedPost.content));
                     dispatch(setFeatureImage(fetchedPost.featureImage || ""));
                     dispatch(setStatus(fetchedPost.status));
-                    setValue("title", fetchedPost.title);
-                    setValue("slug", fetchedPost.slug);
-                    setValue("status", fetchedPost.status);
+                    // Update Form states
+                    setValue("title", fetchedPost.title, {
+                        shouldValidate: true,
+                    });
+                    setValue("slug", fetchedPost.$id, { shouldValidate: true });
+                    setValue("featureImage", fetchedPost.featureImage, {
+                        shouldValidate: true,
+                    });
+                    setValue("content", fetchedPost.content, {
+                        shouldValidate: true,
+                    });
+                    setValue("status", fetchedPost.status, {
+                        shouldValidate: true,
+                    });
+                    // Trigger validation
+                    trigger();
                 }
+                dispatch(setCurrentPost(null));
             });
         } else {
             // Create mode
             dispatch(setIsEditing(false));
             dispatch(resetEditor());
         }
+
+        return () => {
+            dispatch(resetEditor());
+        };
     }, [authStatus, slug, dispatch, navigate, setValue]);
 
     /**
-     * Creates a new post document in the database when form is submitted.
-     * @param {Object} data - The post data to create.
-     * @param {string} data.title - The title of the post.
-     * @param {string} data.slug - The unique slug for the post (used as document ID).
-     * @param {string} data.content - The content of the post.
-     * @param {string} data.featureImage - The ID of the featured image.
-     * @param {string} data.status - The status of the post (e.g., "active", "inactive").
-     * @param {string} data.userID - The ID of the user who created the post.
-     * @returns {Promise<void>} Returns a void promise
-     * @throws {AppwriteException} If the Appwrite API call fails.
+     * Handles post creation or update on form submission.
+     * @param {Object} data - The post data.
      */
     async function createPostOnSubmit(data) {
         try {
@@ -101,7 +125,7 @@ export default function PostEditorForm() {
                 title: data.title,
                 slug: data.slug,
                 content: data.content,
-                featureImage: data.featureImage,
+                featureImage: data.featureImage || featureImage,
                 status: data.status,
                 userID: userData.$id,
                 authorName: userData.name,
@@ -109,40 +133,71 @@ export default function PostEditorForm() {
 
             dispatch(setTitle(data.title));
             dispatch(setContent(data.content));
-            dispatch(setFeatureImage(data.featureImage));
+            dispatch(setFeatureImage(postData.featureImage));
             dispatch(setStatus(data.status));
 
             if (isEditing) {
                 await dispatch(updatePost(postData)).unwrap();
             } else {
-                const createdPost = await dispatch(
-                    createPost(postData)
-                ).unwrap();
-                dispatch(setPosts(createdPost));
-                if (postData.status === `active`) {
-                    dispatch(setActivePosts(createdPost));
-                }
+                await dispatch(createPost(postData)).unwrap();
             }
-            navigate(`/posts/${data.slug}`); // Or redirect to post detail page later
+            dispatch(clearUploadedFiles());
+            navigate(`/posts/${data.slug}`); // Redirect to post detail page
         } catch (error) {
+            dispatch(setError(error.message || "Failed to save post"));
             console.error(error);
         }
     }
 
+    /**
+     * Handles file upload for featured image.
+     * @param {Event} event - The file input change event.
+     */
     async function handleFileUpload(event) {
         const file = event.target.files[0];
         if (file) {
             try {
                 const fileData = await dispatch(
-                    uploadFeaturedImage(file)
+                    uploadFeatureImage(file)
                 ).unwrap();
                 dispatch(setFeatureImage(fileData));
-                setValue("featureImage", fileData.$id);
+                setValue("featureImage", fileData.$id, {
+                    shouldValidate: true,
+                });
             } catch (error) {
                 console.error("File upload error:", error);
                 dispatch(setError(error.message || "Failed to upload image"));
             }
         }
+    }
+
+    /**
+     * Deletes the current post.
+     */
+    async function handleDelete() {
+        setIsDeleting(true);
+        try {
+            await dispatch(deletePostFromDB(slug)).unwrap();
+            if (featureImage) {
+                await dispatch(deleteFile(featureImage)).unwrap();
+            }
+            navigate("/");
+        } catch (error) {
+            dispatch(setError(error.message || "Failed to delete post"));
+        } finally {
+            setIsDeleting(false);
+        }
+    }
+
+    let imageData = null;
+    if (typeof featureImage === `string`) {
+        imageData = featureImage
+            ? storageService.getFileView(featureImage)
+            : null;
+    } else {
+        imageData = featureImage
+            ? storageService.getFileView(featureImage.$id)
+            : null;
     }
 
     return (
@@ -180,13 +235,18 @@ export default function PostEditorForm() {
                                         "Title must be less than 37 characters",
                                 },
                                 onChange: (event) => {
-                                    dispatch(setTitle(event.target.value));
-                                    const slugValue = event.target.value
+                                    const titleValue =
+                                        event.target.value.trim();
+                                    dispatch(setTitle(titleValue));
+                                    const slugValue = titleValue
                                         .toLowerCase()
                                         .replace(/[^a-z0-9-]/g, "-")
+                                        .trim()
                                         .replace(/-+/g, "-")
                                         .trim("-");
-                                    setValue("slug", slugValue);
+                                    setValue("slug", slugValue, {
+                                        shouldValidate: true,
+                                    });
                                     trigger("slug");
                                 },
                             })}
@@ -195,7 +255,6 @@ export default function PostEditorForm() {
                                     ? "border-red-500"
                                     : "border-gray-300 dark:border-gray-600"
                             } rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200`}
-                            disabled={loading}
                         />
                         {errors.title && (
                             <p className="mt-1 text-sm text-red-500 dark:text-red-400">
@@ -210,7 +269,7 @@ export default function PostEditorForm() {
                             htmlFor="slug"
                             className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300"
                         >
-                            Slug{" "}
+                            Slug (non-editable, generated from Title){" "}
                             <sup
                                 className="text-red-600"
                                 title="required field"
@@ -221,7 +280,7 @@ export default function PostEditorForm() {
                         <input
                             id="slug"
                             type="text"
-                            value={initialSlug}
+                            value={watch("slug") || ""} // Bind to form state
                             {...register("slug", {
                                 required: "Slug is required",
                                 pattern: {
@@ -232,24 +291,15 @@ export default function PostEditorForm() {
                                 maxLength: {
                                     value: 36,
                                     message:
-                                        "Title must be less than 37 characters",
-                                },
-                                onChange: (event) => {
-                                    const value = event.target.value
-                                        .toLowerCase()
-                                        .replace(/[^a-z0-9-]/g, "-")
-                                        .replace(/-+/g, "-")
-                                        .trim("-");
-                                    setValue("slug", value);
-                                    trigger("slug"); // Revalidate to clear errors
+                                        "Slug must be less than 37 characters",
                                 },
                             })}
                             className={`w-full px-3 py-2 border ${
                                 errors.slug
                                     ? "border-red-500"
                                     : "border-gray-300 dark:border-gray-600"
-                            } rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500`}
-                            disabled={loading}
+                            } rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-not-allowed`}
+                            readOnly
                         />
                         {errors.slug && (
                             <p className="mt-1 text-sm text-red-500 dark:text-red-400">
@@ -264,28 +314,48 @@ export default function PostEditorForm() {
                             htmlFor="featureImage"
                             className="block w-2/6 text-sm font-medium mb-1 text-gray-700 dark:text-gray-300"
                         >
-                            Featured Image
+                            Featured Image{" "}
+                            <sup
+                                className="text-red-600"
+                                title="required field"
+                            >
+                                *
+                            </sup>
                         </label>
                         <input
                             id="featureImage"
                             type="file"
                             accept="image/*"
                             onChange={handleFileUpload}
-                            className="w-fit px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 cursor-pointer file:mr-[20%] file:rounded-lg file:bg-gray-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-gray-800 hover:file:bg-gray-300 dark:file:bg-gray-800 dark:file:text-violet-100 dark:hover:file:bg-gray-500"
+                            className="w-fit px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer file:mr-[20%] file:rounded-lg file:bg-gray-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-gray-800 hover:file:bg-gray-300 dark:file:bg-gray-800 dark:file:text-violet-100 dark:hover:file:bg-gray-500"
                             disabled={loading}
                         />
                         {uploading && (
-                            <span className="w-3/24 flex justify-between items-center mt-1">
+                            <span className="w-3/24 flex flex-col md:flex-row justify-between items-center mt-1">
                                 <p className=" text-sm text-gray-600 dark:text-gray-400">
                                     Uploading...
                                 </p>
                                 <Spinner size="1" />
                             </span>
                         )}
-                        {featureImage && (
+                        {featureImage && featureImage.name ? (
                             <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
                                 Uploaded: {featureImage.name}
                             </p>
+                        ) : null}
+                        {imageData && (
+                            <div className="my-6">
+                                <p>Current Feature Image</p>
+                                <img
+                                    src={imageData?.href}
+                                    alt={
+                                        title ||
+                                        featureImage ||
+                                        "Error in fetching image"
+                                    }
+                                    className="w-2/6 h-fit object-contain rounded-md mt-2 mb-6"
+                                />
+                            </div>
                         )}
                     </div>
 
@@ -353,14 +423,23 @@ export default function PostEditorForm() {
                         )}
                     </div>
 
-                    {/* Redux Error Display */}
-                    {error && (
-                        <p
-                            className="text-center text-red-500 dark:text-red-400"
-                            role="alert"
+                    {/* Delete Button (Edit Mode) */}
+                    {isEditing && (
+                        <button
+                            type="button"
+                            onClick={handleDelete}
+                            disabled={isDeleting || loading}
+                            className="w-full bg-red-500 hover:bg-red-700 text-white py-3 rounded-md disabled:bg-gray-400 dark:disabled:bg-gray-600 transition-all duration-200 hover:scale-105 flex items-center justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
-                            {error}
-                        </p>
+                            {isDeleting ? (
+                                <>
+                                    Deleting...
+                                    <Spinner size="1" className="ml-2" />
+                                </>
+                            ) : (
+                                "Delete Post"
+                            )}
+                        </button>
                     )}
 
                     {/* Submit Button */}
@@ -380,6 +459,15 @@ export default function PostEditorForm() {
                             "Create Post"
                         )}
                     </button>
+                    {/* Redux Error Display */}
+                    {error && (
+                        <p
+                            className="text-center text-red-500 dark:text-red-400"
+                            role="alert"
+                        >
+                            {error}
+                        </p>
+                    )}
                 </form>
             </div>
         </section>
