@@ -62,23 +62,11 @@ export const fetchPostBySlug = createAsyncThunk(
  */
 export const deletePostFromDB = createAsyncThunk(
     "posts/deletePostFromDB",
-    async (slug, { rejectWithValue, dispatch, getState }) => {
-        // Store the post locally before optimistically deleting it
-        const state = getState();
-        const post =
-            state.posts.posts.find((p) => p.slug === slug) ||
-            state.posts.currentPost;
-
-        dispatch(deletePost(slug)); // Optimistically remove the post
+    async (slug, { rejectWithValue, dispatch }) => {
         try {
             await databaseService.deletePost(slug);
-            if (post?.featureImage) {
-                await storageService.deleteFile(post.featureImage);
-            }
             return slug;
         } catch (error) {
-            // Revert the optimistic update on failure by restoring the state
-            dispatch(revertDeletePost(post));
             return rejectWithValue(error.message);
         }
     }
@@ -109,7 +97,7 @@ const postsSlice = createSlice({
          * @param {Array} action.payload - Array of all posts.
          */
         setPosts: (state, action) => {
-            state.posts.push(action.payload);
+            state.posts = action.payload;
             state.loading = false;
             state.error = null;
         },
@@ -120,7 +108,7 @@ const postsSlice = createSlice({
          * @param {Array} action.payload - Array of active posts.
          */
         setActivePosts: (state, action) => {
-            state.activePosts.push(action.payload);
+            state.activePosts = action.payload;
             state.loading = false;
             state.error = null;
         },
@@ -166,46 +154,6 @@ const postsSlice = createSlice({
             state.loading = false;
             state.error = null;
         },
-        /**
-         * Removes a post from the state by its slug for optimistic deletion.
-         * @param {Object} state - The current state.
-         * @param {Object} action - The action with payload.
-         * @param {string} action.payload - The slug of the post to remove.
-         */
-        deletePost: (state, action) => {
-            const slug = action.payload;
-            state.posts = state.posts.filter((post) => post.slug !== slug);
-            state.activePosts = state.activePosts.filter(
-                (post) => post.slug !== slug
-            );
-
-            if (state.currentPost?.slug === slug) {
-                state.currentPost = null;
-            }
-            state.loading = false;
-            state.error = null;
-        },
-        /**
-         * Reverts an optimistic deletion by restoring the post.
-         * @param {Object} state - The current state.
-         * @param {Object} action - The action with payload.
-         * @param {Object} action.payload.post - The post to restore.
-         */
-        revertDeletePost: (state, action) => {
-            const post = action.payload;
-            if (post) {
-                state.posts.push(post);
-                if (post.status === "active") {
-                    state.activePosts.push(post);
-                }
-                if (
-                    state.currentPost === null &&
-                    post.slug === state.currentPost?.slug
-                ) {
-                    state.currentPost = post;
-                }
-            }
-        },
     },
     extraReducers: (builder) => {
         builder
@@ -250,10 +198,18 @@ const postsSlice = createSlice({
             })
             // Delete a post
             .addCase(deletePostFromDB.pending, (state) => {
-                state.loading = true;
+                // state.loading = true;
                 state.error = null;
             })
-            .addCase(deletePostFromDB.fulfilled, (state) => {
+            .addCase(deletePostFromDB.fulfilled, (state, action) => {
+                const slug = action.payload;
+                state.posts = state.posts.filter((post) => post.slug !== slug);
+                state.activePosts = state.activePosts.filter(
+                    (post) => post.slug !== slug
+                );
+                if (state.currentPost?.slug === slug) {
+                    state.currentPost = null;
+                }
                 state.loading = false;
             })
             .addCase(deletePostFromDB.rejected, (state, action) => {
@@ -270,6 +226,5 @@ export const {
     setLoading,
     setError,
     reset,
-    deletePost,
 } = postsSlice.actions;
 export default postsSlice.reducer;
