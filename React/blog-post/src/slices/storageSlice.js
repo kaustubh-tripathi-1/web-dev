@@ -34,6 +34,9 @@ export const downloadFile = createAsyncThunk(
                 throw new Error("A valid file ID is required for download");
             }
             const blob = await storageService.downloadFile(fileID);
+            //todo check this
+            // const arrayBuffer = await storageService.downloadFile(fileID);
+            // const blob = new Blob([arrayBuffer], { type: "application/octet-stream" });
             return URL.createObjectURL(blob);
         } catch (error) {
             return rejectWithValue(error.message);
@@ -56,7 +59,7 @@ export const deleteFile = createAsyncThunk(
                 );
             }
             await storageService.deleteFile(fileID);
-            return fileID; // Return the file URL
+            return fileID; // Return the file ID
         } catch (error) {
             return rejectWithValue(error.message);
         }
@@ -177,7 +180,7 @@ const storageSlice = createSlice({
                 state.deleting = true;
                 state.error = null;
             })
-            .addCase(deleteFile.fulfilled, (state) => {
+            .addCase(deleteFile.fulfilled, (state, action) => {
                 state.deleting = false;
                 state.uploadedFiles = state.uploadedFiles.filter(
                     (file) => file.$id !== action.payload
