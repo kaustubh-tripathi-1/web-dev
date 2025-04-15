@@ -18,6 +18,7 @@ import "tinymce/plugins/anchor";
 import "tinymce/plugins/searchreplace";
 import "tinymce/plugins/visualblocks";
 import "tinymce/plugins/code";
+import "tinymce/plugins/codesample";
 import "tinymce/plugins/fullscreen";
 import "tinymce/plugins/insertdatetime";
 import "tinymce/plugins/media";
@@ -32,7 +33,7 @@ import "tinymce/skins/ui/oxide/skin.min.css";
 
 export default function BlogEditor({
     name = `content`,
-    initialValue,
+    initialValue = "",
     control,
     ...props
 }) {
@@ -68,6 +69,19 @@ export default function BlogEditor({
                             branding: false,
                             promotion: false,
                             placeholder: `Write your content here...`,
+                            codesample_languages: [
+                                { text: "JavaScript", value: "javascript" },
+                                { text: "HTML/XML", value: "html" },
+                                { text: "CSS", value: "css" },
+                                { text: "PHP", value: "php" },
+                                { text: "Ruby", value: "ruby" },
+                                { text: "Python", value: "python" },
+                                { text: "Java", value: "java" },
+                                { text: "C", value: "c" },
+                                { text: "C#", value: "csharp" },
+                                { text: "C++", value: "cpp" },
+                            ],
+                            forced_root_block: "div",
                             plugins: [
                                 "advlist",
                                 "autolink",
@@ -86,9 +100,10 @@ export default function BlogEditor({
                                 "table",
                                 "help",
                                 "wordcount",
+                                "codesample",
                             ],
                             toolbar:
-                                "undo redo | formatselect | bold italic backcolor | " +
+                                "undo redo | formatselect | bold italic backcolor | codesample code " +
                                 "alignleft aligncenter alignright alignjustify | " +
                                 "bullist numlist outdent indent | link image table | removeformat | help",
                             content_style: `
@@ -152,7 +167,7 @@ export default function BlogEditor({
                                     }
                                     .mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {
                                         padding-left: 0.8rem;
-                                        padding-top: 0.9rem;
+                                        padding-top: 0rem;
                                         color : ${
                                             theme === "dark"
                                                 ? "#fff"
