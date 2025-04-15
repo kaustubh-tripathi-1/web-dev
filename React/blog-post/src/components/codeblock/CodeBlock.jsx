@@ -1,5 +1,26 @@
-import Highlight, { defaultProps } from "prism-react-renderer";
-import theme from "prism-react-renderer/themes/nightOwl"; // Dark mode friendly
+import Highlight from "prism-react-renderer";
+import nightOwl from "prism-react-renderer/themes/nightOwl";
+import Prism from "prism-react-renderer/prism"; // Import Prism core
+
+// // Map TinyMCE language classes to Prism.language keys
+// const languageMap = {
+//     javascript: "javascript",
+//     html: "html",
+//     css: "css",
+//     php: "php",
+//     ruby: "ruby",
+//     python: "python",
+//     java: "java",
+//     c: "c",
+//     csharp: "csharp",
+//     cpp: "cpp",
+// };
+
+// // Force language loading
+// Prism.languages.javascript = Prism.languages.javascript || {};
+// Prism.languages.html = Prism.languages.html || {};
+// Prism.languages.css = Prism.languages.css || {};
+// // ... add all needed languages
 
 /**
  * Highlights code blocks in blog content.
@@ -10,23 +31,44 @@ import theme from "prism-react-renderer/themes/nightOwl"; // Dark mode friendly
 export default function CodeBlock({ code, language = "javascript" }) {
     return (
         <Highlight
-            {...defaultProps}
-            theme={theme}
             code={code.trim()}
             language={language}
+            theme={nightOwl}
+            Prism={Prism}
         >
             {({ className, style, tokens, getLineProps, getTokenProps }) => (
                 <pre
-                    className={`${className} p-4 rounded-md bg-gray-800 text-gray-100`}
+                    className={`${className} p-4 rounded-md bg-gray-800 text-gray-100 overflow-x-auto`}
                     style={style}
                 >
-                    {tokens.map((line, i) => (
-                        <div {...getLineProps({ line, key: i })}>
-                            {line.map((token, key) => (
-                                <span {...getTokenProps({ token, key })} />
-                            ))}
-                        </div>
-                    ))}
+                    <code>
+                        {tokens.map((line, i) => {
+                            const lineProps = getLineProps({ line });
+                            const { key: _key, ...restProps } = lineProps; // Destructure key
+
+                            return (
+                                <div key={i} {...restProps}>
+                                    {line.map((token, key) => {
+                                        const tokenProps = getTokenProps({
+                                            token,
+                                        });
+                                        return (
+                                            <span
+                                                key={key}
+                                                {...{
+                                                    className:
+                                                        tokenProps.className,
+                                                    style: tokenProps.style,
+                                                    children:
+                                                        tokenProps.children,
+                                                }}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            );
+                        })}
+                    </code>
                 </pre>
             )}
         </Highlight>
