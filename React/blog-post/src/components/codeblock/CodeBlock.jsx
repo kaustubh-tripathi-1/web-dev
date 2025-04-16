@@ -1,6 +1,8 @@
 import Highlight from "prism-react-renderer";
 import nightOwl from "prism-react-renderer/themes/nightOwl";
+import nightOwlLight from "prism-react-renderer/themes/nightOwlLight";
 import Prism from "prism-react-renderer/prism"; // Import Prism core
+import { useSelector } from "react-redux";
 
 // // Map TinyMCE language classes to Prism.language keys
 // const languageMap = {
@@ -29,11 +31,13 @@ import Prism from "prism-react-renderer/prism"; // Import Prism core
  * @param {string} [props.language="javascript"] - The language for highlighting.
  */
 export default function CodeBlock({ code, language = "javascript" }) {
+    const { theme } = useSelector((state) => state.ui);
+
     return (
         <Highlight
             code={code.trim()}
             language={language}
-            theme={nightOwl}
+            theme={theme === `dark` ? nightOwl : nightOwlLight}
             Prism={Prism}
         >
             {({ className, style, tokens, getLineProps, getTokenProps }) => (
