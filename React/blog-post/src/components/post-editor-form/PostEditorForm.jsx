@@ -189,6 +189,10 @@ export default function PostEditorForm() {
         }
     }
 
+    function navigateBackToPostDetail() {
+        navigate(`/posts/${slug}`);
+    }
+
     let imageData = null;
     if (typeof featureImage === `string`) {
         imageData = featureImage
@@ -442,6 +446,17 @@ export default function PostEditorForm() {
                         </button>
                     )}
 
+                    {/* Cancel Button when Editing */}
+                    {isEditing && (
+                        <button
+                            type="button"
+                            className="w-full bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-gray-400 dark:disabled:bg-gray-600 transition-all duration-200 hover:scale-105 cursor-pointer flex items-center justify-center"
+                            onClick={navigateBackToPostDetail}
+                            disabled={loading}
+                        >
+                            Cancel
+                        </button>
+                    )}
                     {/* Submit Button */}
                     <button
                         type="submit"
