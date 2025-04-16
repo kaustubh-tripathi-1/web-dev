@@ -169,14 +169,14 @@ export default function PostDetail() {
                     <div className="mb-4 w-full h-full flex items-center gap-4">
                         <button
                             onClick={navigateToPostEditor}
-                            className="w-5/24 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-800 focus:bg-blue-800 transition-colors duration-200 outline-none cursor-pointer"
+                            className="w-1/2 md:w-5/24 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-800 focus:bg-blue-800 transition-colors duration-200 outline-none cursor-pointer"
                             aria-label="Edit Post"
                         >
                             Edit Post
                         </button>
                         <button
                             onClick={deleteCurrrentPost}
-                            className="w-5/24 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700 focus:bg-red-700 transition-colors duration-200 cursor-pointer outline-none"
+                            className="w-1/2 md:w-5/24 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700 focus:bg-red-700 transition-colors duration-200 cursor-pointer outline-none"
                             aria-label="Delete Post"
                             disabled={isDeleting}
                         >
