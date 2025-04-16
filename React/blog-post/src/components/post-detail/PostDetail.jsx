@@ -192,7 +192,8 @@ export default function PostDetail() {
                     </div>
                 )}
 
-                {/* Content */}
+                {/* Content*/}
+                {/* Make sure to install @tailwindcss/typography and use prose classes to enable default styles of html tags */}
                 <article className="prose dark:prose-invert max-w-none">
                     {parsedContent}
                 </article>
