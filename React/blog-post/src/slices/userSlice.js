@@ -61,6 +61,60 @@ export const fetchPreferences = createAsyncThunk(
 );
 
 /**
+ * Updates the name of the user.
+ * @returns {Promise<Object|null>} The updated user's data.
+ */
+export const updateName = createAsyncThunk(
+    "user/updateName",
+    async (nameToUpdate, { rejectWithValue }) => {
+        try {
+            const userData = await authService.updateName(nameToUpdate);
+            return userData;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+/**
+ * Updates the email of the user.
+ * @returns {Promise<Object|null>} The updated user's data.
+ */
+export const updateEmail = createAsyncThunk(
+    "user/updateEmail",
+    async (emailToUpdate, currentPassword, { rejectWithValue }) => {
+        try {
+            const userData = await authService.updateName(
+                emailToUpdate,
+                currentPassword
+            );
+            return userData;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+/**
+ * Updates the password of the user.
+ * @returns {Promise<Object|null>} The updated user's data.
+ */
+export const updatePassword = createAsyncThunk(
+    "user/updatePassword",
+    async (newPassword, currentPassword, { rejectWithValue }) => {
+        try {
+            const userData = await authService.updateName(
+                newPassword,
+                currentPassword
+            );
+            return userData;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+/**
  * Updates the user's preferences in Appwrite.
  * @param {Object} preferencesData - The updated preferences (e.g., { theme, notifications }).
  * @returns {Promise<Object>} The updated preferences.
@@ -238,6 +292,45 @@ const userSlice = createSlice({
                 state.userPosts = action.payload;
             })
             .addCase(getUserPosts.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            // Update Name
+            .addCase(updateName.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updateName.fulfilled, (state, action) => {
+                state.loading = false;
+                state.userData = action.payload;
+            })
+            .addCase(updateName.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            //Update Email
+            .addCase(updateEmail.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updateEmail.fulfilled, (state, action) => {
+                state.loading = false;
+                state.userData = action.payload;
+            })
+            .addCase(updateEmail.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            //Update Password
+            .addCase(updatePassword.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updatePassword.fulfilled, (state, action) => {
+                state.loading = false;
+                state.userData = action.payload;
+            })
+            .addCase(updatePassword.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })
