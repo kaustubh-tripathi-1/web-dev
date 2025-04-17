@@ -49,6 +49,9 @@ export default function UserProfile() {
         );
     }
 
+    let accountCreationDate = new Date(profile?.createdAt).toDateString();
+    accountCreationDate = accountCreationDate.slice(4);
+
     return (
         <section className="min-h-full mx-auto max-w-4xl py-8 px-4 sm:px-6 lg:px-8">
             <h1 className="mb-6 text-3xl font-bold text-gray-900 dark:text-white">
@@ -68,13 +71,16 @@ export default function UserProfile() {
                         <p className="text-gray-600 dark:text-gray-300">
                             {profile?.email}
                         </p>
+                        <p className="text-gray-600 dark:text-gray-300">
+                            Joined on - {accountCreationDate}
+                        </p>
                     </div>
                 </div>
                 <div className="mt-6 flex flex-col sm:flex-row gap-4">
                     <button
                         type="button"
-                        className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors cursor-pointer"
-                        onClick={() => navigate("/profile/edit")}
+                        className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:bg-blue-700 dark:focus:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors cursor-pointer focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+                        onClick={() => navigate(`/profile/edit/${profile.$id}`)}
                     >
                         Edit Profile
                     </button>
@@ -85,7 +91,7 @@ export default function UserProfile() {
             <div className="mt-8">
                 <button
                     type="button"
-                    className="flex items-center gap-2 rounded-md bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors"
+                    className="flex items-center gap-2 rounded-md bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors focus:outline-2 focus:outline-offset-2 focus:outline-gray-600"
                     onClick={togglePosts}
                 >
                     {showPosts ? "Hide My Posts" : "Show My Posts"}
@@ -106,7 +112,7 @@ export default function UserProfile() {
                     </svg>
                 </button>
                 {showPosts && (
-                    <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {userPosts.length > 0 ? (
                             userPosts.map((post) => (
                                 <div
@@ -116,13 +122,10 @@ export default function UserProfile() {
                                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                                         {post.title}
                                     </h3>
-                                    <p className="mt-2 text-gray-600 dark:text-gray-300 line-clamp-2">
-                                        {post.content}
-                                    </p>
                                     <div className="mt-4 flex gap-2">
                                         <button
                                             type="button"
-                                            className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                                            className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer"
                                             onClick={() =>
                                                 navigate(`/posts/${post.$id}`)
                                             }
@@ -131,7 +134,7 @@ export default function UserProfile() {
                                         </button>
                                         <button
                                             type="button"
-                                            className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                                            className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 cursor-pointer"
                                             onClick={() =>
                                                 dispatch(
                                                     openModal({
