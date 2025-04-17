@@ -1,0 +1,597 @@
+/** @jsxImportSource react */
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router";
+import { useForm } from "react-hook-form";
+import { useOptimistic } from "react";
+import {
+    fetchProfile,
+    updateName,
+    updateEmail,
+    updatePassword,
+} from "../../slices/userSlice";
+import { addNotification } from "../../slices/uiSlice";
+import { Spinner } from "../exportCompos";
+
+/**
+ * EditProfile component for updating user details.
+ * @returns {React.ReactElement} Form for editing user profile
+ */
+export default function EditProfile() {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { userID } = useParams();
+    const { profile, loading, error } = useSelector((state) => state.user);
+    const { authStatus } = useSelector((state) => state.auth);
+
+    // Optimistic state for profile updates
+    const [optimisticProfile, setOptimisticProfile] = useOptimistic(profile);
+
+    // States for password visiblity toggle
+    const [isCurrentPasswordShowing, setIsCurrentPasswordShowing] =
+        useState(false);
+    const [isNewPasswordShowing, setIsNewPasswordShowing] = useState(false);
+    const [isConfirmPasswordShowing, setIsConfirmPasswordShowing] =
+        useState(false);
+
+    // Form setup with react-hook-form
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        watch,
+        reset,
+    } = useForm({
+        mode: "onChange",
+        defaultValues: {
+            name: profile?.name || "",
+            email: profile?.email || "",
+            phone: profile?.phone || "",
+            currentPassword: "",
+            newPassword: "",
+            confirmPassword: "",
+        },
+    });
+
+    // Watch newPassword for confirmation validation
+    const newPassword = watch("newPassword");
+
+    // Fetch profile on mount
+    useEffect(() => {
+        if (!authStatus) {
+            navigate(`/login`);
+            return;
+        }
+
+        if (userID && (!profile || profile.$id !== userID)) {
+            dispatch(fetchProfile());
+        }
+    }, [dispatch, userID, profile]);
+
+    // Update form defaults when profile changes
+    useEffect(() => {
+        if (profile) {
+            reset({
+                name: profile.name,
+                email: profile.email,
+                phone: profile.phone || "",
+                currentPassword: "",
+                newPassword: "",
+                confirmPassword: "",
+            });
+            setOptimisticProfile(profile);
+        }
+    }, [profile, reset]);
+
+    // Handlers to toggle password visibility
+    function toggleCurrentPasswordVisibility() {
+        setIsCurrentPasswordShowing(
+            (prevIsCurrentPasswordShowing) => !prevIsCurrentPasswordShowing
+        );
+    }
+    function toggleNewPasswordVisibility() {
+        setIsNewPasswordShowing(
+            (prevIsNewPasswordShowing) => !prevIsNewPasswordShowing
+        );
+    }
+    function toggleConfirmPasswordVisibility() {
+        setIsConfirmPasswordShowing(
+            (prevIsConfirmPasswordShowing) => !prevIsConfirmPasswordShowing
+        );
+    }
+
+    // Handle form submission
+    async function updateProfileOnSubmit(data) {
+        try {
+            // Name update
+            if (data.name !== profile?.name) {
+                setOptimisticProfile({ ...optimisticProfile, name: data.name });
+                console.log(data.name);
+
+                await dispatch(updateName(data.name)).unwrap();
+                dispatch(
+                    addNotification({
+                        message: "Name updated successfully",
+                        type: "success",
+                    })
+                );
+            }
+
+            // Email update
+            if (data.email !== profile?.email && data.currentPassword) {
+                setOptimisticProfile({
+                    ...optimisticProfile,
+                    email: data.email,
+                });
+                await dispatch(
+                    updateEmail({
+                        emailToUpdate: data.email,
+                        currentPassword: data.currentPassword,
+                    })
+                ).unwrap();
+                dispatch(
+                    addNotification({
+                        message: "Email updated successfully",
+                        type: "success",
+                    })
+                );
+            }
+
+            // Phone update
+            if (
+                data.phone &&
+                data.phone !== profile?.phone &&
+                data.currentPassword
+            ) {
+                setOptimisticProfile({
+                    ...optimisticProfile,
+                    phone: data.phone,
+                });
+                await dispatch(
+                    updatePhone({
+                        phone: data.phone,
+                        currentPassword: data.currentPassword,
+                    })
+                ).unwrap();
+                dispatch(
+                    addNotification({
+                        message: "Phone updated successfully",
+                        type: "success",
+                    })
+                );
+            }
+
+            // Password update
+            if (data.newPassword && data.newPassword && data.currentPassword) {
+                await dispatch(
+                    updatePassword({
+                        newPassword: data.newPassword,
+                        currentPassword: data.currentPassword,
+                    })
+                ).unwrap();
+                dispatch(
+                    addNotification({
+                        message: "Password updated successfully",
+                        type: "success",
+                    })
+                );
+            }
+
+            navigate(`/profile/${userID}`);
+        } catch (error) {
+            console.error(error, error.message);
+
+            dispatch(
+                addNotification({
+                    message: error.message || "Update failed",
+                    type: "error",
+                })
+            );
+            setOptimisticProfile(profile); // Roll back optimistic update
+        }
+    }
+
+    if (loading && !optimisticProfile) {
+        return (
+            <div className="text-center text-gray-600 dark:text-gray-300">
+                Loading...
+            </div>
+        );
+    }
+
+    if (error && !optimisticProfile) {
+        return (
+            <div className="text-center text-red-600 dark:text-red-400">
+                {error}
+            </div>
+        );
+    }
+
+    return (
+        <section className="mx-auto max-w-2xl py-8 px-4 sm:px-6 lg:px-8">
+            <h1 className="mb-6 text-3xl font-bold text-gray-900 dark:text-white">
+                Edit Profile
+            </h1>
+            <form
+                onSubmit={handleSubmit(updateProfileOnSubmit)}
+                className="rounded-lg bg-white p-6 shadow-md dark:bg-gray-800 space-y-6"
+            >
+                {/* Name */}
+                <div>
+                    <label
+                        htmlFor="name"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                    >
+                        Name
+                    </label>
+                    <input
+                        id="name"
+                        type="text"
+                        autoComplete="on"
+                        {...register("name", {
+                            required: "Name is required",
+                            maxLength: {
+                                value: 127,
+                                message:
+                                    "Name must be less than 128 characters",
+                            },
+                        })}
+                        className={`mt-1 h-10 px-2 block w-full rounded-md border ${
+                            errors.name
+                                ? "border-red-500"
+                                : "border-gray-300 dark:border-gray-600"
+                        } shadow-sm hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 transition-all duration-200`}
+                    />
+                    {errors.name && (
+                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                            {errors.name.message}
+                        </p>
+                    )}
+                </div>
+
+                {/* Email */}
+                <div>
+                    <label
+                        htmlFor="email"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                    >
+                        Email
+                    </label>
+                    <input
+                        id="email"
+                        type="email"
+                        autoComplete="on"
+                        {...register("email", {
+                            required: "Email is required",
+                            pattern: {
+                                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                message: "Invalid email format",
+                            },
+                        })}
+                        className={`mt-1 h-10 px-2 block w-full rounded-md border ${
+                            errors.email
+                                ? "border-red-500"
+                                : "border-gray-300 dark:border-gray-600"
+                        } shadow-sm hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 transition-all duration-200`}
+                    />
+                    {errors.email && (
+                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                            {errors.email.message}
+                        </p>
+                    )}
+                </div>
+
+                {/* Phone */}
+                <div>
+                    <label
+                        htmlFor="phone"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                    >
+                        Phone
+                    </label>
+                    <input
+                        id="phone"
+                        type="tel"
+                        autoComplete="on"
+                        {...register("phone", {
+                            pattern: {
+                                value: /^\+?[1-9]\d{1,14}$/,
+                                message: "Invalid phone number format",
+                            },
+                        })}
+                        className={`mt-1 h-10 px-2 block w-full rounded-md border ${
+                            errors.phone
+                                ? "border-red-500"
+                                : "border-gray-300 dark:border-gray-600"
+                        } shadow-sm hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 transition-all duration-200`}
+                    />
+                    {errors.phone && (
+                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                            {errors.phone.message}
+                        </p>
+                    )}
+                </div>
+
+                {/* Current Password (for email/phone/password updates) */}
+                <div>
+                    <label
+                        htmlFor="currentPassword"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                    >
+                        Current Password
+                    </label>
+                    <div className="relative">
+                        <input
+                            id="currentPassword"
+                            type={
+                                isCurrentPasswordShowing ? "text" : "password"
+                            }
+                            {...register("currentPassword", {
+                                required:
+                                    watch("email") !== profile?.email ||
+                                    watch("phone") !== profile?.phone ||
+                                    watch("newPassword")
+                                        ? "Current password is required for this update"
+                                        : false,
+                            })}
+                            className={`mt-1 h-10 px-2 block w-full rounded-md border ${
+                                errors.currentPassword
+                                    ? "border-red-500"
+                                    : "border-gray-300 dark:border-gray-600"
+                            } shadow-sm hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 transition-all duration-200`}
+                        />
+                        <button
+                            type="button"
+                            onClick={toggleCurrentPasswordVisibility}
+                            className="absolute top-1/2 -translate-y-1/2 right-0 flex items-center pr-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none cursor-pointer"
+                            aria-label={
+                                isCurrentPasswordShowing
+                                    ? "Hide password"
+                                    : "Show password"
+                            }
+                            tabIndex="-1"
+                        >
+                            {!isCurrentPasswordShowing ? (
+                                <svg
+                                    className="w-5 h-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                    />
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                    />
+                                </svg>
+                            ) : (
+                                <svg
+                                    className="w-5 h-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                                    />
+                                </svg>
+                            )}
+                        </button>
+                    </div>
+                    {errors.currentPassword && (
+                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                            {errors.currentPassword.message}
+                        </p>
+                    )}
+                </div>
+
+                {/* New Password */}
+                <div>
+                    <label
+                        htmlFor="newPassword"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                    >
+                        New Password
+                    </label>
+                    <div className="relative">
+                        <input
+                            id="newPassword"
+                            type={isNewPasswordShowing ? "text" : "password"}
+                            {...register("newPassword", {
+                                minLength: {
+                                    value: 8,
+                                    message:
+                                        "Password must be at least 8 characters",
+                                },
+                                maxLength: {
+                                    value: 256,
+                                    message:
+                                        "Password must be less than 256 characters",
+                                },
+                            })}
+                            className={`mt-1 h-10 px-2 block w-full rounded-md border ${
+                                errors.newPassword
+                                    ? "border-red-500"
+                                    : "border-gray-300 dark:border-gray-600"
+                            } shadow-sm hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 transition-all duration-200`}
+                        />
+                        <button
+                            type="button"
+                            onClick={toggleNewPasswordVisibility}
+                            className="absolute top-1/2 -translate-y-1/2 right-0 flex items-center pr-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none cursor-pointer"
+                            aria-label={
+                                isNewPasswordShowing
+                                    ? "Hide password"
+                                    : "Show password"
+                            }
+                            tabIndex="-1"
+                        >
+                            {!isNewPasswordShowing ? (
+                                <svg
+                                    className="w-5 h-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                    />
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                    />
+                                </svg>
+                            ) : (
+                                <svg
+                                    className="w-5 h-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                                    />
+                                </svg>
+                            )}
+                        </button>
+                    </div>
+                    {errors.newPassword && (
+                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                            {errors.newPassword.message}
+                        </p>
+                    )}
+                </div>
+
+                {/* Confirm Password */}
+                <div>
+                    <label
+                        htmlFor="confirmPassword"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                    >
+                        Confirm New Password
+                    </label>
+                    <div className="relative">
+                        <input
+                            id="confirmPassword"
+                            type={
+                                isConfirmPasswordShowing ? "text" : "password"
+                            }
+                            {...register("confirmPassword", {
+                                validate: (value) =>
+                                    !newPassword ||
+                                    value === newPassword ||
+                                    "Passwords do not match",
+                            })}
+                            className={`mt-1 h-10 px-2 block w-full rounded-md border ${
+                                errors.confirmPassword
+                                    ? "border-red-500"
+                                    : "border-gray-300 dark:border-gray-600"
+                            } shadow-sm hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 transition-all duration-200`}
+                        />
+                        <button
+                            type="button"
+                            onClick={toggleConfirmPasswordVisibility}
+                            className="absolute top-1/2 -translate-y-1/2 right-0 flex items-center pr-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none cursor-pointer"
+                            aria-label={
+                                isConfirmPasswordShowing
+                                    ? "Hide password"
+                                    : "Show password"
+                            }
+                            tabIndex="-1"
+                        >
+                            {!isConfirmPasswordShowing ? (
+                                <svg
+                                    className="w-5 h-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                    />
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                    />
+                                </svg>
+                            ) : (
+                                <svg
+                                    className="w-5 h-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                                    />
+                                </svg>
+                            )}
+                        </button>
+                    </div>
+                    {errors.confirmPassword && (
+                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                            {errors.confirmPassword.message}
+                        </p>
+                    )}
+                </div>
+
+                {/* Form Actions */}
+                <div className="flex justify-end gap-4">
+                    <button
+                        type="button"
+                        onClick={() => navigate(`/profile/${userID}`)}
+                        className="rounded-md bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 cursor-pointer focus:outline-2 focus:outline-offset-2 focus:outline-gray-600 transition-all duration-100"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 disabled:opacity-50 cursor-pointer flex items-center justify-center focus:outline-2 focus:outline-offset-2 focus:outline-blue-600 transition-all duration-100"
+                    >
+                        {loading ? (
+                            <>
+                                Updating...
+                                <Spinner size="1" className="ml-2" />
+                            </>
+                        ) : (
+                            "Save Changes"
+                        )}
+                    </button>
+                </div>
+            </form>
+        </section>
+    );
+}
