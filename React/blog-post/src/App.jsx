@@ -130,14 +130,7 @@ export default function App() {
             setAuthChecked(true);
             if (action.meta.requestStatus === "fulfilled") {
                 const userData = action.payload;
-                dispatch(
-                    setProfile({
-                        $id: userData.$id,
-                        name: userData.name,
-                        email: userData.email,
-                        createdAt: userData.$createdAt,
-                    })
-                );
+                dispatch(setProfile(userData));
                 dispatch(setPreferences(userData.prefs));
             }
         });
