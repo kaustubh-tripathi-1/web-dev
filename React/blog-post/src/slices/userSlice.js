@@ -97,9 +97,9 @@ export const updateName = createAsyncThunk(
  */
 export const updateEmail = createAsyncThunk(
     "user/updateEmail",
-    async (emailToUpdate, currentPassword, { rejectWithValue }) => {
+    async ({ emailToUpdate, currentPassword }, { rejectWithValue }) => {
         try {
-            const userData = await authService.updateName(
+            const userData = await authService.updateEmail(
                 emailToUpdate,
                 currentPassword
             );
@@ -119,9 +119,9 @@ export const updateEmail = createAsyncThunk(
  */
 export const updatePassword = createAsyncThunk(
     "user/updatePassword",
-    async (newPassword, currentPassword, { rejectWithValue }) => {
+    async ({ newPassword, currentPassword }, { rejectWithValue }) => {
         try {
-            const userData = await authService.updateName(
+            const userData = await authService.updatePassword(
                 newPassword,
                 currentPassword
             );
