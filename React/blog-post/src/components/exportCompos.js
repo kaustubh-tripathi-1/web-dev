@@ -17,6 +17,10 @@ import NotFound from "./not-found/NotFound.jsx";
 import ErrorBoundaryInRouter from "./error-boundary/ErrorBoundaryInRouter.jsx";
 import ErrorBoundary from "./error-boundary/ErrorBoundary.jsx";
 import CodeBlock from "./codeblock/CodeBlock.jsx";
+import UserProfile from "./user-profile/UserProfile.jsx";
+import Modal from "./modal/Modal.jsx";
+import ProfileSkeleton from "./skeletons/ProfileSkeleton.jsx";
+import Notifications from "./notifications/Notifications.jsx";
 
 export {
     Header,
@@ -38,4 +42,8 @@ export {
     ErrorBoundaryInRouter,
     ErrorBoundary,
     CodeBlock,
+    UserProfile,
+    Modal,
+    ProfileSkeleton,
+    Notifications,
 };
