@@ -26,11 +26,15 @@ export default function UserProfile() {
         if (profile?.$id) {
             await dispatch(getUserPosts(profile.$id));
         }
-    }, [dispatch, profile?.$id]);
+    }, [dispatch]);
 
     useEffect(() => {
         fetchUserData();
     }, [fetchUserData]);
+
+    useEffect(() => {
+        dispatch(fetchProfile());
+    }, []);
 
     // Toggle posts section
     function togglePosts() {
@@ -49,7 +53,7 @@ export default function UserProfile() {
         );
     }
 
-    let accountCreationDate = new Date(profile?.createdAt).toDateString();
+    let accountCreationDate = new Date(profile?.$createdAt).toDateString();
     accountCreationDate = accountCreationDate.slice(4);
 
     return (
