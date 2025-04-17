@@ -11,29 +11,8 @@ export const fetchProfile = createAsyncThunk(
     "user/fetchProfile",
     async (_, { rejectWithValue }) => {
         try {
-            const profile = await authService.getProfile();
+            const profile = await authService.getCurrentUser();
             return profile;
-        } catch (error) {
-            return rejectWithValue(error.message);
-        }
-    }
-);
-
-/**
- * Updates the user's profile in Appwrite.
- * @param {Object} profileData - The updated profile data (e.g., { name, email }).
- * @returns {Promise<Object>} The updated profile data.
- */
-export const updateProfile = createAsyncThunk(
-    "user/updateProfile",
-    async (profileData, { rejectWithValue }) => {
-        try {
-            // Validation
-            if (!profileData.name || !profileData.email) {
-                throw new Error("Name and email are required");
-            }
-            const updatedProfile = await authService.updateProfile(profileData);
-            return updatedProfile;
         } catch (error) {
             return rejectWithValue(error.message);
         }
@@ -54,60 +33,6 @@ export const fetchPreferences = createAsyncThunk(
                 dispatch(setTheme(preferences.theme));
             }
             return preferences;
-        } catch (error) {
-            return rejectWithValue(error.message);
-        }
-    }
-);
-
-/**
- * Updates the name of the user.
- * @returns {Promise<Object|null>} The updated user's data.
- */
-export const updateName = createAsyncThunk(
-    "user/updateName",
-    async (nameToUpdate, { rejectWithValue }) => {
-        try {
-            const userData = await authService.updateName(nameToUpdate);
-            return userData;
-        } catch (error) {
-            return rejectWithValue(error.message);
-        }
-    }
-);
-
-/**
- * Updates the email of the user.
- * @returns {Promise<Object|null>} The updated user's data.
- */
-export const updateEmail = createAsyncThunk(
-    "user/updateEmail",
-    async (emailToUpdate, currentPassword, { rejectWithValue }) => {
-        try {
-            const userData = await authService.updateName(
-                emailToUpdate,
-                currentPassword
-            );
-            return userData;
-        } catch (error) {
-            return rejectWithValue(error.message);
-        }
-    }
-);
-
-/**
- * Updates the password of the user.
- * @returns {Promise<Object|null>} The updated user's data.
- */
-export const updatePassword = createAsyncThunk(
-    "user/updatePassword",
-    async (newPassword, currentPassword, { rejectWithValue }) => {
-        try {
-            const userData = await authService.updateName(
-                newPassword,
-                currentPassword
-            );
-            return userData;
         } catch (error) {
             return rejectWithValue(error.message);
         }
@@ -140,6 +65,67 @@ export const updatePreferences = createAsyncThunk(
                 dispatch(setTheme(updatedPreferences.theme));
             }
             return updatedPreferences;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+/**
+ * Updates the user's name in Appwrite.
+ * @param {string} nameToUpdate - The new name.
+ * @returns {Promise<Object>} The updated user data.
+ */
+export const updateName = createAsyncThunk(
+    "user/updateName",
+    async (nameToUpdate, { rejectWithValue }) => {
+        try {
+            const userData = await authService.updateName(nameToUpdate);
+            return userData;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+/**
+ * Updates the user's email in Appwrite.
+ * @param {Object} payload - The email and current password.
+ * @param {string} payload.email - The new email.
+ * @param {string} payload.currentPassword - The current password.
+ * @returns {Promise<Object>} The updated user data.
+ */
+export const updateEmail = createAsyncThunk(
+    "user/updateEmail",
+    async (emailToUpdate, currentPassword, { rejectWithValue }) => {
+        try {
+            const userData = await authService.updateName(
+                emailToUpdate,
+                currentPassword
+            );
+            return userData;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+/**
+ * Updates the user's password in Appwrite.
+ * @param {Object} payload - The new and current passwords.
+ * @param {string} payload.newPassword - The new password.
+ * @param {string} payload.currentPassword - The current password.
+ * @returns {Promise<Object>} The updated user data.
+ */
+export const updatePassword = createAsyncThunk(
+    "user/updatePassword",
+    async (newPassword, currentPassword, { rejectWithValue }) => {
+        try {
+            const userData = await authService.updateName(
+                newPassword,
+                currentPassword
+            );
+            return userData;
         } catch (error) {
             return rejectWithValue(error.message);
         }
@@ -238,19 +224,6 @@ const userSlice = createSlice({
                 state.profile = action.payload;
             })
             .addCase(fetchProfile.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-            })
-            // Update Profile
-            .addCase(updateProfile.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(updateProfile.fulfilled, (state, action) => {
-                state.loading = false;
-                state.profile = action.payload;
-            })
-            .addCase(updateProfile.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })
