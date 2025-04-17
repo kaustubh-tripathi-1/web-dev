@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { NavLink } from "react-router";
-import { setTheme } from "../../slices/uiSlice";
+import { NavLink, useNavigate } from "react-router";
+import { setTheme, addNotification, openModal } from "../../slices/uiSlice";
 import { logoutUser, logout } from "../../slices/authSlice";
 import { Spinner } from "../exportCompos";
-// import Notifications from "../Notifications/Notifications";
+import { Notifications } from "../exportCompos";
 
 export default function Header() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { authStatus, userData } = useSelector((state) => state.auth);
     const { theme, notifications } = useSelector((state) => state.ui);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -21,15 +22,34 @@ export default function Header() {
         { name: "Create Post", slug: "/create-post", active: authStatus },
         {
             name: userData?.name || userData?.email || "Profile",
-            slug: "/profile",
+            slug: `/profile/${userData.$id}`,
             active: authStatus,
         },
     ];
 
+    // Handle logout
     async function handleLogout() {
-        dispatch(logoutUser());
-        dispatch(logout());
-        setIsMobileMenuOpen(false); // Close mobile menu on logout
+        try {
+            dispatch(logoutUser());
+            dispatch(logout());
+            setIsMobileMenuOpen(false); // Close mobile menu on logout
+            dispatch(
+                addNotification({
+                    message: "Logged out successfully",
+                    type: "success",
+                })
+            );
+            navigate("/login");
+        } catch (err) {
+            dispatch(
+                addNotification({ message: "Logout failed", type: "error" })
+            );
+        }
+    }
+
+    // Open logout modal
+    function openLogoutModal() {
+        dispatch(openModal({ type: "logout", data: null }));
     }
 
     function toggleMobileMenu() {
@@ -156,11 +176,11 @@ export default function Header() {
             )}
 
             {/* Notifications (conditionally rendered) */}
-            {/* {notifications.length > 0 && (
+            {notifications.length > 0 && (
                 <div className="container mx-auto px-4 py-2">
                     <Notifications />
                 </div>
-            )} */}
+            )}
         </header>
     );
 }
