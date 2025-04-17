@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-import { Footer, Header } from "../exportCompos";
+import { Footer, Header, Modal } from "../exportCompos";
 import { useSelector } from "react-redux";
 
 /**
@@ -15,7 +15,7 @@ export default function Layout() {
             <main className="flex-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200">
                 <Outlet />
             </main>
-            {/* {isModalOpen && <Modal />} */}
+            {isModalOpen && <Modal />}
             <Footer />
         </div>
     );
