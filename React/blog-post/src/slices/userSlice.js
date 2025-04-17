@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { authService } from "../appwrite-services/auth";
+import { databaseService } from "../appwrite-services/database";
 import { setTheme } from "./uiSlice"; // Import setTheme to sync theme with uiSlice
 
 /**
