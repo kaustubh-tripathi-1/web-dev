@@ -13,6 +13,7 @@ import {
     NotFound,
     ErrorBoundaryInRouter,
     UserProfile,
+    EditProfile,
 } from "./components/exportCompos";
 import { useEffect, useState /* lazy, Suspense */ } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -89,14 +90,14 @@ const router = createBrowserRouter([
                     </ProtectedRoute>
                 ),
             },
-            // {
-            //     path: "profile/edit/:userID",
-            //     element: (
-            //         <ProtectedRoute>
-            //             <EditProfile />
-            //         </ProtectedRoute>
-            //     ),
-            // },
+            {
+                path: "profile/edit/:userID",
+                element: (
+                    <ProtectedRoute>
+                        <EditProfile />
+                    </ProtectedRoute>
+                ),
+            },
             { path: "*", element: <NotFound /> },
         ],
     },
@@ -134,6 +135,7 @@ export default function App() {
                         $id: userData.$id,
                         name: userData.name,
                         email: userData.email,
+                        createdAt: userData.$createdAt,
                     })
                 );
                 dispatch(setPreferences(userData.prefs));
