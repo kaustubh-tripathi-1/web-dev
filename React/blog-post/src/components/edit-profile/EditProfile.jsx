@@ -106,8 +106,6 @@ export default function EditProfile() {
             // Name update
             if (data.name !== profile?.name) {
                 setOptimisticProfile({ ...optimisticProfile, name: data.name });
-                console.log(data.name);
-
                 await dispatch(updateName(data.name)).unwrap();
                 dispatch(
                     addNotification({
@@ -179,8 +177,6 @@ export default function EditProfile() {
 
             navigate(`/profile/${userID}`);
         } catch (error) {
-            console.error(error, error.message);
-
             dispatch(
                 addNotification({
                     message: error.message || "Update failed",
