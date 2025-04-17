@@ -3,8 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { NavLink, useNavigate } from "react-router";
 import { setTheme, addNotification, openModal } from "../../slices/uiSlice";
 import { logoutUser, logout } from "../../slices/authSlice";
-import { Spinner } from "../exportCompos";
-import { Notifications } from "../exportCompos";
 
 export default function Header() {
     const dispatch = useDispatch();
@@ -173,13 +171,6 @@ export default function Header() {
                         {theme === "light" ? "Dark Mode 🌙" : "Light Mode ☀️"}
                     </button>
                 </nav>
-            )}
-
-            {/* Notifications (conditionally rendered) */}
-            {notifications.length > 0 && (
-                <div className="container mx-auto px-4 py-2">
-                    <Notifications />
-                </div>
             )}
         </header>
     );
