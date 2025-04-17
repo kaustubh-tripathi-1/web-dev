@@ -21,6 +21,7 @@ import UserProfile from "./user-profile/UserProfile.jsx";
 import Modal from "./modal/Modal.jsx";
 import ProfileSkeleton from "./skeletons/ProfileSkeleton.jsx";
 import Notifications from "./notifications/Notifications.jsx";
+import EditProfile from "./edit-profile/EditProfile.jsx";
 
 export {
     Header,
@@ -46,4 +47,5 @@ export {
     Modal,
     ProfileSkeleton,
     Notifications,
+    EditProfile,
 };
