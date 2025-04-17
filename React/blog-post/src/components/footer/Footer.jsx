@@ -3,6 +3,7 @@ import { NavLink } from "react-router";
 
 export default function Footer() {
     const { authStatus } = useSelector((state) => state.auth);
+    const { profile } = useSelector((state) => state.user);
 
     return (
         <footer className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 py-6">
@@ -49,7 +50,7 @@ export default function Footer() {
                     </NavLink>
                     {authStatus && (
                         <NavLink
-                            to="/profile"
+                            to={`/profile/${profile.$id}`}
                             className={({ isActive }) =>
                                 `hover:underline focus:underline focus:outline-none hover:text-blue-500 dark:hover:text-blue-400 focus:text-blue-500 dark:focus:text-blue-400 ${
                                     isActive
