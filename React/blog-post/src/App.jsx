@@ -12,10 +12,12 @@ import {
     PostDetail,
     NotFound,
     ErrorBoundaryInRouter,
+    UserProfile,
 } from "./components/exportCompos";
 import { useEffect, useState /* lazy, Suspense */ } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { checkAuthStatus, setInitialLoading } from "./slices/authSlice";
+import { setPreferences, setProfile } from "./slices/userSlice";
 
 /**
  * Persists the current route path in sessionStorage for redirect handling.
@@ -79,11 +81,19 @@ const router = createBrowserRouter([
                     </ProtectedRoute>
                 ),
             },
+            {
+                path: "profile/:userID",
+                element: (
+                    <ProtectedRoute>
+                        <UserProfile />
+                    </ProtectedRoute>
+                ),
+            },
             // {
-            //     path: "profile",
+            //     path: "profile/edit/:userID",
             //     element: (
             //         <ProtectedRoute>
-            //             <UserProfile />
+            //             <EditProfile />
             //         </ProtectedRoute>
             //     ),
             // },
@@ -115,8 +125,19 @@ export default function App() {
     useEffect(() => {
         // Set initialLoading to true manually before checking auth
         dispatch(setInitialLoading(true));
-        dispatch(checkAuthStatus()).then(() => {
+        dispatch(checkAuthStatus()).then((action) => {
             setAuthChecked(true);
+            if (action.meta.requestStatus === "fulfilled") {
+                const userData = action.payload;
+                dispatch(
+                    setProfile({
+                        $id: userData.$id,
+                        name: userData.name,
+                        email: userData.email,
+                    })
+                );
+                dispatch(setPreferences(userData.prefs));
+            }
         });
     }, [dispatch]);
 
@@ -139,94 +160,3 @@ export default function App() {
 
     return <RouterProvider router={router} />;
 }
-
-/* 
-import {
-    createBrowserRouter,
-    RouterProvider,
-    useNavigate,
-    useLocation,
-} from "react-router";
-import Layout from "./components/layout/Layout";
-import {
-    Home,
-    Login,
-    Signup,
-    About,
-    Contact,
-    Spinner,
-    ProtectedRoute,
-    PostEditorForm,
-} from "./components/exportCompos";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { checkAuthStatus } from "./slices/authSlice";
-
-const router = createBrowserRouter([
-    {
-        path: "/",
-        element: <Layout />,
-        children: [
-            { path: "", index: true, element: <Home /> },
-            { path: "login", element: <Login /> },
-            { path: "signup", element: <Signup /> },
-            { path: "about", element: <About /> },
-            { path: "contact", element: <Contact /> },
-            // { path: "posts/:slug", element: <PostDetail /> },
-            {
-                path: "create-post",
-                element: (
-                    <ProtectedRoute>
-                        <PostEditorForm />
-                    </ProtectedRoute>
-                ),
-            },
-            // {
-            //     path: "edit-post/:slug",
-            //     element: (
-            //         <ProtectedRoute>
-            //             <PostEditorForm />
-            //         </ProtectedRoute>
-            //     ),
-            // },
-            // {
-            //     path: "profile",
-            //     element: (
-            //         <ProtectedRoute>
-            //             <UserProfile />
-            //         </ProtectedRoute>
-            //     ),
-            // },
-            // { path: "*", element: <NotFound /> },
-        ],
-    },
-]);
-
-function AuthWrapper({ children }) {
-    const dispatch = useDispatch();
-    const { initialLoading } = useSelector((state) => state.auth);
-
-    useEffect(() => {
-        dispatch(checkAuthStatus());
-    }, [dispatch]);
-
-    if (initialLoading) {
-        return (
-            <section className="min-h-screen flex justify-center items-center bg-white text-gray-900 dark:bg-gray-800 dark:text-white">
-                <Spinner size="4" />
-            </section>
-        );
-    }
-
-    return children;
-}
-
-export default function App() {
-    return (
-        <AuthWrapper>
-            <RouterProvider router={router} />
-        </AuthWrapper>
-    );
-}
-
- */
