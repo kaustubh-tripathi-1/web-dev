@@ -20,7 +20,7 @@ export default function Header() {
         { name: "Create Post", slug: "/create-post", active: authStatus },
         {
             name: userData?.name || userData?.email || "Profile",
-            slug: `/profile/${userData.$id}`,
+            slug: `/profile/${userData?.$id}`,
             active: authStatus,
         },
     ];
