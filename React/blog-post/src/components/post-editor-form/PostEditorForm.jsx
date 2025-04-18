@@ -31,7 +31,7 @@ import { storageService } from "../../appwrite-services/storage";
  * @returns {JSX.Element} The post editor form.
  */
 export default function PostEditorForm() {
-    const { authStatus, userData } = useSelector((state) => state.auth);
+    const { userData } = useSelector((state) => state.auth);
     const {
         slug: initialSlug,
         title,
@@ -69,11 +69,6 @@ export default function PostEditorForm() {
     });
 
     useEffect(() => {
-        if (!authStatus) {
-            navigate(`/login`);
-            return;
-        }
-
         if (slug) {
             // Editing mode
             dispatch(setIsEditing(true));
@@ -113,7 +108,7 @@ export default function PostEditorForm() {
         return () => {
             dispatch(resetEditor());
         };
-    }, [authStatus, slug, dispatch, navigate, setValue]);
+    }, [slug, dispatch, navigate, setValue]);
 
     /**
      * Handles post creation or update on form submission.
