@@ -9,6 +9,7 @@ import {
     updateName,
     updateEmail,
     updatePassword,
+    setError,
 } from "../../slices/userSlice";
 import { addNotification } from "../../slices/uiSlice";
 import { Spinner } from "../exportCompos";
@@ -46,7 +47,6 @@ export default function EditProfile() {
         defaultValues: {
             name: profile?.name || "",
             email: profile?.email || "",
-            phone: profile?.phone || "",
             currentPassword: "",
             newPassword: "",
             confirmPassword: "",
@@ -58,11 +58,6 @@ export default function EditProfile() {
 
     // Fetch profile on mount
     useEffect(() => {
-        if (!authStatus) {
-            navigate(`/login`);
-            return;
-        }
-
         if (userID && (!profile || profile.$id !== userID)) {
             dispatch(fetchProfile());
         }
@@ -74,7 +69,6 @@ export default function EditProfile() {
             reset({
                 name: profile.name,
                 email: profile.email,
-                phone: profile.phone || "",
                 currentPassword: "",
                 newPassword: "",
                 confirmPassword: "",
@@ -135,30 +129,6 @@ export default function EditProfile() {
                 );
             }
 
-            // Phone update
-            if (
-                data.phone &&
-                data.phone !== profile?.phone &&
-                data.currentPassword
-            ) {
-                setOptimisticProfile({
-                    ...optimisticProfile,
-                    phone: data.phone,
-                });
-                await dispatch(
-                    updatePhone({
-                        phone: data.phone,
-                        currentPassword: data.currentPassword,
-                    })
-                ).unwrap();
-                dispatch(
-                    addNotification({
-                        message: "Phone updated successfully",
-                        type: "success",
-                    })
-                );
-            }
-
             // Password update
             if (data.newPassword && data.newPassword && data.currentPassword) {
                 await dispatch(
@@ -177,9 +147,10 @@ export default function EditProfile() {
 
             navigate(`/profile/${userID}`);
         } catch (error) {
+            dispatch(setError(error));
             dispatch(
                 addNotification({
-                    message: error.message || "Update failed",
+                    message: error || "Update failed",
                     type: "error",
                 })
             );
@@ -189,8 +160,8 @@ export default function EditProfile() {
 
     if (loading && !optimisticProfile) {
         return (
-            <div className="text-center text-gray-600 dark:text-gray-300">
-                Loading...
+            <div className="flex justify-center items-center text-gray-600 dark:text-gray-300">
+                <Spinner size="4" />
             </div>
         );
     }
@@ -277,38 +248,7 @@ export default function EditProfile() {
                     )}
                 </div>
 
-                {/* Phone */}
-                <div>
-                    <label
-                        htmlFor="phone"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
-                    >
-                        Phone
-                    </label>
-                    <input
-                        id="phone"
-                        type="tel"
-                        autoComplete="on"
-                        {...register("phone", {
-                            pattern: {
-                                value: /^\+?[1-9]\d{1,14}$/,
-                                message: "Invalid phone number format",
-                            },
-                        })}
-                        className={`mt-1 h-10 px-2 block w-full rounded-md border ${
-                            errors.phone
-                                ? "border-red-500"
-                                : "border-gray-300 dark:border-gray-600"
-                        } shadow-sm hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 transition-all duration-200`}
-                    />
-                    {errors.phone && (
-                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                            {errors.phone.message}
-                        </p>
-                    )}
-                </div>
-
-                {/* Current Password (for email/phone/password updates) */}
+                {/* Current Password (for email/password updates) */}
                 <div>
                     <label
                         htmlFor="currentPassword"
@@ -325,7 +265,6 @@ export default function EditProfile() {
                             {...register("currentPassword", {
                                 required:
                                     watch("email") !== profile?.email ||
-                                    watch("phone") !== profile?.phone ||
                                     watch("newPassword")
                                         ? "Current password is required for this update"
                                         : false,
@@ -562,6 +501,16 @@ export default function EditProfile() {
                         </p>
                     )}
                 </div>
+
+                {/* Redux Errors */}
+                {error && (
+                    <p
+                        className="italic text-center text-red-500 dark:text-red-400"
+                        role="alert"
+                    >
+                        {error}
+                    </p>
+                )}
 
                 {/* Form Actions */}
                 <div className="flex justify-end gap-4">
