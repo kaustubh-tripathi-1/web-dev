@@ -50,7 +50,7 @@ export default function Footer() {
                     </NavLink>
                     {authStatus && (
                         <NavLink
-                            to={`/profile/${profile.$id}`}
+                            to={`/profile/${profile?.$id}`}
                             className={({ isActive }) =>
                                 `hover:underline focus:underline focus:outline-none hover:text-blue-500 dark:hover:text-blue-400 focus:text-blue-500 dark:focus:text-blue-400 ${
                                     isActive
