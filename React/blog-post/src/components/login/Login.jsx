@@ -12,7 +12,7 @@ export default function Login() {
     const [isPasswordShowing, setIsPasswordShowing] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    // const from = location.state?.from || "/"; // Default to "/" if no intended route
+
     const lastPath = sessionStorage.getItem(`lastPath`) || `/`;
     const {
         register,
