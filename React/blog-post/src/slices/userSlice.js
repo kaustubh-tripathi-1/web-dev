@@ -275,7 +275,7 @@ const userSlice = createSlice({
             })
             .addCase(updateName.fulfilled, (state, action) => {
                 state.loading = false;
-                state.userData = action.payload;
+                state.profile = action.payload;
             })
             .addCase(updateName.rejected, (state, action) => {
                 state.loading = false;
@@ -288,7 +288,7 @@ const userSlice = createSlice({
             })
             .addCase(updateEmail.fulfilled, (state, action) => {
                 state.loading = false;
-                state.userData = action.payload;
+                state.profile = action.payload;
             })
             .addCase(updateEmail.rejected, (state, action) => {
                 state.loading = false;
@@ -301,7 +301,7 @@ const userSlice = createSlice({
             })
             .addCase(updatePassword.fulfilled, (state, action) => {
                 state.loading = false;
-                state.userData = action.payload;
+                state.profile = action.payload;
             })
             .addCase(updatePassword.rejected, (state, action) => {
                 state.loading = false;
