@@ -14,6 +14,7 @@ import {
     ErrorBoundaryInRouter,
     UserProfile,
     EditProfile,
+    Notifications,
 } from "./components/exportCompos";
 import { useEffect, useState /* lazy, Suspense */ } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -153,5 +154,10 @@ export default function App() {
         );
     }
 
-    return <RouterProvider router={router} />;
+    return (
+        <>
+            <Notifications />
+            <RouterProvider router={router} />
+        </>
+    );
 }
