@@ -1,9 +1,16 @@
 /** @jsxImportSource react */
-import { memo, useCallback, useEffect } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-// import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
-import { closeModal } from "../../slices/uiSlice";
+import { useNavigate } from "react-router";
+import {
+    closeModal,
+    addNotification,
+    clearNotifications,
+} from "../../slices/uiSlice";
+import { logoutUser, logout } from "../../slices/authSlice";
+import { deletePostFromDB } from "../../slices/postsSlice";
+import { deleteFile } from "../../slices/storageSlice";
 
 /**
  * Reusable Modal component for displaying confirmations or custom content.
@@ -15,6 +22,7 @@ import { closeModal } from "../../slices/uiSlice";
  */
 function Modal({ modalType, modalData, children }) {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { isModalOpen } = useSelector((state) => state.ui);
     const [isClosing, setIsClosing] = useState(false);
 
@@ -28,14 +36,14 @@ function Modal({ modalType, modalData, children }) {
     }, [dispatch]);
 
     // Prevent click propagation on modal content
-    const handleContentClick = useCallback((e) => {
-        e.stopPropagation();
+    const handleContentClick = useCallback((event) => {
+        event.stopPropagation();
     }, []);
 
     // Close modal on Escape key
     useEffect(() => {
-        function handleEscape(e) {
-            if (e.key === "Escape" && isModalOpen) {
+        function handleEscape(event) {
+            if (event.key === "Escape" && isModalOpen) {
                 handleClose();
             }
         }
@@ -45,6 +53,59 @@ function Modal({ modalType, modalData, children }) {
 
     if (!isModalOpen) return null;
 
+    // Handle logout
+    const handleLogout = useCallback(async () => {
+        try {
+            await dispatch(logoutUser()).unwrap();
+            dispatch(logout());
+            dispatch(
+                addNotification({
+                    message: "Logged out successfully",
+                    type: "success",
+                })
+            );
+            dispatch(clearNotifications()); // Clear notifications before navigation
+            navigate("/login");
+            handleClose();
+        } catch (error) {
+            console.error("Logout failed:", error);
+            dispatch(
+                addNotification({
+                    message: error || "Logout failed",
+                    type: "error",
+                })
+            );
+            handleClose();
+        }
+    }, [dispatch, navigate, handleClose]);
+
+    // Handle post deletion
+    const handleDeletePost = useCallback(async () => {
+        try {
+            await dispatch(deletePostFromDB(modalData.postID)).unwrap();
+            if (modalData.featureImage) {
+                await dispatch(deleteFile(modalData.featureImage)).unwrap();
+            }
+            dispatch(
+                addNotification({
+                    message: "Post deleted successfully",
+                    type: "success",
+                })
+            );
+            navigate("/");
+            handleClose();
+        } catch (error) {
+            console.error("Delete Post failed:", error);
+            dispatch(
+                addNotification({
+                    message: error || "Delete failed",
+                    type: "error",
+                })
+            );
+            handleClose();
+        }
+    }, [dispatch, modalData, navigate, handleClose]);
+
     // Modal configurations based on type
     const modalConfigs = {
         "delete-post": {
@@ -53,21 +114,14 @@ function Modal({ modalType, modalData, children }) {
                 "Are you sure you want to delete this post? This action cannot be undone.",
             confirmText: "Delete",
             cancelText: "Cancel",
-            confirmAction: () => {
-                // Dispatch delete action with modalData.slug
-                // Example: dispatch(deletePost(modalData.slug));
-                handleClose();
-            },
+            confirmAction: handleDeletePost,
         },
         logout: {
             title: "Confirm Logout",
             message: "Are you sure you want to log out?",
-            confirmText: "Log Out",
+            confirmText: "Yes, I'm sure!!🙄 Log Out",
             cancelText: "Cancel",
-            confirmAction: () => {
-                // Handled in UserProfile
-                handleClose();
-            },
+            confirmAction: handleLogout,
         },
     };
 
@@ -106,14 +160,14 @@ function Modal({ modalType, modalData, children }) {
                 <div className="flex justify-end gap-3">
                     <button
                         type="button"
-                        className="rounded-md bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors"
+                        className="rounded-md bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer"
                         onClick={handleClose}
                     >
                         {config.cancelText}
                     </button>
                     <button
                         type="button"
-                        className="rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 transition-colors"
+                        className="rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-700 transition-colors cursor-pointer"
                         onClick={config.confirmAction}
                     >
                         {config.confirmText}
@@ -125,10 +179,4 @@ function Modal({ modalType, modalData, children }) {
     );
 }
 
-/* Modal.propTypes = {
-    modalType: PropTypes.string.isRequired,
-    modalData: PropTypes.object,
-    children: PropTypes.node,
-};
- */
 export default memo(Modal);
