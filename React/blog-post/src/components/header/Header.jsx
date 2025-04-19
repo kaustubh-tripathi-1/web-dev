@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { NavLink, useNavigate } from "react-router";
-import { setTheme, addNotification, openModal } from "../../slices/uiSlice";
-import { logoutUser, logout } from "../../slices/authSlice";
+import { setTheme, openModal } from "../../slices/uiSlice";
 
 export default function Header() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { authStatus, userData } = useSelector((state) => state.auth);
-    const { theme, notifications } = useSelector((state) => state.ui);
+    const { theme } = useSelector((state) => state.ui);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const navItems = [
@@ -25,28 +24,9 @@ export default function Header() {
         },
     ];
 
-    // Handle logout
-    async function handleLogout() {
-        try {
-            dispatch(logoutUser());
-            dispatch(logout());
-            setIsMobileMenuOpen(false); // Close mobile menu on logout
-            dispatch(
-                addNotification({
-                    message: "Logged out successfully",
-                    type: "success",
-                })
-            );
-            navigate("/login");
-        } catch (err) {
-            dispatch(
-                addNotification({ message: "Logout failed", type: "error" })
-            );
-        }
-    }
-
     // Open logout modal
     function openLogoutModal() {
+        setIsMobileMenuOpen(false); // Close mobile menu on logout
         dispatch(openModal({ type: "logout", data: null }));
     }
 
@@ -89,7 +69,7 @@ export default function Header() {
                     )}
                     {authStatus && (
                         <button
-                            onClick={handleLogout}
+                            onClick={openLogoutModal}
                             className="bg-red-500 text-white hover:bg-red-600 focus:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 px-3 py-1 rounded cursor-pointer"
                         >
                             Logout
@@ -156,7 +136,7 @@ export default function Header() {
                     )}
                     {authStatus && (
                         <button
-                            onClick={handleLogout}
+                            onClick={openLogoutModal}
                             className="block w-full text-left p-2  text-red-400 hover:text-red-500 focus:text-red-500 focus:outline-none focus:underline"
                         >
                             Logout
