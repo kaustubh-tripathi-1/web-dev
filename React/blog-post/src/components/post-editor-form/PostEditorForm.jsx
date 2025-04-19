@@ -15,16 +15,12 @@ import {
 } from "../../slices/postEditorSlice";
 import {
     clearUploadedFiles,
-    deleteFile,
     uploadFeatureImage,
 } from "../../slices/storageSlice";
-import {
-    fetchPostBySlug,
-    deletePostFromDB,
-    setCurrentPost,
-} from "../../slices/postsSlice";
+import { fetchPostBySlug, setCurrentPost } from "../../slices/postsSlice";
 import { Spinner, BlogEditor } from "../exportCompos";
 import { storageService } from "../../appwrite-services/storage";
+import { openModal } from "../../slices/uiSlice";
 
 /**
  * Form for creating or editing blog posts with Appwrite.
@@ -139,7 +135,7 @@ export default function PostEditorForm() {
             dispatch(clearUploadedFiles());
             navigate(`/posts/${data.slug}`); // Redirect to post detail page
         } catch (error) {
-            dispatch(setError(error.message || "Failed to save post"));
+            dispatch(setError(error || "Failed to save post"));
             console.error(error);
         }
     }
@@ -161,24 +157,25 @@ export default function PostEditorForm() {
                 });
             } catch (error) {
                 console.error("File upload error:", error);
-                dispatch(setError(error.message || "Failed to upload image"));
+                dispatch(setError(error || "Failed to upload image"));
             }
         }
     }
 
     /**
-     * Deletes the current post.
+     * Opens Delete Post Modal
      */
-    async function handleDelete() {
+    function openDeletePostModal() {
         setIsDeleting(true);
         try {
-            await dispatch(deletePostFromDB(slug)).unwrap();
-            if (featureImage) {
-                await dispatch(deleteFile(featureImage)).unwrap();
-            }
-            navigate("/");
+            dispatch(
+                openModal({
+                    type: "delete-post",
+                    data: { postID: slug, featureImage },
+                })
+            );
         } catch (error) {
-            dispatch(setError(error.message || "Failed to delete post"));
+            dispatch(setError(error || "Failed to delete post"));
         } finally {
             setIsDeleting(false);
         }
@@ -426,7 +423,7 @@ export default function PostEditorForm() {
                     {isEditing && (
                         <button
                             type="button"
-                            onClick={handleDelete}
+                            onClick={openDeletePostModal}
                             disabled={isDeleting || loading}
                             className="w-full bg-red-500 hover:bg-red-700 text-white py-3 rounded-md disabled:bg-gray-400 dark:disabled:bg-gray-600 transition-all duration-200 hover:scale-105 flex items-center justify-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
