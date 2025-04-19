@@ -70,7 +70,7 @@ const uiSlice = createSlice({
                     id: nanoid(), // Use nanoid for unique ID
                     message: action.payload.message,
                     type: action.payload.type || "info",
-                    timeout: action.payload.timeout || 5000,
+                    timeout: action.payload.timeout || 2500,
                 };
                 state.notifications.push(notification);
             }
