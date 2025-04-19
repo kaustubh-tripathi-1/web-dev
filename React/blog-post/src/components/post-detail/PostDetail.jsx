@@ -5,10 +5,9 @@ import { fetchPostBySlug, setCurrentPost } from "../../slices/postsSlice";
 import parse, { domToReact } from "html-react-parser";
 import { storageService } from "../../appwrite-services/storage";
 import { PostDetailSkeleton, Spinner } from "../exportCompos";
-import { deletePostFromDB } from "../../slices/postsSlice";
-import { deleteFile } from "../../slices/storageSlice";
 import { CodeBlock } from "../exportCompos";
 import DOMPurify from "dompurify";
+import { openModal } from "../../slices/uiSlice";
 
 /**
  * Displays a single blog post with edit/delete options for authors.
@@ -92,16 +91,18 @@ export default function PostDetail() {
     /**
      * Deletes the current post and its featured image.
      */
-    async function deleteCurrrentPost() {
-        setIsDeleting(true);
+    function openPostDeleteModal() {
         try {
-            await dispatch(deletePostFromDB(currentPost.$id)).unwrap();
-            if (currentPost.featureImage) {
-                await dispatch(deleteFile(currentPost.featureImage)).unwrap();
-            }
-            navigate("/");
-        } catch (error) {
-            console.error("Delete failed:", error);
+            setIsDeleting(true);
+            dispatch(
+                openModal({
+                    type: "delete-post",
+                    data: {
+                        postID: currentPost?.$id,
+                        featureImage: currentPost?.featureImage,
+                    },
+                })
+            );
         } finally {
             setIsDeleting(false);
         }
@@ -175,7 +176,7 @@ export default function PostDetail() {
                             Edit Post
                         </button>
                         <button
-                            onClick={deleteCurrrentPost}
+                            onClick={openPostDeleteModal}
                             className="w-1/2 md:w-5/24 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700 focus:bg-red-700 transition-colors duration-200 cursor-pointer outline-none"
                             aria-label="Delete Post"
                             disabled={isDeleting}
