@@ -1,5 +1,5 @@
 /** @jsxImportSource react */
-import { useEffect, useState } from "react";
+import { useEffect, useState, startTransition } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router";
 import { useForm } from "react-hook-form";
@@ -73,7 +73,9 @@ export default function EditProfile() {
                 newPassword: "",
                 confirmPassword: "",
             });
-            setOptimisticProfile(profile);
+            startTransition(() => {
+                setOptimisticProfile(profile);
+            });
         }
     }, [profile, reset]);
 
@@ -99,7 +101,12 @@ export default function EditProfile() {
         try {
             // Name update
             if (data.name !== profile?.name) {
-                setOptimisticProfile({ ...optimisticProfile, name: data.name });
+                startTransition(() => {
+                    setOptimisticProfile({
+                        ...optimisticProfile,
+                        name: data.name,
+                    });
+                });
                 await dispatch(updateName(data.name)).unwrap();
                 dispatch(
                     addNotification({
@@ -111,9 +118,11 @@ export default function EditProfile() {
 
             // Email update
             if (data.email !== profile?.email && data.currentPassword) {
-                setOptimisticProfile({
-                    ...optimisticProfile,
-                    email: data.email,
+                startTransition(() => {
+                    setOptimisticProfile({
+                        ...optimisticProfile,
+                        email: data.email,
+                    });
                 });
                 await dispatch(
                     updateEmail({
@@ -154,7 +163,9 @@ export default function EditProfile() {
                     type: "error",
                 })
             );
-            setOptimisticProfile(profile); // Roll back optimistic update
+            startTransition(() => {
+                setOptimisticProfile(profile); // Roll back optimistic update
+            });
         }
     }
 
