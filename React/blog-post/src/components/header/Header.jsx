@@ -69,7 +69,10 @@ export default function Header() {
         const newTheme = theme === "light" ? "dark" : "light";
         dispatch(setTheme(newTheme));
         if (authStatus) {
-            debouncedUpdatePreferences({ ...preferences, theme: newTheme });
+            debouncedUpdatePreferences({
+                theme: newTheme,
+                notifications: preferences.notifications || true,
+            });
         }
     }
 
