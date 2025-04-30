@@ -43,7 +43,7 @@ export default function Signup() {
         try {
             const user = await dispatch(signupUser(data)).unwrap();
 
-            // Create temporary session to send verification email
+            // Create temporary session to send verification email to user
             await dispatch(
                 createTempSession({
                     email: data.email,

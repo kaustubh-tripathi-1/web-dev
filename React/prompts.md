@@ -1,1 +1,0 @@
-1. I didn't store the email and password at all because after email verification, I'm re-directing the user to login instead of automatically logging him in.
