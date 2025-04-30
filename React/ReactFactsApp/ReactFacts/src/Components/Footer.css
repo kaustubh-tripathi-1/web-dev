@@ -1,0 +1,18 @@
+:root {
+    --footer-background-color: #0b0b1a;
+    --footer-text-color: #7f7f9b;
+    --footer-height: 3vh;
+    --footer-font-size: 2vh;
+}
+
+.footer {
+    height: var(--footer-height);
+    box-sizing: border-box;
+    background-color: var(--footer-background-color);
+    text-align: center;
+}
+
+.footer-para {
+    font-size: var(--footer-font-size);
+    color: var(--footer-text-color);
+}

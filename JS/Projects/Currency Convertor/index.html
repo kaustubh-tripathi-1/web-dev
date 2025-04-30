@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Currency Convertor</title>
+        <link rel="stylesheet" href="./style.css" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+            integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        />
+    </head>
+    <body>
+        <div id="container">
+            <h2 id="page-heading">Currency Convertor</h2>
+            <form>
+                <div id="amount">
+                    <p>Enter Currency Value :</p>
+                    <input type="text" name="amount" id="amount-input" />
+                </div>
+
+                <div id="dropdown">
+                    <div id="from">
+                        <p>From :</p>
+                        <div class="select-container">
+                            <img
+                                src="https://flagsapi.com/US/flat/64.png"
+                                id="img1"
+                            />
+                            <select name="from" class="selects"></select>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-right-left"></i>
+                    <div id="to">
+                        <p>To :</p>
+                        <div class="select-container">
+                            <img
+                                src="https://flagsapi.com/IN/flat/64.png"
+                                id="img2"
+                            />
+                            <select name="to" class="selects"></select>
+                        </div>
+                    </div>
+                </div>
+                <div id="msg"></div>
+                <button id="btn" type="submit">Get Exchange Rate</button>
+            </form>
+        </div>
+
+        <script src="./codes.js"></script>
+        <script src="./app.js"></script>
+    </body>
+</html>

@@ -1,0 +1,13 @@
+#bg {
+  height: 400px;
+  width: 320px;
+  background-image: url(./Assets/benjamin-chambon-QPInlTAwwLg-unsplash.jpg);
+  background-size: cover;
+  position: fixed;
+  right: 1px;
+  bottom: 0px;
+  border: 1px black solid;
+  border-radius: 50%;
+  text-align: center;
+  padding: 90px;
+}

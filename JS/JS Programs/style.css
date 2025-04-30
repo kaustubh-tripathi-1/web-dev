@@ -1,0 +1,294 @@
+body {
+    background-color: #343434;
+    color: #fff;
+}
+
+/**
+#heading1 {
+    margin: 1rem;
+    background-color: aqua;
+}
+
+.text {
+    background-color: azure;
+}
+
+.divs {
+    height: 5rem;
+    width: 6rem;
+    text-align: center;
+    margin: 3rem;
+    border: 2px solid black;
+}
+
+.p1 {
+    background-color: red;
+    color: yellow;
+}
+.p2 {
+    background-color: #a43ace;
+}
+
+.dark {
+    background-color: #343434;
+    color: #fff;
+}
+
+.light {
+    background-color: #fff;
+    color: #000;
+} */
+
+/*@ DOM Assign, Q8 */
+
+/* .table {
+    border: 2px solid #000;
+    margin: 10px;
+    border-collapse: collapse;
+}
+
+td {
+    padding: 20px;
+    border: 2px solid #000;
+} */
+
+/*@ DOM Assign, Q9 */
+
+/**
+#colorBox {
+    height: 15rem;
+    width: 15rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-inline: auto;
+} */
+
+/*@ DOM Assign, Q10 */
+
+/* .highlight {
+    background-color: #ff778e;
+    color: #000;
+}
+
+.normal {
+    background-color: #343434;
+    color: #fff;
+} */
+
+/*@ Events Assign, Q2 */
+
+/* #div1 {
+    height: 10rem;
+    width: 10rem;
+}
+
+.container {
+    height: 10rem;
+    width: 10rem;
+    background-color: #1bda34;
+} */
+
+/*@ Events Assign, Q5 */
+
+/* #div1 {
+    height: 10rem;
+    width: 10rem;
+    background-color: cornflowerblue;
+}
+
+.hide {
+    display: none;
+}
+ */
+
+/*@ Events Assign, Q8 */
+
+/* #container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 25rem;
+    width: 30rem;
+    margin-inline: auto;
+}
+
+.buttons {
+    height: 3rem;
+    width: 5rem;
+}
+ */
+
+/*@ Events Assign, Q10 */
+
+/* #out {
+    height: 20rem;
+    width: 20rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid red;
+    margin-top: 10rem;
+    margin-inline: auto;
+    padding: 2rem;
+}
+
+#in {
+    height: 15rem;
+    width: 15rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid green;
+} */
+
+/*@ Events Assign, Q11 */
+
+/* .search-container {
+    max-width: 600px;
+    margin: 50px auto;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.suggestions-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.suggestion-item {
+    padding: 10px 20px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.suggestion-item:hover {
+    background-color: #999;
+}
+
+.status {
+    color: #666;
+    font-size: 14px;
+    margin-top: 8px;
+} */
+
+/*@ Events Assign, Q12 */
+
+/* .content {
+    /* Create scrollable content */ /*
+    height: 5000px;
+    width: 5000px;
+    background: linear-gradient(to bottom, #333333, #3f3f3f);
+    padding: 20px;
+}
+
+.scroll-info {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(235, 230, 230, 0.3);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    font-family: monospace;
+    z-index: 1000;
+}
+
+.log-container {
+    position: fixed;
+    left: 20px;
+    top: 20px;
+    width: 350px;
+    height: 200px;
+    background: rgba(235, 230, 230, 0.3);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    overflow-y: auto;
+}
+
+.log-entry {
+    margin: 5px 0;
+    font-family: monospace;
+    font-size: 12px;
+}
+
+.throttle-status {
+    color: #4caf50;
+}
+ */
+
+/*@ Events Assign, Q14 */
+
+/* #container {
+    height: 300px;
+    width: 300px;
+    margin-top: 10rem;
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #fff;
+} */
+
+/*@ Events Assign, Q15 */
+
+/* #searchInput {
+    display: block;
+    height: 2rem;
+    width: 20rem;
+    margin-inline: auto;
+    margin-top: 3rem;
+    border: 10px solid red;
+}
+
+.focus {
+    border: 10px solid green !important;
+}
+ */
+
+/*@ Events Assign, Q19 */
+
+/* #dragContainer {
+    height: 10rem;
+    width: 10rem;
+    margin-inline: auto;
+    border: 2px solid green;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#dragItem {
+    height: 4rem;
+    width: 4rem;
+    display: flex;
+    align-items: center;
+}
+
+#dropZone {
+    height: 10rem;
+    width: 10rem;
+    margin-top: 5rem;
+    margin-inline: auto;
+    border: 2px solid yellow;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+} */

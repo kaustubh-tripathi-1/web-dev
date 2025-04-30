@@ -1,0 +1,40 @@
+* {
+  margin: 0;
+}
+#ulist {
+  background-color: #414141;
+  color: #ffffff;
+  display: flex;
+  flex-direction: row;
+  height: 50px;
+  width: 100%;
+  justify-content: space-evenly;
+  list-style-type: none;
+}
+
+.listelement {
+  display: flex;
+  align-items: center;
+}
+.anchor {
+  text-decoration: none;
+  color: red;
+  background-color: pink;
+}
+
+#outer {
+  margin: 100px;
+  margin-inline: auto;
+  height: 400px;
+  width: 800px;
+  background-color: lightcoral;
+  display: flex;
+  justify-content: center;
+}
+#inner {
+  height: 100px;
+  display: flex;
+  align-self: center;
+  width: 90%;
+  background-color: blue;
+}

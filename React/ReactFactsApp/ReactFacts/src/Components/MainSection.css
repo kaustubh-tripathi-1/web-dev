@@ -1,0 +1,57 @@
+:root {
+    --facts-section-bg-color: #151633;
+    --facts-section-color: #ececec;
+}
+
+/* .facts-container {
+    padding: 1rem;
+    height: 85vh;
+    width: 100%;
+    color: var(--facts-section-color);
+    background: var(--facts-section-bg-color);
+    background-image: url("../assets/react-logo-black-and-white.png");
+    background-size: contain;
+    background-position: 80vw;
+    background-repeat: no-repeat;
+} */
+
+.facts-container {
+    position: relative; /* Establish a relative positioning context */
+    padding: 1rem;
+    height: 85vh;
+    width: 100%;
+    color: var(--facts-section-color);
+    background-color: var(
+        --facts-section-bg-color
+    ); /* Keep the background color */
+    overflow: hidden; /* Ensure the image doesn't overflow the container */
+}
+
+.facts-container::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("../assets/react-logo-black-and-white.png");
+    background-size: contain;
+    background-position: 81vw;
+    background-repeat: no-repeat;
+    opacity: 0.2; /* Adjust the opacity for the background image */
+    pointer-events: none; /* Ensure the pseudo-element doesn’t interfere with interactions */
+}
+
+.sub-heading {
+    font-size: 10vh;
+    padding-left: 1rem;
+}
+
+.facts-list {
+    padding: 3rem 4rem;
+    line-height: 3rem;
+}
+
+li::marker {
+    color: #3dffc5;
+}

@@ -1,0 +1,24 @@
+.profile-container {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: #444;
+    font-size: 1.2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+}
+
+.login-error {
+    width: 80%;
+    padding: 1rem;
+    color: rgb(216, 68, 68);
+    background-color: rgb(255, 251, 0, 90%);
+    border-radius: 0.6rem;
+}
+
+@media (max-width: 480px) {
+    .profile-container {
+        font-size: 1rem;
+    }
+}

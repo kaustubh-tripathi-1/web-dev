@@ -1,0 +1,91 @@
+* {
+    font-family: cursive;
+    margin: 0;
+    padding: 0;
+    background-color: #424b54;
+    color: #f1fffa;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    font-size: 3rem;
+}
+
+p {
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#page-heading {
+    font-size: 5rem;
+    text-align: center;
+}
+
+#amount {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#from && #to {
+    height: 13rem;
+}
+
+#dropdown {
+    margin: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#dropdown > * {
+    margin: 1rem;
+}
+
+.select-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#amount-input {
+    background-color: #d5aca9;
+    color: #424b54;
+    height: 2rem;
+    width: 15rem;
+    align-self: center;
+    font-size: 1.5rem;
+}
+
+#btn {
+    background-color: #0080ff;
+    height: 5rem;
+    width: 15rem;
+    border-radius: 10px;
+    margin: 2rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+img {
+    height: 8rem;
+}
+
+.selects {
+    height: 2.5rem;
+    width: 6rem;
+    text-align: center;
+    font-size: large;
+    background-color: #f1fffa;
+    color: #424b54;
+}

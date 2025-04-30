@@ -1,0 +1,31 @@
+/* body {
+    background-color: #303030;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+} */
+
+.count-container {
+    width: 40vw;
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.heading {
+    color: #fff;
+}
+
+.buttons {
+    background-color: #202020;
+    border: none;
+    border-radius: 0.5rem;
+    white-space: nowrap;
+    padding: 3vh;
+    color: #fff;
+    cursor: pointer;
+}
