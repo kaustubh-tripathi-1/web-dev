@@ -2,7 +2,14 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { loginUser, login, setError, setLoading } from "../../slices/authSlice";
+import {
+    loginUser,
+    login,
+    setError,
+    setLoading,
+    logout,
+    logoutUser,
+} from "../../slices/authSlice";
 import { Spinner } from "../exportCompos";
 import { NavLink } from "react-router";
 import { addNotification } from "../../slices/uiSlice";
@@ -36,6 +43,19 @@ export default function Login() {
             const user = await dispatch(
                 loginUser({ email: data.email, password: data.password })
             ).unwrap();
+
+            if (!user.emailVerification) {
+                dispatch(logout()); // Or deleteSession
+                dispatch(logoutUser()); // Or deleteSession
+                dispatch(
+                    addNotification({
+                        message: "Please verify your email before logging in.",
+                        type: "error",
+                    })
+                );
+                navigate("/verify-email");
+                return;
+            }
 
             if (user) {
                 dispatch(
