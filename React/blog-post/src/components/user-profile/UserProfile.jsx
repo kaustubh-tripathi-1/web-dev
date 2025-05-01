@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 import { fetchProfile, getUserPosts } from "../../slices/userSlice";
 import { openModal } from "../../slices/uiSlice";
 import defaultUserAvatar from "../../assets/man.png";
