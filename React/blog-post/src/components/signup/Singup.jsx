@@ -63,9 +63,7 @@ export default function Signup() {
                     timeout: 10000,
                 })
             );
-            // Store email and password in Redux for VerifyEmail
-            // dispatch(setError({ email: data.email, password: data.password }));
-            navigate(`/login`);
+            navigate(`/email-sent`);
         } catch (error) {
             if (error.type === `user_already_exists`) {
                 console.error(error.type, error.message);
