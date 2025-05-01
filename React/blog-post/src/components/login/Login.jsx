@@ -45,15 +45,19 @@ export default function Login() {
             ).unwrap();
 
             if (!user.emailVerification) {
-                dispatch(logout()); // Or deleteSession
-                dispatch(logoutUser()); // Or deleteSession
+                dispatch(logoutUser());
+                dispatch(logout());
+                navigate(`/login`);
                 dispatch(
                     addNotification({
                         message: "Please verify your email before logging in.",
                         type: "error",
+                        timeout: 6000,
                     })
                 );
-                navigate("/verify-email");
+                dispatch(
+                    setError("Please verify your email before logging in.")
+                );
                 return;
             }
 
