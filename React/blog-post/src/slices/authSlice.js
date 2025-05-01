@@ -22,7 +22,7 @@ export const loginUser = createAsyncThunk(
             // Get user data as login method returns session data
             const userData = await authService.getCurrentUser();
 
-            if (userData.prefs?.notifications) {
+            if (userData?.prefs?.notifications && userData?.emailVerification) {
                 dispatch(
                     addNotification({
                         message: "Logged in successfully",
