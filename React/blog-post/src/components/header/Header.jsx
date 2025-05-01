@@ -110,7 +110,7 @@ export default function Header() {
                     {authStatus && (
                         <button
                             onClick={openLogoutModal}
-                            className="bg-red-500 text-white hover:bg-red-600 focus:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 px-3 py-1 rounded cursor-pointer"
+                            className="bg-red-500 text-white hover:bg-red-700 focus:bg-red-600 focus:outline-2 focus:outline-offset-2 focus:outline-red-500 px-3 py-1 rounded cursor-pointer"
                         >
                             Logout
                         </button>
