@@ -11,6 +11,7 @@ import {
 } from "../../slices/authSlice";
 import { Spinner } from "../exportCompos";
 import { addNotification } from "../../slices/uiSlice";
+import { updatePreferences } from "../../slices/userSlice";
 
 export default function Signup() {
     const { authStatus, loading, error } = useSelector((state) => state.auth);
@@ -42,13 +43,15 @@ export default function Signup() {
     async function signupOnSubmit(data) {
         try {
             const user = await dispatch(signupUser(data)).unwrap();
-
             // Create temporary session to send verification email to user
             await dispatch(
                 createTempSession({
                     email: data.email,
                     password: data.password,
                 })
+            ).unwrap();
+            await dispatch(
+                updatePreferences({ theme: "dark", notifications: true })
             ).unwrap();
             await dispatch(requestEmailVerification()).unwrap();
 
