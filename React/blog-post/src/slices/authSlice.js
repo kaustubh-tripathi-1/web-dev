@@ -244,7 +244,8 @@ export const completeEmailVerification = createAsyncThunk(
             await authService.completeEmailVerification(userId, secret);
             return true;
         } catch (error) {
-            return rejectWithValue(error.message || "Failed to verify email");
+            // return rejectWithValue(error.message || "Failed to verify email");
+            return rejectWithValue(error || "Failed to verify email");
         }
     }
 );
@@ -457,7 +458,7 @@ const authSlice = createSlice({
             })
             .addCase(completeEmailVerification.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload;
+                state.error = action.payload.message;
             });
     },
 });
