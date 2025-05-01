@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams, NavLink } from "react-router";
-import { completeEmailVerification, loginUser } from "../../slices/authSlice";
+import { completeEmailVerification } from "../../slices/authSlice";
 import { Spinner } from "../exportCompos";
 import { addNotification } from "../../slices/uiSlice";
 
@@ -16,6 +16,7 @@ export default function VerifyEmail() {
     const [searchParams] = useSearchParams();
     const [success, setSuccess] = useState(false);
     const [verified, setVerified] = useState(false);
+    // Add a ref using useRef if you want to absolutely guarantee that verifyEmail doesn't run again, otherwise the current useEffect dependencies are stable.
 
     useEffect(() => {
         const userId = searchParams.get("userId");
@@ -50,9 +51,17 @@ export default function VerifyEmail() {
             } catch (error) {
                 setSuccess(false);
                 setVerified(false);
+                console.error(
+                    `Message - ${error.message}, type - ${error.type}, code - ${error.code}`
+                );
+
+                const errorMessage = error.type.includes("too_many_requests")
+                    ? "Too many verification attempts. Please try again later."
+                    : error ||
+                      "Failed to verify email. The link may be invalid or expired.";
                 dispatch(
                     addNotification({
-                        message: error || "Failed to verify email",
+                        message: errorMessage,
                         type: "error",
                     })
                 );
@@ -60,7 +69,7 @@ export default function VerifyEmail() {
         }
 
         verifyEmail();
-    }, [searchParams, dispatch, navigate, error]);
+    }, [searchParams, dispatch, navigate]);
 
     return (
         <section className="min-h-screen flex items-center justify-center px-4 py-6 bg-gray-100 dark:bg-gray-900">
@@ -84,7 +93,7 @@ export default function VerifyEmail() {
                         <p className="text-green-500 dark:text-green-400 mb-4">
                             Email verified successfully! Please log in.
                         </p>
-                        <div className="flex">
+                        <div className="flex justify-center items-center">
                             <p className="text-gray-700 dark:text-gray-300">
                                 Redirecting to login...
                             </p>
@@ -97,7 +106,7 @@ export default function VerifyEmail() {
                 ) : (
                     error &&
                     error !== `User (role: guests) missing scope (account)` && (
-                        <div className="text-center">
+                        <div className="flex flex-col items-center justify-center">
                             <p className="text-red-500 dark:text-red-400 mb-4">
                                 {error ||
                                     "Failed to verify email. The link may be invalid or expired."}
@@ -106,6 +115,14 @@ export default function VerifyEmail() {
                                 Please try again or request a new verification
                                 email.
                             </p>
+                            <button
+                                onClick={() => {
+                                    navigate(`/resend-email`);
+                                }}
+                                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            >
+                                Resend Verification Email
+                            </button>
                         </div>
                     )
                 )}
