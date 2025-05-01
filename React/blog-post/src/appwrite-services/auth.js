@@ -109,15 +109,16 @@ export default class AuthService {
             name
         );
 
-        // try {
-        //     await this.login(email, password);
-        // } catch (error) {
-        //     throw new AuthError(
-        //         "User created but login failed. Please try logging in manually.",
-        //         error.code,
-        //         error.message
-        //     );
-        // }
+        // Disable auto login after signup to verify email
+        /* try {
+            await this.login(email, password);
+        } catch (error) {
+            throw new AuthError(
+                "User created but login failed. Please try logging in manually.",
+                error.code,
+                error.message
+            );
+        } */
 
         return user;
     }
@@ -163,7 +164,10 @@ export default class AuthService {
     async createSession(email, password) {
         email = email.trim();
         this.#validateCredentials(email, password);
-        await this.#account.createEmailSession(email.toLowerCase(), password);
+        await this.#account.createEmailPasswordSession(
+            email.toLowerCase(),
+            password
+        );
     }
 
     /**
