@@ -1,5 +1,5 @@
 /** @jsxImportSource react */
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
@@ -32,13 +32,18 @@ function Modal({ modalType, modalData, children }) {
     const { loading: authLoading } = useSelector((state) => state.auth);
     const [isClosing, setIsClosing] = useState(false);
 
+    const modalRef = useRef(null);
+    const firstFocusableRef = useRef(null);
+    const lastFocusableRef = useRef(null);
+    const triggerRef = useRef(null);
+
     // Handle close with animation
     const handleClose = useCallback(() => {
         setIsClosing(true);
         setTimeout(() => {
             setIsClosing(false);
             dispatch(closeModal());
-        }, 300); // Match Tailwind animation duration
+        }, 300);
     }, [dispatch]);
 
     // Prevent click propagation on modal content
@@ -46,21 +51,67 @@ function Modal({ modalType, modalData, children }) {
         event.stopPropagation();
     }, []);
 
-    // Close modal on Escape key
+    // Focus trapping and accessibility and Close modal on Escape key
     useEffect(() => {
-        function handleEscape(event) {
-            if (
+        if (!isModalOpen) return;
+
+        const modal = modalRef.current;
+        // Store the trigger element
+        triggerRef.current = document.activeElement;
+
+        // Find focusable elements within the modal
+        const focusableElements = modal.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        const firstFocusable = focusableElements[0];
+        const lastFocusable = focusableElements[focusableElements.length - 1];
+
+        firstFocusableRef.current = firstFocusable;
+        lastFocusableRef.current = lastFocusable;
+
+        // Set initial focus to the Cancel button
+        firstFocusable?.focus();
+
+        // Handle Tab and Shift+Tab
+        const handleKeyDown = (event) => {
+            if (event.key === "Tab") {
+                if (
+                    event.shiftKey &&
+                    document.activeElement === firstFocusable
+                ) {
+                    event.preventDefault();
+                    lastFocusable.focus();
+                } else if (
+                    !event.shiftKey &&
+                    document.activeElement === lastFocusable
+                ) {
+                    event.preventDefault();
+                    firstFocusable.focus();
+                }
+            } else if (
                 event.key === "Escape" &&
-                isModalOpen &&
                 !postsLoading &&
                 !storageDeleting &&
                 !authLoading
             ) {
                 handleClose();
             }
-        }
-        document.addEventListener("keydown", handleEscape);
-        return () => document.removeEventListener("keydown", handleEscape);
+        };
+
+        modal.addEventListener("keydown", handleKeyDown);
+
+        // Hide background content
+        const mainContent = document.querySelector("main") || document.body;
+        mainContent.setAttribute("aria-hidden", "true");
+        mainContent.setAttribute("inert", "");
+
+        return () => {
+            modal.removeEventListener("keydown", handleKeyDown);
+            mainContent.removeAttribute("aria-hidden");
+            mainContent.removeAttribute("inert");
+            // Restore focus
+            triggerRef.current?.focus();
+        };
     }, [isModalOpen, handleClose, postsLoading, storageDeleting, authLoading]);
 
     if (!isModalOpen) return null;
@@ -167,6 +218,7 @@ function Modal({ modalType, modalData, children }) {
             }`}
             onClick={handleClose}
             role="dialog"
+            aria-modal="true"
             aria-labelledby="modal-title"
         >
             <div
@@ -174,6 +226,7 @@ function Modal({ modalType, modalData, children }) {
                     isClosing ? "scale-95" : "scale-100"
                 }`}
                 onClick={handleContentClick}
+                ref={modalRef}
             >
                 <h2
                     id="modal-title"
