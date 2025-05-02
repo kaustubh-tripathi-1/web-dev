@@ -19,10 +19,10 @@ export default function VerifyEmail() {
     // Add a ref using useRef if you want to absolutely guarantee that verifyEmail doesn't run again, otherwise the current useEffect dependencies are stable.
 
     useEffect(() => {
-        const userId = searchParams.get("userId");
+        const userID = searchParams.get("userId");
         const secret = searchParams.get("secret");
 
-        if (!userId || !secret) {
+        if (!userID || !secret) {
             dispatch(
                 addNotification({
                     message: "Invalid or missing verification link parameters",
@@ -36,7 +36,7 @@ export default function VerifyEmail() {
         async function verifyEmail() {
             try {
                 await dispatch(
-                    completeEmailVerification({ userId, secret })
+                    completeEmailVerification({ userID, secret })
                 ).unwrap();
                 setSuccess(true);
                 setVerified(true);
