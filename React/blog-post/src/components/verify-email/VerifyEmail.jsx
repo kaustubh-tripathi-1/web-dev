@@ -47,7 +47,7 @@ export default function VerifyEmail() {
                         type: "success",
                     })
                 );
-                setTimeout(() => navigate("/login"), 3000);
+                setTimeout(() => navigate("/login"), 5000);
             } catch (error) {
                 setSuccess(false);
                 setVerified(false);
@@ -89,7 +89,7 @@ export default function VerifyEmail() {
                         />
                     </div>
                 ) : success && verified ? (
-                    <div className="flex flex-col">
+                    <div className="flex flex-col justify-center items-center">
                         <p className="text-green-500 dark:text-green-400 mb-4">
                             Email verified successfully! Please log in.
                         </p>
