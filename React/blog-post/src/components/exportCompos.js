@@ -25,6 +25,8 @@ import EditProfile from "./edit-profile/EditProfile.jsx";
 import ForgotPassword from "./forgot-password/ForgotPassword.jsx";
 import ResetPassword from "./reset-password/ResetPassword.jsx";
 import VerifyEmail from "./verify-email/VerifyEmail.jsx";
+import EmailSent from "./email-sent/EmailSent.jsx";
+import ResendVerificationEmail from "./resend-verification-email/ResendVerificationEmail.jsx";
 
 export {
     Header,
@@ -54,4 +56,6 @@ export {
     ForgotPassword,
     ResetPassword,
     VerifyEmail,
+    EmailSent,
+    ResendVerificationEmail,
 };
