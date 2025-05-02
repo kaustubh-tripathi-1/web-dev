@@ -22,7 +22,7 @@ export default class ErrorBoundary extends Component {
                         <h1 className="text-4xl font-bold mb-6">
                             Something went wrong!
                         </h1>
-                        <p className="mb-6 text-lg text-red-500 dark:text-red-400">
+                        <p className="px-4 mb-6 text-lg text-red-500 dark:text-red-400">
                             {this.state.error?.message || "Unknown error"}
                         </p>
                         <div className="flex justify-center items-center gap-12">
