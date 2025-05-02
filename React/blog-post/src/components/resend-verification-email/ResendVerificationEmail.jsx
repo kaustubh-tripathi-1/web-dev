@@ -10,7 +10,7 @@ import {
     setLoading,
 } from "../../slices/authSlice";
 import { Spinner } from "../exportCompos";
-import { Link } from "react-router";
+import { NavLink } from "react-router";
 import { addNotification } from "../../slices/uiSlice";
 
 /**
@@ -250,21 +250,21 @@ export default function ResendVerificationEmail() {
                 <div className="mt-4 text-center text-sm text-gray-700 dark:text-gray-300">
                     <p>
                         Already verified?{" "}
-                        <Link
+                        <NavLink
                             to="/login"
                             className="text-blue-500 dark:text-blue-400 hover:underline focus:underline focus:outline-none transition-colors duration-200 hover:text-blue-600 dark:hover:text-blue-300"
                         >
                             Log In
-                        </Link>
+                        </NavLink>
                     </p>
                     <p className="mt-2">
                         Need to create an account?{" "}
-                        <Link
+                        <NavLink
                             to="/signup"
                             className="text-blue-500 dark:text-blue-400 hover:underline focus:underline focus:outline-none transition-colors duration-200 hover:text-blue-600 dark:hover:text-blue-300"
                         >
                             Sign Up
-                        </Link>
+                        </NavLink>
                     </p>
                 </div>
             </div>
