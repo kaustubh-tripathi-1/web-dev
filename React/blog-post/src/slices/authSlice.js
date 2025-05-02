@@ -198,10 +198,10 @@ export const requestPasswordReset = createAsyncThunk(
  */
 export const completePasswordReset = createAsyncThunk(
     "auth/completePasswordReset",
-    async ({ userId, secret, newPassword }, { rejectWithValue }) => {
+    async ({ userID, secret, newPassword }, { rejectWithValue }) => {
         try {
             await authService.completePasswordReset(
-                userId,
+                userID,
                 secret,
                 newPassword
             );
@@ -239,9 +239,9 @@ export const requestEmailVerification = createAsyncThunk(
  */
 export const completeEmailVerification = createAsyncThunk(
     "auth/completeEmailVerification",
-    async ({ userId, secret }, { rejectWithValue }) => {
+    async ({ userID, secret }, { rejectWithValue }) => {
         try {
-            await authService.completeEmailVerification(userId, secret);
+            await authService.completeEmailVerification(userID, secret);
             return true;
         } catch (error) {
             // return rejectWithValue(error.message || "Failed to verify email");
