@@ -413,6 +413,19 @@ export default function Signup() {
                         Log In
                     </NavLink>
                 </p>
+
+                {/* Resend Verification Email Link */}
+                <div className="flex flex-col justify-center items-center">
+                    <p className="mt-4 text-center text-sm text-gray-700 dark:text-gray-300">
+                        Already signed up but missed verification email?
+                    </p>
+                    <NavLink
+                        to="/resend-verification-email"
+                        className="text-blue-500 dark:text-blue-400 text-sm hover:underline focus:underline focus:outline-none transition-colors duration-200 hover:text-blue-600 dark:hover:text-blue-300"
+                    >
+                        Resend Verification Email
+                    </NavLink>
+                </div>
             </div>
         </section>
     );
