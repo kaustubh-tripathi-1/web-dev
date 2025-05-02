@@ -18,6 +18,8 @@ import {
     ForgotPassword,
     ResetPassword,
     VerifyEmail,
+    EmailSent,
+    ResendVerificationEmail,
 } from "./components/exportCompos";
 import { useEffect, useState /* lazy, Suspense */ } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -126,6 +128,16 @@ const router = createBrowserRouter([
     {
         path: "verify-email",
         element: <VerifyEmail />,
+        errorElement: <ErrorBoundaryInRouter />,
+    },
+    {
+        path: "email-sent",
+        element: <EmailSent />,
+        errorElement: <ErrorBoundaryInRouter />,
+    },
+    {
+        path: "resend-verification-email",
+        element: <ResendVerificationEmail />,
         errorElement: <ErrorBoundaryInRouter />,
     },
 ]);
