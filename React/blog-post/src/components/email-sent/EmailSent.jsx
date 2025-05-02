@@ -13,7 +13,7 @@ export default function EmailSent() {
     useEffect(() => {
         // Auto-redirect to login after 10 seconds
         const timer = setTimeout(() => {
-            // navigate("/login");
+            navigate("/login");
         }, 20000);
         return () => clearTimeout(timer);
     }, [navigate]);
