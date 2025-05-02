@@ -61,6 +61,7 @@ export {
 };
  */
 
+// Follow Re-export approach to avoid eager imports
 export { default as Header } from "./header/Header.jsx";
 export { default as Home } from "./home/Home.jsx";
 export { default as Layout } from "./layout/Layout.jsx";
