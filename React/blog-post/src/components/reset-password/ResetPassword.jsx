@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams, NavLink } from "react-router";
-import { completePasswordReset } from "../../slices/authSlice";
-import { Spinner } from "../exportCompos";
+import { completePasswordReset, setError } from "../../slices/authSlice";
+import { Spinner } from "../componentsIndex";
 import { addNotification } from "../../slices/uiSlice";
 
 /**
@@ -34,7 +34,8 @@ export default function ResetPassword() {
         if (!searchParams.get("userId") || !searchParams.get("secret")) {
             dispatch(
                 addNotification({
-                    message: "Invalid or missing reset link parameters",
+                    message:
+                        "Invalid or missing password reset link parameters",
                     type: "error",
                 })
             );
@@ -42,37 +43,37 @@ export default function ResetPassword() {
         }
     }, [searchParams, dispatch, navigate]);
 
-    async function onSubmit(data) {
-        const userId = searchParams.get("userId");
+    async function resetPasswordOnSubmit(data) {
+        const userID = searchParams.get("userId");
         const secret = searchParams.get("secret");
 
         try {
             await dispatch(
                 completePasswordReset({
-                    userId,
+                    userID,
                     secret,
                     newPassword: data.password,
                 })
             ).unwrap();
             setSuccess(true);
-            if (preferences?.notifications) {
-                dispatch(
-                    addNotification({
-                        message: "Password reset successfully. Please log in.",
-                        type: "success",
-                    })
-                );
-            }
+            dispatch(
+                addNotification({
+                    message: "Password reset successfully. Please log in.",
+                    type: "success",
+                    timeout: 4000,
+                })
+            );
             setTimeout(() => navigate("/login"), 3000);
-        } catch (err) {
-            if (preferences?.notifications) {
-                dispatch(
-                    addNotification({
-                        message: err.message || "Failed to reset password",
-                        type: "error",
-                    })
-                );
-            }
+        } catch (error) {
+            console.error(error);
+            dispatch(setError(error));
+            dispatch(
+                addNotification({
+                    message: error.message || "Failed to reset password",
+                    type: "error",
+                    timeout: 4000,
+                })
+            );
         }
     }
 
@@ -103,7 +104,7 @@ export default function ResetPassword() {
                     </div>
                 ) : (
                     <form
-                        onSubmit={handleSubmit(onSubmit)}
+                        onSubmit={handleSubmit(resetPasswordOnSubmit)}
                         className="space-y-6"
                     >
                         {/* Password Field */}

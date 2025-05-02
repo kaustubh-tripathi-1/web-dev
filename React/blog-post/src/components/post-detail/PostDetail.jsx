@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchPostBySlug, setCurrentPost } from "../../slices/postsSlice";
 import parse, { domToReact } from "html-react-parser";
 import { storageService } from "../../appwrite-services/storage";
-import { PostDetailSkeleton, Spinner } from "../exportCompos";
-import { CodeBlock } from "../exportCompos";
+import { PostDetailSkeleton, Spinner } from "../componentsIndex";
+import { CodeBlock } from "../componentsIndex";
 import DOMPurify from "dompurify";
 import { openModal } from "../../slices/uiSlice";
 

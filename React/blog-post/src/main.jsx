@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App.jsx";
 import { Provider } from "react-redux";
 import { store } from "./store.js";
-import { ErrorBoundary } from "./components/exportCompos.js";
+import { ErrorBoundary } from "./components/componentsIndex.js";
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>

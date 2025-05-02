@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router";
 import { fetchProfile, getUserPosts } from "../../slices/userSlice";
 import { openModal } from "../../slices/uiSlice";
 import defaultUserAvatar from "../../assets/man.png";
-import { ProfileSkeleton } from "../exportCompos";
+import { ProfileSkeleton } from "../componentsIndex";
 
 /**
  * UserProfile component to display and manage user details and posts.

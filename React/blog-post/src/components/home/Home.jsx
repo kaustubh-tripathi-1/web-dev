@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchActivePosts, fetchAllPosts } from "../../slices/postsSlice";
 import { NavLink } from "react-router";
-import { HomePostCardSkeleton } from "../exportCompos";
+import { HomePostCardSkeleton } from "../componentsIndex";
 
 export default function Home() {
     const { activePosts, loading, error } = useSelector((state) => state.posts);

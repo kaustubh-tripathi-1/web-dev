@@ -9,7 +9,7 @@ import {
     createTempSession,
     deleteSession,
 } from "../../slices/authSlice";
-import { Spinner } from "../exportCompos";
+import { Spinner } from "../componentsIndex";
 import { addNotification } from "../../slices/uiSlice";
 import { updatePreferences } from "../../slices/userSlice";
 
@@ -66,7 +66,16 @@ export default function Signup() {
                     timeout: 10000,
                 })
             );
-            navigate(`/email-sent`);
+            // Debug state before navigation
+            const navState = { emailType: "email-verification" };
+            console.log("Navigating with state:", navState);
+
+            // setTimeout(() => {
+            navigate({
+                pathname: `/email-sent`,
+                state: navState,
+            });
+            // }, 2000);
         } catch (error) {
             if (error.type === `user_already_exists`) {
                 console.error(error.type, error.message);
@@ -96,13 +105,11 @@ export default function Signup() {
     }
 
     function togglePasswordVisibility() {
-        setIsPasswordShowing((prevIsPasswordShowing) => !prevIsPasswordShowing);
+        setIsPasswordShowing((prev) => !prev);
     }
 
     function toggleConfirmPasswordVisibility() {
-        setIsConfirmPasswordShowing(
-            (prevIsConfirmPasswordShowing) => !prevIsConfirmPasswordShowing
-        );
+        setIsConfirmPasswordShowing((prev) => !prev);
     }
 
     return (

@@ -11,7 +11,7 @@ import {
 import { logoutUser, logout } from "../../slices/authSlice";
 import { deletePostFromDB } from "../../slices/postsSlice";
 import { deleteFile } from "../../slices/storageSlice";
-import { Spinner } from "../exportCompos";
+import { Spinner } from "../componentsIndex";
 import { setPreferences, setProfile } from "../../slices/userSlice";
 
 /**

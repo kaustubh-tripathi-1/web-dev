@@ -12,7 +12,7 @@ import {
     updatePreferences,
 } from "../../slices/userSlice";
 import { addNotification } from "../../slices/uiSlice";
-import { Spinner } from "../exportCompos";
+import { Spinner } from "../componentsIndex";
 
 /**
  * EditProfile component for updating user details and preferences..

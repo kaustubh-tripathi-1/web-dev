@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-import { Footer, Header, Modal } from "../exportCompos";
+import { Footer, Header, Modal } from "../componentsIndex";
 import { useSelector } from "react-redux";
 
 /**

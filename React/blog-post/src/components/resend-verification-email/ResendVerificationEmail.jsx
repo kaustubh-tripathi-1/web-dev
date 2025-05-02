@@ -9,7 +9,7 @@ import {
     setError,
     setLoading,
 } from "../../slices/authSlice";
-import { Spinner } from "../exportCompos";
+import { Spinner } from "../componentsIndex";
 import { NavLink } from "react-router";
 import { addNotification } from "../../slices/uiSlice";
 

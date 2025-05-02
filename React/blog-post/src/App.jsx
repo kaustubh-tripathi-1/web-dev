@@ -20,7 +20,7 @@ import {
     VerifyEmail,
     EmailSent,
     ResendVerificationEmail,
-} from "./components/exportCompos";
+} from "./components/componentsIndex";
 import { useEffect, useState /* lazy, Suspense */ } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { checkAuthStatus, setInitialLoading } from "./slices/authSlice";

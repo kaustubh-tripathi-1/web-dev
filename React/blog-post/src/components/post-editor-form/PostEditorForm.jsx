@@ -18,7 +18,7 @@ import {
     uploadFeatureImage,
 } from "../../slices/storageSlice";
 import { fetchPostBySlug, setCurrentPost } from "../../slices/postsSlice";
-import { Spinner, BlogEditor } from "../exportCompos";
+import { Spinner, BlogEditor } from "../componentsIndex";
 import { storageService } from "../../appwrite-services/storage";
 import { addNotification, openModal } from "../../slices/uiSlice";
 
