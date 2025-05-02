@@ -1,4 +1,3 @@
-/** @jsxImportSource react */
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { Link } from "react-router";
