@@ -291,6 +291,11 @@ export default function Login() {
                             Reset Password
                         </NavLink>
                     </p>
+                    <p className="mt-2 text-center text-sm text-gray-700 dark:text-gray-300">
+                        We use third-party cookies for authentication. Please
+                        ensure you have enabled third-party cookies in your
+                        browser settings.
+                    </p>
                 </div>
             </div>
         </section>
