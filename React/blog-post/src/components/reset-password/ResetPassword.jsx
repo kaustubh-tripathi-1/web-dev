@@ -93,14 +93,20 @@ export default function ResetPassword() {
                 </h1>
 
                 {success ? (
-                    <div className="text-center">
+                    <div className="flex flex-col justify-center items-center">
                         <p className="text-green-500 dark:text-green-400 mb-4">
                             Password reset successfully! Please log in with your
                             new password.
                         </p>
-                        <p className="text-gray-700 dark:text-gray-300">
-                            Redirecting to login...
-                        </p>
+                        <div className="flex justify-center items-center">
+                            <p className="text-gray-700 dark:text-gray-300">
+                                Redirecting to login
+                            </p>
+                            <Spinner
+                                size="1"
+                                className="text-gray-700 dark:text-gray-300 ml-2"
+                            />
+                        </div>
                     </div>
                 ) : (
                     <form
