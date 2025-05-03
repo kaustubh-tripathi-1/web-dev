@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchActivePosts, fetchAllPosts } from "../../slices/postsSlice";
 import { NavLink } from "react-router";
-import { HomePostCardSkeleton } from "../componentsIndex";
+import { HomePostCardSkeleton, PostCard } from "../componentsIndex";
 
 export default function Home() {
     const { activePosts, loading, error } = useSelector((state) => state.posts);
@@ -56,20 +56,11 @@ export default function Home() {
             {!loading && !error && activePosts.length > 0 && (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {activePosts.map((post) => (
-                        <NavLink
+                        <PostCard
                             key={post.$id}
                             to={`/posts/${post.$id}`}
-                            className=""
-                        >
-                            <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md">
-                                <h2 className="text-xl font-semibold mb-4 hover:text-blue-300 dark:hover:text-blue-300">
-                                    {post.title}
-                                </h2>
-                                <span className="text-blue-500 dark:text-blue-400 hover:underline focus:underline focus:outline-none">
-                                    Read More
-                                </span>
-                            </div>
-                        </NavLink>
+                            title={post.title}
+                        />
                     ))}
                 </div>
             )}
