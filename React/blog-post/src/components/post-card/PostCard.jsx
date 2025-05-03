@@ -1,6 +1,7 @@
+import { memo } from "react";
 import { NavLink } from "react-router";
 
-export default function PostCard({ to, title }) {
+function PostCard({ to, title }) {
     return (
         <NavLink to={to}>
             <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md">
@@ -14,3 +15,4 @@ export default function PostCard({ to, title }) {
         </NavLink>
     );
 }
+export default memo(PostCard);
