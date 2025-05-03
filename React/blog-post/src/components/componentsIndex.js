@@ -74,6 +74,7 @@ export { default as Contact } from "./contact/Contact.jsx";
 export { default as HomePostCardSkeleton } from "./skeletons/HomePostCardSkeleton.jsx";
 export { default as Spinner } from "./spinner/Spinner.jsx";
 export { default as ProtectedRoute } from "./ProtectedRoute.jsx";
+export { default as PostCard } from "./post-card/PostCard.jsx";
 export { default as PostEditorForm } from "./post-editor-form/PostEditorForm.jsx";
 export { default as PostDetail } from "./post-detail/PostDetail.jsx";
 export { default as PostDetailSkeleton } from "./skeletons/PostDetailSkeleton.jsx";
