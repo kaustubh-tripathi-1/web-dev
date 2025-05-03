@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPostBySlug, setCurrentPost } from "../../slices/postsSlice";
@@ -21,6 +21,9 @@ export default function PostDetail() {
     const { authStatus, userData } = useSelector((state) => state.auth);
     const [isLoading, setisLoading] = useState(true);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [isMoveToTopVisible, setIsMoveToTopVisible] = useState(false);
+
+    const topRef = useRef(null);
 
     // Parse content with syntax highlighting
     const parsedContent = useMemo(() => {
@@ -79,6 +82,23 @@ export default function PostDetail() {
             dispatch(setCurrentPost(null));
         };
     }, [dispatch, slug]);
+
+    // Handle visibility of Move to Top button
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 1000) {
+                setIsMoveToTopVisible(true);
+            } else {
+                setIsMoveToTopVisible(false);
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    });
 
     /**
      * Navigates to the post editor.
@@ -139,7 +159,39 @@ export default function PostDetail() {
         : null;
 
     return (
-        <section className="min-h-screen py-8 px-4 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 animate-fade-in">
+        <section
+            ref={topRef}
+            className="min-h-screen py-8 px-4 bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 animate-fade-in"
+        >
+            {/* Move To Top Button */}
+            <button
+                onClick={() => {
+                    topRef?.current.scrollIntoView({
+                        behavior: "smooth",
+                    });
+                }}
+                className={`transition-opacity duration-500 w-10 h-10 fixed cursor-pointer bottom-4 right-4 bg-blue-500 rounded-full flex justify-center items-center ${
+                    isMoveToTopVisible
+                        ? "opacity-100"
+                        : "opacity-0 pointer-events-none"
+                }`}
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className={`w-5 h-5`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 15l7-7 7 7"
+                    />
+                </svg>
+            </button>
+
             <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
                 {/* Feature Image */}
                 {imageData && (
