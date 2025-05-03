@@ -16,7 +16,21 @@ export default function Home() {
 
     return (
         <section className="min-h-full px-4 py-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 animate-fade-in">
-            <h1 className="text-3xl font-bold mb-6">Latest Posts</h1>
+            {/* Hero Section */}
+            {!authStatus && (
+                <section className="flex flex-col items-center justify-center py-12 px-4 mb-4 bg-gray-100 dark:bg-gray-900 rounded-xl">
+                    <h1 className="text-center text-4xl font-bold mb-4">
+                        Welcome to Blogsmith 🛠️
+                    </h1>
+                    <p className="text-lg text-center text-gray-600 dark:text-gray-300">
+                        A modern platform to write, edit, and share blog posts
+                        effortlessly. Join a space where writers share ideas,
+                        stay current, and grow their voice.
+                    </p>
+                </section>
+            )}
+
+            <h2 className="text-3xl font-bold mb-6">Latest Posts</h2>
 
             {/* Loading State with Skeleton */}
             {loading && (
@@ -51,13 +65,7 @@ export default function Home() {
                                 <h2 className="text-xl font-semibold mb-4 hover:text-blue-300 dark:hover:text-blue-300">
                                     {post.title}
                                 </h2>
-                                {/* <p className="text-gray-700 dark:text-gray-300 mb-4">
-                                    {post.content.slice(0, 100)}...
-                                </p> */}
-                                <span
-                                    // to={`/posts/${post.$id}`}
-                                    className="text-blue-500 dark:text-blue-400 hover:underline focus:underline focus:outline-none"
-                                >
+                                <span className="text-blue-500 dark:text-blue-400 hover:underline focus:underline focus:outline-none">
                                     Read More
                                 </span>
                             </div>
