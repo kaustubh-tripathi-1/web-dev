@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams, NavLink } from "react-router";
 import { completeEmailVerification } from "../../slices/authSlice";
-import { Spinner } from "../exportCompos";
+import { Spinner } from "../componentsIndex";
 import { addNotification } from "../../slices/uiSlice";
 
 /**
