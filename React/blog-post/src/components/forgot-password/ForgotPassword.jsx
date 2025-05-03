@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, NavLink } from "react-router";
 import { requestPasswordReset, setError } from "../../slices/authSlice";
-import { Spinner } from "../exportCompos";
+import { Spinner } from "../componentsIndex";
 import { addNotification } from "../../slices/uiSlice";
 
 /**
@@ -12,7 +12,6 @@ import { addNotification } from "../../slices/uiSlice";
  */
 export default function ForgotPassword() {
     const { loading, error } = useSelector((state) => state.auth);
-    const { preferences } = useSelector((state) => state.user);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [success, setSuccess] = useState(false);
@@ -33,7 +32,8 @@ export default function ForgotPassword() {
                     timeout: 3000,
                 })
             );
-            setTimeout(() => navigate("/login"), 3000); // Redirect after 3s
+
+            navigate(`/email-sent?type=password-reset`);
         } catch (error) {
             console.error(error);
             dispatch(setError(error));
@@ -60,9 +60,12 @@ export default function ForgotPassword() {
                             Password reset email sent! Please check your inbox
                             (and spam folder).
                         </p>
-                        <p className="text-gray-700 dark:text-gray-300">
-                            Redirecting to login...
-                        </p>
+                        <div className="flex justify-center items-center">
+                            <p className="text-gray-700 dark:text-gray-300">
+                                Redirecting to login
+                            </p>
+                            <Spinner size="1" className="ml-2" />
+                        </div>
                     </div>
                 ) : (
                     <form
