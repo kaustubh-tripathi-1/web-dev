@@ -23,9 +23,9 @@ export default function Home() {
                         Welcome to Blogsmith 🛠️
                     </h1>
                     <p className="text-lg text-center text-gray-600 dark:text-gray-300">
-                        A modern platform to write, edit, and share blog posts
+                        A modern platform to write and share blog posts
                         effortlessly. Join a space where writers share ideas,
-                        stay current, and grow their voice.
+                        stay up-to-date, and grow their voice and career.
                     </p>
                 </section>
             )}
