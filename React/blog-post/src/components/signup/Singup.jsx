@@ -66,16 +66,8 @@ export default function Signup() {
                     timeout: 10000,
                 })
             );
-            // Debug state before navigation
-            const navState = { emailType: "email-verification" };
-            console.log("Navigating with state:", navState);
 
-            // setTimeout(() => {
-            navigate({
-                pathname: `/email-sent`,
-                state: navState,
-            });
-            // }, 2000);
+            navigate(`/email-sent?type=email-verification`);
         } catch (error) {
             if (error.type === `user_already_exists`) {
                 console.error(error.type, error.message);
