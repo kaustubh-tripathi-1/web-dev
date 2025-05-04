@@ -108,7 +108,7 @@ export default function Header() {
                                 : blogSmithLogoLight
                         }
                         alt="blog-smith logo"
-                        className="w-20"
+                        className="w-24"
                     />
                 </NavLink>
 
@@ -124,7 +124,7 @@ export default function Header() {
                                     key={item.name}
                                     to={item.slug}
                                     className={({ isActive }) =>
-                                        `md:py-1 md:px-3 md:text-sm lg:py-1.5 lg:px-4 lg:text-base hover:underline focus:underline text-nowrap hover:decoration-white focus:decoration-white hover:text-white hover:bg-blue-800  rounded-full  focus:text-white focus:bg-blue-800 focus:outline-2 focus:outline-offset-2 focus:outline-blue-800 active:bg-blue-800  ${
+                                        `md:py-1.5 md:px-3 md:text-sm lg:py-1.5 lg:px-4 lg:text-base hover:underline focus:underline text-nowrap hover:decoration-white focus:decoration-white hover:text-white hover:bg-blue-800  rounded-full  focus:text-white focus:bg-blue-800 focus:outline-2 focus:outline-offset-2 focus:outline-blue-800 active:bg-blue-800  ${
                                             isActive
                                                 ? "text-blue-500 dark:text-blue-400 font-semibold"
                                                 : ""
