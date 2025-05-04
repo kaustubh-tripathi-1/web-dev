@@ -5,7 +5,7 @@ export default function ErrorBoundaryInRouter() {
     const error = useRouteError(); // Get the error from React Router
     const navigate = useNavigate();
 
-    console.error("Caught by ErrorBoundary In Router:", error); // Log it
+    console.error("Caught by Router ErrorBoundary:", error); // Log it
 
     if (!error) {
         // If no error, redirect to home or render nothing

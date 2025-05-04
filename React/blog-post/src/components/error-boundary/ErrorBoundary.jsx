@@ -11,7 +11,7 @@ export default class ErrorBoundary extends Component {
 
     componentDidCatch(error, errorInfo) {
         // Log error to a service (e.g., Sentry) or console
-        console.error("Caught by ErrorBoundary:", error, errorInfo);
+        console.error("Caught by global ErrorBoundary:", error, errorInfo);
     }
 
     render() {
