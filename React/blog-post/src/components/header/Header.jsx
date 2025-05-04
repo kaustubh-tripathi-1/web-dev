@@ -5,8 +5,8 @@ import { setTheme, openModal } from "../../slices/uiSlice";
 import { updatePreferences } from "../../slices/userSlice";
 import darkModeIcon from "../../assets/night-mode.png";
 import lightModeIcon from "../../assets/light.png";
-import blogSmithLogoDark from "../../assets/BlogSmith-Logo-5-16-9-bg-removed-dark.png";
-import blogSmithLogoLight from "../../assets/BlogSmith-Logo-5-light-16-9.png";
+import blogSmithLogoDark from "../../assets/BlogSmith-Logo-6-16-9-dark.png";
+import blogSmithLogoLight from "../../assets/BlogSmith-Logo-6-light-16-9.png";
 
 export default function Header() {
     const dispatch = useDispatch();
