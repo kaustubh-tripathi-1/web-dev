@@ -7,6 +7,7 @@ import darkModeIcon from "../../assets/night-mode.png";
 import lightModeIcon from "../../assets/light.png";
 import blogSmithLogoDark from "../../assets/BlogSmith-Logo-6-16-9-dark.png";
 import blogSmithLogoLight from "../../assets/BlogSmith-Logo-6-light-16-9.png";
+import { useDebounce } from "../../hooks/useDebounce";
 
 export default function Header() {
     const dispatch = useDispatch();
@@ -63,23 +64,23 @@ export default function Header() {
      * @param {number} delay - The delay after which the callback is to be executed
      * @returns {function} A debounced version of the callback
      */
-    function debounce(callback, delay) {
-        let timeoutId;
+    // function debounce(callback, delay) {
+    //     let timeoutId;
 
-        return function (...args) {
-            if (timeoutId) {
-                clearTimeout(timeoutId);
-            }
+    //     return function (...args) {
+    //         if (timeoutId) {
+    //             clearTimeout(timeoutId);
+    //         }
 
-            timeoutId = setTimeout(() => {
-                callback.call(null, ...args);
-            }, delay);
-        };
-    }
+    //         timeoutId = setTimeout(() => {
+    //             callback.call(null, ...args);
+    //         }, delay);
+    //     };
+    // }
 
     // Debounced updatePreferences
     const debouncedUpdatePreferences = useCallback(
-        debounce((prefs) => {
+        useDebounce((prefs) => {
             dispatch(updatePreferences(prefs));
         }, 2000),
         [dispatch]
