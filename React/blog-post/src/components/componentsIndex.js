@@ -92,3 +92,4 @@ export { default as ResetPassword } from "./reset-password/ResetPassword.jsx";
 export { default as VerifyEmail } from "./verify-email/VerifyEmail.jsx";
 export { default as EmailSent } from "./email-sent/EmailSent.jsx";
 export { default as ResendVerificationEmail } from "./resend-verification-email/ResendVerificationEmail.jsx";
+export { default as SearchModalContent } from "./search/SearchModalContent.jsx";
