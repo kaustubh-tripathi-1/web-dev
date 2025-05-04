@@ -2,9 +2,11 @@ import { useCallback, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { NavLink } from "react-router";
 import { setTheme, openModal } from "../../slices/uiSlice";
+import { updatePreferences } from "../../slices/userSlice";
 import darkModeIcon from "../../assets/night-mode.png";
 import lightModeIcon from "../../assets/light.png";
-import { updatePreferences } from "../../slices/userSlice";
+import blogSmithLogoDark from "../../assets/BlogSmith-Logo-5-16-9-bg-removed-dark.png";
+import blogSmithLogoLight from "../../assets/BlogSmith-Logo-5-light-16-9.png";
 
 export default function Header() {
     const dispatch = useDispatch();
@@ -99,7 +101,15 @@ export default function Header() {
             <div className="mx-auto px-4 py-4 flex items-center justify-between">
                 {/* Logo/Title */}
                 <NavLink to="/" className="text-2xl font-bold">
-                    BlogSmith
+                    <img
+                        src={
+                            theme === "dark"
+                                ? blogSmithLogoDark
+                                : blogSmithLogoLight
+                        }
+                        alt="blog-smith logo"
+                        className="w-20"
+                    />
                 </NavLink>
 
                 {/* Desktop Navigation (md and above) */}
@@ -128,7 +138,7 @@ export default function Header() {
                     {authStatus && (
                         <button
                             onClick={openLogoutModal}
-                            className="text-sm lg:text-base lg:px-3 bg-red-500 text-white hover:bg-red-700 focus:bg-red-600 focus:outline-2 focus:outline-offset-2 focus:outline-red-500 px-3 py-1 rounded-full cursor-pointer"
+                            className="text-sm lg:text-base lg:px-3 bg-red-500 text-white hover:bg-red-700 focus:bg-red-600 focus:outline-2 focus:outline-offset-2 focus:outline-red-500 px-3 py-1.5 rounded-full cursor-pointer"
                         >
                             Logout
                         </button>
