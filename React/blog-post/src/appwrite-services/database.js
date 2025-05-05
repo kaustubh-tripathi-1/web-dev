@@ -249,6 +249,55 @@ export class DatabaseService {
             [Query.equal("userID", userID)]
         );
     }
+
+    /**
+     * Searches for posts matching the query in title or content, only returning active posts.
+     * @param {string} query - The search query.
+     * @returns {Promise<object[]>} Array of matching post documents.
+     * @throws {DatabaseError} If validation fails.
+     * @throws {AppwriteException} If the Appwrite API call fails.
+     */
+    async searchPosts(query) {
+        if (this.#validateString(query)) {
+            throw new DatabaseError("Search query must be a non-empty string");
+        }
+
+        try {
+            // Search by title (requires fulltext index)
+            const titleResponse = await this.#databases.listDocuments(
+                appwriteConfig.appwriteDatabaseID,
+                appwriteConfig.appwriteCollectionID,
+                [Query.search("title", query), Query.equal("status", "active")]
+            );
+
+            // Search by content (requires fulltext index)
+            const contentResponse = await this.#databases.listDocuments(
+                appwriteConfig.appwriteDatabaseID,
+                appwriteConfig.appwriteCollectionID,
+                [
+                    Query.search("content", query),
+                    Query.equal("status", "active"),
+                ]
+            );
+
+            // Combine and deduplicate results
+            const combinedResults = [
+                ...titleResponse.documents,
+                ...contentResponse.documents.filter(
+                    (doc) =>
+                        !titleResponse.documents.some(
+                            (titleDoc) => titleDoc.$id === doc.$id
+                        )
+                ),
+            ];
+
+            return combinedResults;
+        } catch (error) {
+            throw new AppwriteException(
+                `Failed to search posts: ${error.message}`
+            );
+        }
+    }
 }
 
 export const databaseService = new DatabaseService();
