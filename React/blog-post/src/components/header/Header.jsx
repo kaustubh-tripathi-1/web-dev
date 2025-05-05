@@ -101,7 +101,7 @@ export default function Header() {
         <header className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 shadow-md">
             <div className="mx-auto px-4 py-4 flex items-center justify-between">
                 {/* Logo/Title */}
-                <NavLink to="/" className="text-2xl font-bold">
+                <NavLink to="/" className="text-2xl font-bold shrink-0">
                     <img
                         src={
                             theme === "dark"
