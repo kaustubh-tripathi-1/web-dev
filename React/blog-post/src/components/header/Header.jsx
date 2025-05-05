@@ -166,6 +166,7 @@ export default function Header() {
                             />
                         </svg>
                     </button>
+
                     {/* Search Bar with Text (lg breakpoint) */}
                     <button
                         onClick={openSearchModal}
