@@ -137,9 +137,14 @@ export class DatabaseService {
      */
     async updatePost(slug, { title, content, featureImage, status }) {
         //$ Validations
-        if (this.#validateString(slug) || slug.length > 36) {
+        if (this.#validateString(slug)) {
             throw new DatabaseError(
                 "Document ID/slug must be a non-empty string"
+            );
+        }
+        if (slug.length > 36) {
+            throw new DatabaseError(
+                "Document ID/slug must be a less than 37 characters"
             );
         }
         if (this.#validateString(title)) {
@@ -297,6 +302,54 @@ export class DatabaseService {
                 `Failed to search posts: ${error.message}`
             );
         }
+    }
+
+    /**
+     * Retrieves a paginated list of active posts from the database with limit and offset.
+     * @param {Object} options - Pagination options.
+     * @param {number} [options.limit=10] - Number of posts to fetch per page.
+     * @param {number} [options.offset=0] - Offset for pagination.
+     * @returns {Promise<object>} Returns a promise that resolves to an object containing a list of active documents (e.g., { documents: [...] }).
+     * @throws {AppwriteException} If the Appwrite API call fails.
+     */
+    async getActivePostsWithLimit({ limit = 10, offset = 0 } = {}) {
+        return this.#databases.listDocuments(
+            appwriteConfig.appwriteDatabaseID,
+            appwriteConfig.appwriteCollectionID,
+            [
+                Query.equal("status", "active"),
+                Query.limit(limit),
+                Query.offset(offset),
+                Query.orderDesc("$createdAt"),
+            ]
+        );
+    }
+
+    /**
+     * Retrieves a paginated list of posts for a specific user from the database with limit and offset.
+     * @param {string} userID - The ID of the user whose posts to retrieve.
+     * @param {Object} options - Pagination options.
+     * @param {number} [options.limit=10] - Number of posts to fetch per page.
+     * @param {number} [options.offset=0] - Offset for pagination.
+     * @returns {Promise<object>} Returns a promise that resolves to an object containing a list of user documents (e.g., { documents: [...] }).
+     * @throws {DatabaseError} If validation fails.
+     * @throws {AppwriteException} If the Appwrite API call fails.
+     */
+    async getUserPostsWithLimit(userID, { limit = 10, offset = 0 } = {}) {
+        if (this.#validateString(userID)) {
+            throw new DatabaseError("User ID must be a non-empty string");
+        }
+
+        return this.#databases.listDocuments(
+            appwriteConfig.appwriteDatabaseID,
+            appwriteConfig.appwriteCollectionID,
+            [
+                Query.equal("userID", userID),
+                Query.limit(limit),
+                Query.offset(offset),
+                Query.orderDesc("$createdAt"),
+            ]
+        );
     }
 }
 
