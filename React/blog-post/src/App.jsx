@@ -20,6 +20,7 @@ import {
     VerifyEmail,
     EmailSent,
     ResendVerificationEmail,
+    SearchResults,
 } from "./components/componentsIndex";
 import { useEffect, useState /* lazy, Suspense */ } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -102,6 +103,7 @@ const router = createBrowserRouter([
                     </ProtectedRoute>
                 ),
             },
+            { path: "search", element: <SearchResults /> },
             { path: "*", element: <NotFound /> },
         ],
     },
