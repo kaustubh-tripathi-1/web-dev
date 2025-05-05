@@ -1,18 +1,14 @@
-/** @jsxImportSource react */
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import {
-    closeModal,
-    addNotification,
-    clearNotifications,
-} from "../../slices/uiSlice";
+import { closeModal, addNotification } from "../../slices/uiSlice";
 import { logoutUser, logout } from "../../slices/authSlice";
 import { deletePostFromDB } from "../../slices/postsSlice";
 import { deleteFile } from "../../slices/storageSlice";
 import { Spinner } from "../componentsIndex";
 import { setPreferences, setProfile } from "../../slices/userSlice";
+import { SearchModalContent } from "../componentsIndex";
 
 /**
  * Reusable Modal component for displaying confirmations or custom content.
@@ -56,25 +52,41 @@ function Modal({ modalType, modalData, children }) {
         if (!isModalOpen) return;
 
         const modal = modalRef.current;
+
         // Store the trigger element
         triggerRef.current = document.activeElement;
 
-        // Find focusable elements within the modal
-        const focusableElements = modal.querySelectorAll(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        const firstFocusable = focusableElements[0];
-        const lastFocusable = focusableElements[focusableElements.length - 1];
+        // Function to update focusable elements
+        const updateFocusableElements = () => {
+            const focusableElements = modal.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            const firstFocusable = focusableElements[0];
+            const lastFocusable =
+                focusableElements[focusableElements.length - 1];
 
-        firstFocusableRef.current = firstFocusable;
-        lastFocusableRef.current = lastFocusable;
+            firstFocusableRef.current = firstFocusable;
+            lastFocusableRef.current = lastFocusable;
 
-        // Set initial focus to the Cancel button
-        firstFocusable?.focus();
+            // Set initial focus to the first focusable element (e.g., input in SearchModalContent)
+            firstFocusable?.focus();
+        };
+
+        // Initial setup of focusable elements
+        updateFocusableElements();
 
         // Handle Tab and Shift+Tab
         const handleKeyDown = (event) => {
             if (event.key === "Tab") {
+                const focusableElements = modal.querySelectorAll(
+                    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                );
+                const firstFocusable = focusableElements[0];
+                const lastFocusable =
+                    focusableElements[focusableElements.length - 1];
+
+                if (focusableElements.length === 0) return;
+
                 if (
                     event.shiftKey &&
                     document.activeElement === firstFocusable
@@ -105,14 +117,30 @@ function Modal({ modalType, modalData, children }) {
         mainContent.setAttribute("aria-hidden", "true");
         mainContent.setAttribute("inert", "");
 
+        // Observe changes to the modal content to update focusable elements
+        const observer = new MutationObserver(() => {
+            updateFocusableElements();
+        });
+
+        observer.observe(modal, { childList: true, subtree: true });
+
         return () => {
             modal.removeEventListener("keydown", handleKeyDown);
             mainContent.removeAttribute("aria-hidden");
             mainContent.removeAttribute("inert");
+            observer.disconnect();
             // Restore focus
             triggerRef.current?.focus();
         };
-    }, [isModalOpen, handleClose, postsLoading, storageDeleting, authLoading]);
+    }, [
+        isModalOpen,
+        handleClose,
+        postsLoading,
+        storageDeleting,
+        authLoading,
+        modalType,
+        children,
+    ]);
 
     if (!isModalOpen) return null;
 
@@ -129,7 +157,6 @@ function Modal({ modalType, modalData, children }) {
                     })
                 );
             }
-            // dispatch(clearNotifications()); // Clear notifications before navigation
             dispatch(setProfile(null));
             dispatch(setPreferences(null));
             navigate("/login");
@@ -198,6 +225,14 @@ function Modal({ modalType, modalData, children }) {
             confirmAction: handleLogout,
             isLoading: authLoading,
         },
+        search: {
+            title: "Search Posts",
+            message: <SearchModalContent />,
+            confirmText: null,
+            cancelText: "Close (esc)",
+            confirmAction: null,
+            isLoading: false,
+        },
     };
 
     const config = modalConfigs[modalType] || {
@@ -222,7 +257,7 @@ function Modal({ modalType, modalData, children }) {
             aria-labelledby="modal-title"
         >
             <div
-                className={`mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-2xl transition-transform duration-300 dark:bg-gray-800 sm:max-w-lg ${
+                className={`mx-4 w-full max-w-md rounded-lg bg-white dark:bg-gray-800 p-6 shadow-2xl transition-transform duration-300 sm:max-w-lg ${
                     isClosing ? "scale-95" : "scale-100"
                 }`}
                 onClick={handleContentClick}
@@ -237,33 +272,37 @@ function Modal({ modalType, modalData, children }) {
                 <div className="mb-6 text-gray-700 dark:text-gray-200 prose dark:prose-invert">
                     {children || config.message}
                 </div>
-                <div className="flex justify-end gap-3">
-                    <button
-                        type="button"
-                        className="rounded-md bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer focus:outline-2 focus:outline-offset-2 focus:outline-gray-600"
-                        onClick={handleClose}
-                        disabled={config.isLoading}
-                    >
-                        {config.cancelText}
-                    </button>
-                    <button
-                        type="button"
-                        className="rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-700 transition-colors cursor-pointer focus:outline-2 focus:outline-offset-2 focus:outline-red-600"
-                        onClick={config.confirmAction}
-                        disabled={config.isLoading}
-                    >
-                        {config.isLoading ? (
-                            <div className="flex justify-center items-center">
-                                {modalType === "delete-post"
-                                    ? "Deleting..."
-                                    : "Logging out..."}
-                                <Spinner size="1" className="ml-2" />
-                            </div>
-                        ) : (
-                            config.confirmText
+                {modalType !== "search" && (
+                    <div className="flex justify-end gap-3">
+                        <button
+                            type="button"
+                            className="rounded-md bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer focus:outline-2 focus:outline-offset-2 focus:outline-gray-600"
+                            onClick={handleClose}
+                            disabled={config.isLoading}
+                        >
+                            {config.cancelText}
+                        </button>
+                        {config.confirmText && (
+                            <button
+                                type="button"
+                                className="rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-700 transition-colors cursor-pointer focus:outline-2 focus:outline-offset-2 focus:outline-red-600"
+                                onClick={config.confirmAction}
+                                disabled={config.isLoading}
+                            >
+                                {config.isLoading ? (
+                                    <div className="flex justify-center items-center">
+                                        {modalType === "delete-post"
+                                            ? "Deleting..."
+                                            : "Logging out..."}
+                                        <Spinner size="1" className="ml-2" />
+                                    </div>
+                                ) : (
+                                    config.confirmText
+                                )}
+                            </button>
                         )}
-                    </button>
-                </div>
+                    </div>
+                )}
             </div>
         </div>,
         document.body
