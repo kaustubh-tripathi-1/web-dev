@@ -1,18 +1,49 @@
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchActivePosts, fetchAllPosts } from "../../slices/postsSlice";
+import {
+    fetchActivePosts,
+    fetchAllPosts,
+    fetchMoreActivePosts,
+} from "../../slices/postsSlice";
 import { NavLink } from "react-router";
-import { HomePostCardSkeleton, PostCard } from "../componentsIndex";
+import { HomePostCardSkeleton, PostCard, Spinner } from "../componentsIndex";
 
 export default function Home() {
-    const { activePosts, loading, error } = useSelector((state) => state.posts);
+    const { activePosts, loading, infiniteScrollLoading, error, hasMore } =
+        useSelector((state) => state.posts);
     const { authStatus } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
+    const observerRef = useRef(null);
 
     useEffect(() => {
         dispatch(fetchActivePosts());
         dispatch(fetchAllPosts());
     }, [dispatch]);
+
+    // Intersection Observer to detect when the user scrolls to the bottom
+    const lastPostRef = useCallback(
+        (node) => {
+            if (loading || infiniteScrollLoading) return;
+
+            if (observerRef.current) {
+                observerRef.current.disconnect();
+            }
+
+            observerRef.current = new IntersectionObserver(
+                (entries) => {
+                    if (entries[0].isIntersecting && hasMore) {
+                        dispatch(fetchMoreActivePosts());
+                    }
+                } /* ,
+                { threshold: 1.0 } */
+            );
+
+            if (node) {
+                observerRef.current.observe(node);
+            }
+        },
+        [loading, infiniteScrollLoading, hasMore, dispatch]
+    );
 
     return (
         <section className="min-h-full px-4 py-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 animate-fade-in">
@@ -59,15 +90,45 @@ export default function Home() {
             {/* Posts List */}
             {!loading && !error && activePosts.length > 0 && (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {activePosts.map((post) => (
+                    {/* {activePosts.map((post) => (
                         <PostCard
                             key={post.$id}
                             to={`/posts/${post.$id}`}
                             title={post.title}
                         />
-                    ))}
+                    ))} */}
+                    {activePosts.map((post, index) => {
+                        const isLastPost = index === activePosts.length - 1;
+                        return (
+                            <div
+                                key={post.$id}
+                                ref={isLastPost ? lastPostRef : null}
+                            >
+                                <PostCard
+                                    to={`/posts/${post.$id}`}
+                                    title={post.title}
+                                />
+                            </div>
+                        );
+                    })}
                 </div>
             )}
+
+            {/* Infinite Scroll Loading Spinner */}
+            {infiniteScrollLoading && (
+                <Spinner size="2" className="mx-auto mt-4" />
+            )}
+
+            {/* No More Posts Message */}
+            {!loading &&
+                !infiniteScrollLoading &&
+                !error &&
+                activePosts.length > 0 &&
+                !hasMore && (
+                    <p className="text-center text-gray-600 dark:text-gray-400 mt-4">
+                        No more posts to load.
+                    </p>
+                )}
 
             {/* No Posts - Conditional Messaging */}
             {!loading && !error && activePosts.length === 0 && (
