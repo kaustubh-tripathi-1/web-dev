@@ -97,7 +97,7 @@ export default function UserProfile() {
                     <div className="mt-6 flex flex-col sm:flex-row gap-4">
                         <button
                             type="button"
-                            className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:bg-blue-700 dark:focus:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors cursor-pointer focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
+                            className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:bg-blue-700 dark:focus:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-600 cursor-pointer focus:outline-2 focus:outline-offset-2 focus:outline-blue-600"
                             onClick={() =>
                                 navigate(`/profile/edit/${profile.$id}`)
                             }
@@ -113,7 +113,7 @@ export default function UserProfile() {
                 <div className="mt-8">
                     <button
                         type="button"
-                        className="flex items-center gap-2 rounded-md bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors focus:outline-2 focus:outline-offset-2 focus:outline-gray-600"
+                        className="flex items-center gap-2 rounded-md bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 focus:outline-2 focus:outline-offset-2 focus:outline-gray-600"
                         onClick={togglePosts}
                     >
                         {showPosts ? "Hide My Posts" : "Show My Posts"}
@@ -147,7 +147,7 @@ export default function UserProfile() {
                                         <div className="mt-4 flex gap-2">
                                             <button
                                                 type="button"
-                                                className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer"
+                                                className="px-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer focus:outline focus:outline-blue-400 rounded-md"
                                                 onClick={() =>
                                                     navigate(
                                                         `/posts/${post.$id}`
@@ -158,7 +158,7 @@ export default function UserProfile() {
                                             </button>
                                             <button
                                                 type="button"
-                                                className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 cursor-pointer"
+                                                className="px-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 cursor-pointer focus:outline focus:outline-red-400 rounded-md"
                                                 onClick={() =>
                                                     dispatch(
                                                         openModal({
