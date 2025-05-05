@@ -55,6 +55,18 @@ export const fetchPostBySlug = createAsyncThunk(
     }
 );
 
+export const searchPostsWithQuery = createAsyncThunk(
+    "posts/searchPostsWithQuery",
+    async (query, { rejectWithValue }) => {
+        try {
+            const results = await databaseService.searchPosts(query);
+            return results;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
 /**
  * Deletes a post from the database.
  * @param {string} slug - The slug of the post to delete.
@@ -62,12 +74,12 @@ export const fetchPostBySlug = createAsyncThunk(
  */
 export const deletePostFromDB = createAsyncThunk(
     "posts/deletePostFromDB",
-    async (slug, { rejectWithValue, dispatch }) => {
+    async (slug, { rejectWithValue }) => {
         try {
             await databaseService.deletePost(slug);
             return slug;
         } catch (error) {
-            return rejectWithValue(error.message);
+            return rejectWithValue(error.message || error);
         }
     }
 );
@@ -79,7 +91,9 @@ const initialState = {
     posts: [], // Array of all posts
     activePosts: [], // Array of active posts
     currentPost: null, // Object for the currently viewed post
+    searchResults: [], // Array of results of searched posts
     loading: false,
+    searchLoading: false, // Separate loading for searching posts
     error: null,
 };
 
@@ -134,6 +148,16 @@ const postsSlice = createSlice({
             state.error = null;
         },
         /**
+         * Sets the search loading state.
+         * @param {Object} state - The current state.
+         * @param {Object} action - The action with payload.
+         * @param {boolean} action.payload - The loading state.
+         */
+        setSearchLoading: (state, action) => {
+            state.searchLoading = action.payload;
+            state.error = null;
+        },
+        /**
          * Sets an error message.
          * @param {Object} state - The current state.
          * @param {Object} action - The action with payload.
@@ -151,6 +175,11 @@ const postsSlice = createSlice({
             state.posts = [];
             state.activePosts = [];
             state.currentPost = null;
+            state.loading = false;
+            state.error = null;
+        },
+        clearSearchResults: (state) => {
+            state.searchResults = [];
             state.loading = false;
             state.error = null;
         },
@@ -196,6 +225,18 @@ const postsSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
+            .addCase(searchPostsWithQuery.pending, (state) => {
+                state.searchLoading = true;
+                state.error = null;
+            })
+            .addCase(searchPostsWithQuery.fulfilled, (state, action) => {
+                state.searchResults = action.payload;
+                state.searchLoading = false;
+            })
+            .addCase(searchPostsWithQuery.rejected, (state, action) => {
+                state.searchLoading = false;
+                state.error = action.payload;
+            })
             // Delete a post
             .addCase(deletePostFromDB.pending, (state) => {
                 // state.loading = true;
@@ -224,7 +265,9 @@ export const {
     setActivePosts,
     setCurrentPost,
     setLoading,
+    setSearchLoading,
     setError,
     reset,
+    clearSearchResults,
 } = postsSlice.actions;
 export default postsSlice.reducer;
