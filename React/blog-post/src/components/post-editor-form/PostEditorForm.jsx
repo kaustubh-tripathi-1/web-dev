@@ -210,7 +210,7 @@ export default function PostEditorForm() {
             dispatch(
                 openModal({
                     type: "delete-post",
-                    data: { postID: slug, featureImage },
+                    data: { postID: slug, featureImage, shouldNavigate: true },
                 })
             );
         } finally {

@@ -119,6 +119,7 @@ export default function PostDetail() {
                     data: {
                         postID: currentPost?.$id,
                         featureImage: currentPost?.featureImage,
+                        shouldNavigate: true,
                     },
                 })
             );
