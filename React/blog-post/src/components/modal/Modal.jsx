@@ -265,7 +265,7 @@ function Modal({ modalType, modalData, children }) {
             >
                 {modalType === "search" && (
                     <p className="hidden absolute top-5.5 right-4 text-gray-900 dark:text-gray-300 rounded-md md:flex justify-center items-center px-2 py-1 gap-1">
-                        <span className="bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-gray-300 shadow-md rounded-sm px-1 pb-0.5">
+                        <span className="bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-gray-300 shadow-2xl rounded-sm px-1 pb-0.5">
                             esc
                         </span>
                         to close
