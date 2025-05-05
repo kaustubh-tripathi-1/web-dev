@@ -257,12 +257,21 @@ function Modal({ modalType, modalData, children }) {
             aria-labelledby="modal-title"
         >
             <div
-                className={`mx-4 w-full max-w-md rounded-lg bg-white dark:bg-gray-800 p-6 shadow-2xl transition-transform duration-300 sm:max-w-lg ${
+                className={`relative mx-4 w-full max-w-md rounded-lg bg-white dark:bg-gray-800 p-6 shadow-2xl transition-transform duration-300 sm:max-w-lg ${
                     isClosing ? "scale-95" : "scale-100"
                 }`}
                 onClick={handleContentClick}
                 ref={modalRef}
             >
+                {modalType === "search" && (
+                    <p className="hidden absolute top-5.5 right-4 text-gray-900 dark:text-gray-300 rounded-md md:flex justify-center items-center px-2 py-1 gap-1">
+                        <span className="bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-gray-300 shadow-md rounded-sm px-1 pb-0.5">
+                            esc
+                        </span>
+                        to close
+                    </p>
+                )}
+
                 <h2
                     id="modal-title"
                     className="mb-4 text-xl font-semibold text-gray-900 dark:text-white"
