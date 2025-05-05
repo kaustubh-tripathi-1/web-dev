@@ -16,7 +16,7 @@ function PostCard({ to, title, onClick }) {
             onClick={handleClick}
         >
             <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
-                <h2 className="text-xl font-semibold mb-4 hover:text-blue-300 dark:hover:text-blue-300 mt-0">
+                <h2 className="text-xl font-semibold mt-0 mb-4 hover:text-blue-300 dark:hover:text-blue-300">
                     {title}
                 </h2>
                 <span className="text-blue-500 dark:text-blue-400 hover:underline focus:underline focus:outline-none">
