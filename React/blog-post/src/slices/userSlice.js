@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { authService } from "../appwrite-services/auth";
 import { databaseService } from "../appwrite-services/database";
 import { setTheme } from "./uiSlice"; // Import setTheme to sync theme with uiSlice
+import { logoutUser } from "./authSlice";
 
 /**
  * Fetches the user's profile from Appwrite.
@@ -129,16 +130,46 @@ export const updatePassword = createAsyncThunk(
 );
 
 /**
- * Fetches the user's posts from Appwrite.
+ * Fetches the user's posts from Appwrite with pagination.
  * @param {string} userID - The ID of the user.
  * @returns {Promise<Array>} Array of the user's posts.
  */
-export const getUserPosts = createAsyncThunk(
-    "user/getUserPosts",
+export const fetchUserPosts = createAsyncThunk(
+    "user/fetchUserPosts",
     async (userID, { rejectWithValue }) => {
         try {
-            const posts = await databaseService.getUserPosts(userID);
-            return posts.documents;
+            const userPosts = await databaseService.getUserPostsWithLimit(
+                userID,
+                {
+                    limit: 10,
+                    offset: 0,
+                }
+            );
+            return userPosts.documents;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+/**
+ * Fetches more user posts for infinite scrolling.
+ * @param {string} userID - The ID of the user.
+ * @returns {Promise<Array>} Array of additional user posts.
+ */
+export const fetchMoreUserPosts = createAsyncThunk(
+    "user/fetchMoreUserPosts",
+    async (userID, { getState, rejectWithValue }) => {
+        const { offset } = getState().user;
+        try {
+            const userPosts = await databaseService.getUserPostsWithLimit(
+                userID,
+                {
+                    limit: 10,
+                    offset: offset + 10,
+                }
+            );
+            return userPosts.documents;
         } catch (error) {
             return rejectWithValue(error.message);
         }
@@ -152,7 +183,11 @@ const initialState = {
     profile: null, // e.g., { name: "John Doe", email: "john@example.com" }
     preferences: null, // e.g., { theme: "dark", notifications: true }
     userPosts: [],
-    loading: false,
+    loading: false, // global loading
+    infiniteScrollLoading: false, // Separate loading for fetching more posts during infinite scroll
+    userPostsLoading: false, // Separate loading for fetching user posts
+    offset: 0, // Tracks the current offset for pagination
+    hasMore: true, // Indicates if there are more posts to fetch
     error: null,
 };
 
@@ -191,6 +226,42 @@ const userSlice = createSlice({
             state.loading = action.payload;
         },
         /**
+         * Sets the infiniteScrollLoading state.
+         * @param {Object} state - The current state.
+         * @param {Object} action - The action with payload.
+         * @param {boolean} action.payload - The infiniteScrollLoading state.
+         */
+        setInfiniteScrollLoading: (state, action) => {
+            state.infiniteScrollLoading = action.payload;
+        },
+        /**
+         * Sets the userPostsLoading state.
+         * @param {Object} state - The current state.
+         * @param {Object} action - The action with payload.
+         * @param {boolean} action.payload - The userPostsLoading state.
+         */
+        setUserPostsLoading: (state, action) => {
+            state.userPostsLoading = action.payload;
+        },
+        /**
+         * Sets the offset state.
+         * @param {Object} state - The current state.
+         * @param {Object} action - The action with payload.
+         * @param {number} action.payload - The offset state.
+         */
+        setOffset: (state, action) => {
+            state.offset = action.payload;
+        },
+        /**
+         * Sets the hasMore state.
+         * @param {Object} state - The current state.
+         * @param {Object} action - The action with payload.
+         * @param {boolean} action.payload - The hasMore state.
+         */
+        setHasMore: (state, action) => {
+            state.hasMore = action.payload;
+        },
+        /**
          * Sets an error message.
          * @param {Object} state - The current state.
          * @param {Object} action - The action with payload.
@@ -206,6 +277,18 @@ const userSlice = createSlice({
          */
         clearUserPosts: (state, action) => {
             state.userPosts = [];
+        },
+        /**
+         * Removes a post from userPosts by slug.
+         * @param {Object} state - The current state.
+         * @param {Object} action - The action with payload.
+         * @param {string} action.payload - The slug of the post to remove.
+         */
+        removeUserPost: (state, action) => {
+            const slug = action.payload;
+            state.userPosts = state.userPosts.filter(
+                (post) => post.$id !== slug
+            );
         },
     },
     extraReducers: (builder) => {
@@ -249,17 +332,34 @@ const userSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
-            // Get User Posts
-            .addCase(getUserPosts.pending, (state) => {
-                state.loading = true;
+            // Fetch User Posts
+            .addCase(fetchUserPosts.pending, (state) => {
+                state.userPostsLoading = true;
                 state.error = null;
             })
-            .addCase(getUserPosts.fulfilled, (state, action) => {
-                state.loading = false;
+            .addCase(fetchUserPosts.fulfilled, (state, action) => {
+                state.userPostsLoading = false;
                 state.userPosts = action.payload;
+                state.offset = 0;
+                state.hasMore = action.payload.length === 10;
             })
-            .addCase(getUserPosts.rejected, (state, action) => {
-                state.loading = false;
+            .addCase(fetchUserPosts.rejected, (state, action) => {
+                state.userPostsLoading = false;
+                state.error = action.payload;
+            })
+            // Fetch More User Posts (Infinite Scrolling)
+            .addCase(fetchMoreUserPosts.pending, (state) => {
+                state.infiniteScrollLoading = true;
+                state.error = null;
+            })
+            .addCase(fetchMoreUserPosts.fulfilled, (state, action) => {
+                state.infiniteScrollLoading = false;
+                state.userPosts = [...state.userPosts, ...action.payload];
+                state.offset = state.offset + 10;
+                state.hasMore = action.payload.length === 10;
+            })
+            .addCase(fetchMoreUserPosts.rejected, (state, action) => {
+                state.infiniteScrollLoading = false;
                 state.error = action.payload;
             })
             // Update Name
@@ -302,11 +402,15 @@ const userSlice = createSlice({
                 state.error = action.payload;
             })
             // Reset state on logout (from authSlice)
-            .addCase("auth/logoutUser", (state) => {
+            .addCase(logoutUser.fulfilled, (state) => {
                 state.profile = null;
                 state.preferences = null;
                 state.userPosts = [];
                 state.loading = false;
+                state.infiniteScrollLoading = false;
+                state.userPostsLoading = false;
+                state.offset = 0;
+                state.hasMore = true;
                 state.error = null;
             });
     },
@@ -318,6 +422,11 @@ export const {
     setLoading,
     setError,
     clearUserPosts,
+    removeUserPost,
+    setInfiniteScrollLoading,
+    setUserPostsLoading,
+    setHasMore,
+    setOffset,
 } = userSlice.actions;
 
 export default userSlice.reducer;
