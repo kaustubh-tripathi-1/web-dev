@@ -227,7 +227,7 @@ function Modal({ modalType, modalData, children }) {
         logout: {
             title: "Confirm Logout",
             message: "Are you sure you want to log out?",
-            confirmText: "Yes, I'm sure!!🙄 Log Out",
+            confirmText: 'Yes, "I\'m sure"🙄 Log Out',
             cancelText: "Cancel",
             confirmAction: handleLogout,
             isLoading: authLoading,
