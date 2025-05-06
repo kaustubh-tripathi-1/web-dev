@@ -4,7 +4,7 @@ import { createSlice, nanoid } from "@reduxjs/toolkit";
  * Initial State for the UI slice
  */
 const initialState = {
-    theme: localStorage.getItem("theme") || "light", // Load theme from local storage
+    theme: localStorage.getItem("theme") || "dark", // Load theme from local storage
     isModalOpen: false,
     modalType: null,
     modalData: null,
