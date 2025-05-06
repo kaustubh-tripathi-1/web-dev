@@ -176,7 +176,7 @@ export default function UserProfile() {
 
                 {/* User posts skeleton when loading */}
                 {showPosts && userPostsLoading && (
-                    <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 animate-fade-in">
+                    <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 animate-fade-in">
                         <UserPostCardSkeleton />
                         <UserPostCardSkeleton />
                         <UserPostCardSkeleton />
@@ -188,7 +188,7 @@ export default function UserProfile() {
 
                 {/* User posts */}
                 {showPosts && !userPostsLoading && (
-                    <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 animate-fade-in">
+                    <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 animate-fade-in">
                         {userPosts.length > 0 ? (
                             userPosts.map((post, index) => {
                                 const isLastPost =
