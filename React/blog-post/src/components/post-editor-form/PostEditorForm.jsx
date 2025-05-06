@@ -287,7 +287,7 @@ export default function PostEditorForm() {
                                 errors.title
                                     ? "border-red-500"
                                     : "border-gray-300 dark:border-gray-600"
-                            } shadow-sm hover:shadow-xl rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
+                            } shadow-sm hover:shadow-lg dark:shadow-cyan-800/50 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300`}
                         />
                         {errors.title && (
                             <p className="mt-1 text-sm text-red-500 dark:text-red-400">
@@ -331,7 +331,7 @@ export default function PostEditorForm() {
                                 errors.slug
                                     ? "border-red-500"
                                     : "border-gray-300 dark:border-gray-600"
-                            } shadow-sm hover:shadow-xl rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-not-allowed transition-all duration-300`}
+                            } shadow-sm hover:shadow-lg dark:shadow-cyan-800/50 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-not-allowed transition-all duration-300`}
                             readOnly
                         />
                         {errors.slug && (
@@ -360,7 +360,7 @@ export default function PostEditorForm() {
                             type="file"
                             accept="image/*"
                             onChange={handleFileUpload}
-                            className="w-fit px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm hover:shadow-xl cursor-pointer file:mr-[20%] file:rounded-lg file:bg-gray-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-gray-800 hover:file:bg-gray-300 dark:file:bg-gray-800 dark:file:text-violet-100 dark:hover:file:bg-gray-500 transition-all duration-300"
+                            className="w-fit px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm hover:shadow-lg dark:shadow-cyan-800/50 cursor-pointer file:mr-[20%] file:rounded-lg file:bg-gray-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-gray-800 hover:file:bg-gray-300 dark:file:bg-gray-800 dark:file:text-violet-100 dark:hover:file:bg-gray-500 transition-all duration-300"
                             disabled={loading}
                         />
                         {uploading && (
@@ -443,7 +443,7 @@ export default function PostEditorForm() {
                                 errors.status
                                     ? "border-red-500"
                                     : "border-gray-300 dark:border-gray-600"
-                            } shadow-sm hover:shadow-xl rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                            } shadow-sm hover:shadow-lg dark:shadow-cyan-800/50 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow duration-300`}
                             disabled={loading}
                         >
                             <option value="active">Published</option>
