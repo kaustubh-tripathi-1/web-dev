@@ -10,7 +10,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>WriteIt</title>
     </head>
-    <body>
+    <body style="background-color: #1f2937">
+        <script>
+            // Apply theme from localStorage before React renders
+            const theme = localStorage.getItem("theme") || "dark"; // Default to 'dark'
+            const html = document.documentElement;
+            if (theme === "dark") {
+                html.classList.add("dark");
+            } else {
+                html.classList.remove("dark");
+            }
+        </script>
         <div id="root"></div>
         <script type="module" src="/src/main.jsx"></script>
     </body>
