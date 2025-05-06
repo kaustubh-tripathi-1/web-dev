@@ -12,7 +12,7 @@ function PostCard({ to, title, onClick }) {
         <NavLink
             to={to}
             tabIndex={0}
-            className="block focus:outline-1 focus:outline-blue-500 focus:outline-offset-2 no-underline"
+            className="block focus:outline-1 focus:outline-blue-500 focus:outline-offset-2 no-underline animate-fade-in"
             onClick={handleClick}
         >
             <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
