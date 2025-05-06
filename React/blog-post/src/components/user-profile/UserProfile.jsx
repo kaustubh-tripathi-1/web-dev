@@ -75,7 +75,7 @@ export default function UserProfile() {
     const togglePostsAndFetchPosts = useCallback(() => {
         const newShowPosts = !showPosts;
         setShowPosts(newShowPosts);
-        if (newShowPosts && profile?.$id && userPosts.length === 0) {
+        if (newShowPosts && profile?.$id) {
             getUserPosts();
         }
     }, [showPosts, profile?.$id, userPosts.length, getUserPosts]);
@@ -197,12 +197,12 @@ export default function UserProfile() {
                                     <div
                                         key={post.$id}
                                         ref={isLastPost ? lastPostRef : null}
-                                        className="rounded-lg bg-white p-4 shadow-md dark:bg-gray-700 hover:shadow-lg dark:shadow-cyan-800/50 transition-shadow duration-300 animate-fade-in"
+                                        className="min-h-30 rounded-lg bg-white p-4 shadow-md dark:bg-gray-700 hover:shadow-lg dark:shadow-cyan-800/50 transition-shadow duration-300 animate-fade-in"
                                     >
-                                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                        <h3 className="h-10 text-lg font-semibold text-gray-900 dark:text-white">
                                             {post.title}
                                         </h3>
-                                        <div className="mt-4 flex gap-2">
+                                        <div className="mt-8 flex gap-2">
                                             <button
                                                 type="button"
                                                 className="px-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer focus:outline focus:outline-blue-400 rounded-md"
