@@ -197,7 +197,7 @@ export default function UserProfile() {
                                     <div
                                         key={post.$id}
                                         ref={isLastPost ? lastPostRef : null}
-                                        className="rounded-lg bg-white p-4 shadow-md dark:bg-gray-700 hover:shadow-lg transition-shadow"
+                                        className="rounded-lg bg-white p-4 shadow-md dark:bg-gray-700 hover:shadow-lg dark:shadow-cyan-800/50 transition-shadow duration-300 animate-fade-in"
                                     >
                                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                                             {post.title}
