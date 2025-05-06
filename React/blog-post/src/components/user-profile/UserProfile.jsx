@@ -1,10 +1,18 @@
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router";
-import { fetchProfile, getUserPosts } from "../../slices/userSlice";
+import {
+    fetchMoreUserPosts,
+    fetchProfile,
+    fetchUserPosts,
+} from "../../slices/userSlice";
 import { openModal } from "../../slices/uiSlice";
 import defaultUserAvatar from "../../assets/man.png";
-import { ProfileSkeleton } from "../componentsIndex";
+import {
+    ProfileSkeleton,
+    Spinner,
+    UserPostCardSkeleton,
+} from "../componentsIndex";
 
 /**
  * UserProfile component to display and manage user details and posts.
@@ -13,31 +21,64 @@ import { ProfileSkeleton } from "../componentsIndex";
 export default function UserProfile() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { profile, userPosts, preferences, loading, error } = useSelector(
-        (state) => state.user
-    );
+    const {
+        profile,
+        userPosts,
+        preferences,
+        loading,
+        infiniteScrollLoading,
+        userPostsLoading,
+        hasMore,
+        error,
+    } = useSelector((state) => state.user);
     const { authStatus, userData } = useSelector((state) => state.auth);
     const [showPosts, setShowPosts] = useState(false);
+    const observerRef = useRef(null);
 
-    // Fetch user profile and posts
-    const fetchUserData = useCallback(async () => {
+    // Fetch user posts
+    const getUserPosts = useCallback(() => {
         if (profile?.$id) {
-            dispatch(getUserPosts(profile.$id));
+            dispatch(fetchUserPosts(profile.$id));
         }
-    }, [dispatch]);
+    }, [dispatch, profile?.$id]);
 
-    useEffect(() => {
-        fetchUserData();
-    }, [fetchUserData]);
-
+    // Fetch user profile
     useEffect(() => {
         dispatch(fetchProfile());
     }, []);
 
-    // Toggle posts section
-    function togglePosts() {
-        setShowPosts((prev) => !prev);
-    }
+    // Intersection Observer to detect when the user scrolls to the bottom of the posts list
+    const lastPostRef = useCallback(
+        (node) => {
+            if (loading || infiniteScrollLoading || !showPosts) return;
+            if (observerRef.current) observerRef.current.disconnect();
+
+            observerRef.current = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting && hasMore) {
+                    dispatch(fetchMoreUserPosts(profile.$id));
+                }
+            });
+
+            if (node) observerRef.current.observe(node);
+        },
+        [
+            loading,
+            infiniteScrollLoading,
+            hasMore,
+            showPosts,
+            dispatch,
+            profile?.$id,
+        ]
+    );
+
+    // Toggle posts section and fetch user posts
+    const togglePostsAndFetchPosts = useCallback(() => {
+        const newShowPosts = !showPosts;
+        setShowPosts(newShowPosts);
+        if (newShowPosts && profile?.$id && userPosts.length === 0) {
+            getUserPosts();
+        }
+    }, [showPosts, profile?.$id, userPosts.length, getUserPosts]);
 
     // Check if the current user is viewing their own profile
     const isOwnProfile = authStatus && profile?.$id === userData.$id;
@@ -109,37 +150,54 @@ export default function UserProfile() {
             </div>
 
             {/* User Posts Section */}
-            {userPosts.length > 0 && (
-                <div className="mt-8">
-                    <button
-                        type="button"
-                        className="flex items-center gap-2 rounded-md bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 focus:outline-2 focus:outline-offset-2 focus:outline-gray-600"
-                        onClick={togglePosts}
+            <div className="mt-8">
+                <button
+                    type="button"
+                    className="flex items-center gap-2 rounded-md bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 focus:outline-2 focus:outline-offset-2 focus:outline-gray-600 cursor-pointer"
+                    onClick={togglePostsAndFetchPosts}
+                >
+                    {showPosts ? "Hide My Posts" : "Show My Posts"}
+                    <svg
+                        className={`w-5 h-5 transform transition-transform ${
+                            showPosts ? "rotate-180" : ""
+                        }`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
                     >
-                        {showPosts ? "Hide My Posts" : "Show My Posts"}
-                        <svg
-                            className={`w-5 h-5 transform transition-transform ${
-                                showPosts ? "rotate-180" : ""
-                            }`}
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M19 9l-7 7-7-7"
-                            />
-                        </svg>
-                    </button>
-                    {showPosts && (
-                        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                            {userPosts.length > 0 ? (
-                                userPosts.map((post) => (
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M19 9l-7 7-7-7"
+                        />
+                    </svg>
+                </button>
+
+                {/* User posts skeleton when loading */}
+                {showPosts && userPostsLoading && (
+                    <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 animate-fade-in">
+                        <UserPostCardSkeleton />
+                        <UserPostCardSkeleton />
+                        <UserPostCardSkeleton />
+                        <UserPostCardSkeleton />
+                        <UserPostCardSkeleton />
+                        <UserPostCardSkeleton />
+                    </div>
+                )}
+
+                {/* User posts */}
+                {showPosts && !userPostsLoading && (
+                    <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 animate-fade-in">
+                        {userPosts.length > 0 ? (
+                            userPosts.map((post, index) => {
+                                const isLastPost =
+                                    index === userPosts.length - 1;
+                                return (
                                     <div
                                         key={post.$id}
-                                        className="rounded-lg bg-white p-4 shadow-md dark:bg-gray-800 hover:shadow-lg transition-shadow"
+                                        ref={isLastPost ? lastPostRef : null}
+                                        className="rounded-lg bg-white p-4 shadow-md dark:bg-gray-700 hover:shadow-lg transition-shadow"
                                     >
                                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                                             {post.title}
@@ -164,7 +222,10 @@ export default function UserProfile() {
                                                         openModal({
                                                             type: "delete-post",
                                                             data: {
-                                                                slug: post.$id,
+                                                                postID: post.$id,
+                                                                featureImage:
+                                                                    post.featureImage,
+                                                                shouldNavigate: false,
                                                             },
                                                         })
                                                     )
@@ -174,16 +235,34 @@ export default function UserProfile() {
                                             </button>
                                         </div>
                                     </div>
-                                ))
-                            ) : (
-                                <p className="text-gray-600 dark:text-gray-300">
-                                    No posts yet.
+                                );
+                            })
+                        ) : (
+                            <p className="text-gray-600 dark:text-gray-300">
+                                No posts yet.
+                            </p>
+                        )}
+
+                        {/* Infinite Scroll Loading Spinner */}
+                        {infiniteScrollLoading && (
+                            <Spinner
+                                size="2"
+                                className="mx-auto mt-4 col-span-full"
+                            />
+                        )}
+
+                        {/* No More Posts Message */}
+                        {!infiniteScrollLoading &&
+                            !error &&
+                            userPosts.length > 0 &&
+                            !hasMore && (
+                                <p className="text-center text-gray-600 dark:text-gray-400 mt-4 col-span-full">
+                                    No more posts to load.
                                 </p>
                             )}
-                        </div>
-                    )}
-                </div>
-            )}
+                    </div>
+                )}
+            </div>
         </section>
     );
 }
