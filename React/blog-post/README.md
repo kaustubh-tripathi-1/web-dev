@@ -59,6 +59,7 @@ Follow these steps to get BlogSmith up and running locally:
    # or
    yarn install
    ```
+    Note: Use --legacy-peer-deps flag to ignore peer dependency conflicts as the used version of tinymce is not fully compatible with react-v19. 
 
 3. **Set Up Appwrite**
    - Create a new project in your Appwrite instance (e.g., named "BlogSmith").
