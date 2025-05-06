@@ -31,7 +31,9 @@ Welcome to **BlogSmith**, a sleek and modern blogging platform built with React 
 - **`html-react-parser`**: For parsing html into react components
 - **`react-router`**: For navigation and routing.
 - **`prism-react-renderer`**: For syntax highlighting.
-- **`vite`**: Fast build tool and development server.
+- **`vite`**: Fast build tool and development server.  
+#### Note: I created a new repo for deployment, that is why there is only a single commit. For commits and commit history, go [here](https://github.com/kaustubh-tripathi-1/web-dev/tree/main/React/blog-post)
+
 
 ---
 
