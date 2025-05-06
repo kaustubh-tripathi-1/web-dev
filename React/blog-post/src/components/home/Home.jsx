@@ -65,7 +65,7 @@ export default function Home() {
 
             {/* Loading State with Skeleton */}
             {loading && (
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 animate-fade-in">
                     {/* Show 4-6 skeleton cards as placeholders when loading */}
                     <HomePostCardSkeleton />
                     <HomePostCardSkeleton />
