@@ -90,13 +90,6 @@ export default function Home() {
             {/* Posts List */}
             {!loading && !error && activePosts.length > 0 && (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {/* {activePosts.map((post) => (
-                        <PostCard
-                            key={post.$id}
-                            to={`/posts/${post.$id}`}
-                            title={post.title}
-                        />
-                    ))} */}
                     {activePosts.map((post, index) => {
                         const isLastPost = index === activePosts.length - 1;
                         return (
