@@ -44,11 +44,6 @@ export default function SearchModalContent() {
         }
     }, [searchQuery, memoizedDebouncedSearch, dispatch]);
 
-    // Focus input when modal opens
-    useEffect(() => {
-        setFocus("searchQuery");
-    }, [setFocus]);
-
     function handleClear() {
         inputRef.current.value = "";
         dispatch(clearSearchResults());
