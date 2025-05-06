@@ -144,7 +144,7 @@ This project is a personal portfolio piece and does not currently have an open-s
 ## 📧 Contact
 
 Have questions or suggestions? Reach out to me at:
-- **Email**: your-email@example.com
+- **Email**: kt40060@gmail.com
 - **GitHub Issues**: [Create an Issue](https://github.com/kaustubh-tripathi-1/blogsmith/issues)
 
 ---
