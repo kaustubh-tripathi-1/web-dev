@@ -105,7 +105,7 @@ Follow these steps to get BlogSmith up and running locally:
 
 ## 🖼️ Screenshots
 
-### Homepage
+### Homepage (with sample posts)
 ![Homepage Screenshot](./public/screenshots/Home.png)
 
 ### User Profile
