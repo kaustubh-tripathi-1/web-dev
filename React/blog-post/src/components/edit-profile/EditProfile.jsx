@@ -251,7 +251,7 @@ export default function EditProfile() {
                             errors.name
                                 ? "border-red-500"
                                 : "border-gray-300 dark:border-gray-600"
-                        } shadow-sm hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 transition-all duration-200`}
+                        } shadow-sm hover:shadow-lg dark:shadow-cyan-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 transition-all duration-200`}
                     />
                     {errors.name && (
                         <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -283,7 +283,7 @@ export default function EditProfile() {
                             errors.email
                                 ? "border-red-500"
                                 : "border-gray-300 dark:border-gray-600"
-                        } shadow-sm hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 transition-all duration-200`}
+                        } shadow-sm hover:shadow-lg dark:shadow-cyan-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 transition-all duration-200`}
                     />
                     {errors.email && (
                         <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -297,7 +297,7 @@ export default function EditProfile() {
                     <label
                         htmlFor="notifications"
                         id="notifications-label"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                        className="block text-sm font-medium  text-gray-700 dark:text-gray-200"
                     >
                         Show Notifications
                     </label>
@@ -358,7 +358,7 @@ export default function EditProfile() {
                                 errors.currentPassword
                                     ? "border-red-500"
                                     : "border-gray-300 dark:border-gray-600"
-                            } shadow-sm hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 transition-all duration-200`}
+                            } shadow-sm hover:shadow-lg dark:shadow-cyan-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 transition-all duration-200`}
                         />
                         <button
                             type="button"
@@ -445,7 +445,7 @@ export default function EditProfile() {
                                 errors.newPassword
                                     ? "border-red-500"
                                     : "border-gray-300 dark:border-gray-600"
-                            } shadow-sm hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 transition-all duration-200`}
+                            } shadow-sm hover:shadow-lg dark:shadow-cyan-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 transition-all duration-200`}
                         />
                         <button
                             type="button"
@@ -528,7 +528,7 @@ export default function EditProfile() {
                                 errors.confirmPassword
                                     ? "border-red-500"
                                     : "border-gray-300 dark:border-gray-600"
-                            } shadow-sm hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 transition-all duration-200`}
+                            } shadow-sm hover:shadow-lg dark:shadow-cyan-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 transition-all duration-200`}
                         />
                         <button
                             type="button"

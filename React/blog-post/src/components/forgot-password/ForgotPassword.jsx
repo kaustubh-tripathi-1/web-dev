@@ -100,7 +100,7 @@ export default function ForgotPassword() {
                                     errors.email
                                         ? "border-red-500"
                                         : "border-gray-300 dark:border-gray-600"
-                                } rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 focus:border-transparent shadow-sm hover:shadow-xl`}
+                                } rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 focus:border-transparent shadow-sm hover:shadow-lg dark:shadow-cyan-800/50`}
                                 disabled={loading}
                                 autoComplete="email"
                                 aria-invalid={errors.email ? "true" : "false"}
