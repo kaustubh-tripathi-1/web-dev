@@ -32,6 +32,7 @@ function Modal({ modalType, modalData, children }) {
     const firstFocusableRef = useRef(null);
     const lastFocusableRef = useRef(null);
     const triggerRef = useRef(null);
+    const scrollPositionRef = useRef(0);
 
     // Handle close with animation
     const handleClose = useCallback(() => {
@@ -53,6 +54,13 @@ function Modal({ modalType, modalData, children }) {
 
         // Store the trigger element
         triggerRef.current = document.activeElement;
+
+        // Prevent background scrolling
+        scrollPositionRef.current = window.scrollY;
+        document.body.style.overflow = "hidden";
+        document.body.style.position = "fixed";
+        document.body.style.width = "100%";
+        document.body.style.top = `-${scrollPositionRef.current}px`;
 
         const modal = modalRef.current;
 
@@ -125,6 +133,13 @@ function Modal({ modalType, modalData, children }) {
         observer.observe(modal, { childList: true, subtree: true });
 
         return () => {
+            // Restore background scrolling
+            document.body.style.overflow = "";
+            document.body.style.position = "";
+            document.body.style.width = "";
+            document.body.style.top = "";
+            window.scrollTo(0, scrollPositionRef.current);
+
             modal.removeEventListener("keydown", handleKeyDown);
             mainContent.removeAttribute("aria-hidden");
             mainContent.removeAttribute("inert");
