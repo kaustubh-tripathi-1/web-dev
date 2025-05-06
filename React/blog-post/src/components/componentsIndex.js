@@ -94,3 +94,4 @@ export { default as EmailSent } from "./email-sent/EmailSent.jsx";
 export { default as ResendVerificationEmail } from "./resend-verification-email/ResendVerificationEmail.jsx";
 export { default as SearchModalContent } from "./search/SearchModalContent.jsx";
 export { default as SearchResults } from "./search/SearchResults.jsx";
+export { default as UserPostCardSkeleton } from "./skeletons/UserPostCardSkeleton.jsx";
