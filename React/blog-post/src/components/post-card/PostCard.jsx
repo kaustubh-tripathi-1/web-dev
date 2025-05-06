@@ -15,7 +15,7 @@ function PostCard({ to, title, onClick }) {
             className="block focus:outline-1 focus:outline-blue-500 focus:outline-offset-2 no-underline animate-fade-in"
             onClick={handleClick}
         >
-            <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md hover:shadow-lg dark:shadow-cyan-800/50 transition-all duration-300">
+            <div className="min-h-30 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md hover:shadow-lg dark:shadow-cyan-800/50 transition-all duration-300">
                 <h2 className="h-15 text-xl font-semibold mt-0 mb-4 hover:text-blue-300 dark:hover:text-blue-300">
                     {title}
                 </h2>
