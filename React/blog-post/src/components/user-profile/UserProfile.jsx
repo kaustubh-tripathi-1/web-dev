@@ -78,7 +78,7 @@ export default function UserProfile() {
         if (newShowPosts && profile?.$id) {
             getUserPosts();
         }
-    }, [showPosts, profile?.$id, userPosts.length, getUserPosts]);
+    }, [showPosts, profile?.$id, getUserPosts]);
 
     // Check if the current user is viewing their own profile
     const isOwnProfile = authStatus && profile?.$id === userData.$id;
