@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { databaseService } from "../appwrite-services/database";
-import { storageService } from "../appwrite-services/storage";
+import { logoutUser } from "./authSlice";
 
 /**
  * Fetches all posts from the database.
@@ -19,14 +19,38 @@ export const fetchAllPosts = createAsyncThunk(
 );
 
 /**
- * Fetches active posts from the database.
+ * Fetches active posts from the database with pagination.
  * @returns {Promise<Array>} Array of active posts.
  */
 export const fetchActivePosts = createAsyncThunk(
     `posts/fetchActivePosts`,
     async (_, { rejectWithValue }) => {
         try {
-            const activePosts = await databaseService.getActivePosts();
+            const activePosts = await databaseService.getActivePostsWithLimit({
+                limit: 10,
+                offset: 0,
+            });
+            return activePosts.documents;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+/**
+ * Fetches more active posts for infinite scrolling.
+ * @returns {Promise<Array>} Array of additional active posts.
+ */
+export const fetchMoreActivePosts = createAsyncThunk(
+    `posts/fetchMoreActivePosts`,
+    async (_, { rejectWithValue, getState }) => {
+        const { offset } = getState().posts;
+
+        try {
+            const activePosts = await databaseService.getActivePostsWithLimit({
+                limit: 10,
+                offset: offset + 10,
+            });
             return activePosts.documents;
         } catch (error) {
             return rejectWithValue(error.message);
@@ -94,6 +118,9 @@ const initialState = {
     searchResults: [], // Array of results of searched posts
     loading: false,
     searchLoading: false, // Separate loading for searching posts
+    infiniteScrollLoading: false, // Separate loading for fetching more posts during infinite scroll
+    offset: 0, // Tracks the current offset for pagination
+    hasMore: true, // Indicates if there are more posts to fetch
     error: null,
 };
 
@@ -163,6 +190,33 @@ const postsSlice = createSlice({
          * @param {Object} action - The action with payload.
          * @param {string|null} action.payload - The error message or null.
          */
+        /**
+         * Sets the infiniteScrollLoading state.
+         * @param {Object} state - The current state.
+         * @param {Object} action - The action with payload.
+         * @param {boolean} action.payload - The infiniteScrollLoading state.
+         */
+        setInfiniteScrollLoading: (state, action) => {
+            state.infiniteScrollLoading = action.payload;
+        },
+        /**
+         * Sets the offset state.
+         * @param {Object} state - The current state.
+         * @param {Object} action - The action with payload.
+         * @param {number} action.payload - The offset state.
+         */
+        setOffset: (state, action) => {
+            state.offset = action.payload;
+        },
+        /**
+         * Sets the hasMore state.
+         * @param {Object} state - The current state.
+         * @param {Object} action - The action with payload.
+         * @param {boolean} action.payload - The hasMore state.
+         */
+        setHasMore: (state, action) => {
+            state.hasMore = action.payload;
+        },
         setError: (state, action) => {
             state.loading = false;
             state.error = action.payload;
@@ -205,11 +259,28 @@ const postsSlice = createSlice({
                 state.error = null;
             })
             .addCase(fetchActivePosts.fulfilled, (state, action) => {
-                state.activePosts = action.payload;
                 state.loading = false;
+                state.activePosts = action.payload;
+                state.offset = 0;
+                state.hasMore = action.payload.length === 10;
             })
             .addCase(fetchActivePosts.rejected, (state, action) => {
                 state.loading = false;
+                state.error = action.payload;
+            })
+            // Fetch More Active Posts (Infinite Scrolling)
+            .addCase(fetchMoreActivePosts.pending, (state) => {
+                state.infiniteScrollLoading = true;
+                state.error = null;
+            })
+            .addCase(fetchMoreActivePosts.fulfilled, (state, action) => {
+                state.infiniteScrollLoading = false;
+                state.activePosts = [...state.activePosts, ...action.payload];
+                state.offset = state.offset + 10;
+                state.hasMore = action.payload.length === 10;
+            })
+            .addCase(fetchMoreActivePosts.rejected, (state, action) => {
+                state.infiniteScrollLoading = false;
                 state.error = action.payload;
             })
             // Fetch Post by Slug
@@ -256,6 +327,19 @@ const postsSlice = createSlice({
             .addCase(deletePostFromDB.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+            })
+            // Reset state on logout (from authSlice)
+            .addCase(logoutUser.fulfilled, (state) => {
+                state.posts = [];
+                state.activePosts = [];
+                state.currentPost = null;
+                state.searchResults = [];
+                state.loading = false;
+                state.searchLoading = false;
+                state.infiniteScrollLoading = false;
+                state.offset = 0;
+                state.hasMore = true;
+                state.error = null;
             });
     },
 });
@@ -269,5 +353,8 @@ export const {
     setError,
     reset,
     clearSearchResults,
+    setHasMore,
+    setInfiniteScrollLoading,
+    setOffset,
 } = postsSlice.actions;
 export default postsSlice.reducer;
