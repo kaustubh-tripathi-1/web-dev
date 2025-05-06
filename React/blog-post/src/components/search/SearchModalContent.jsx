@@ -121,7 +121,7 @@ export default function SearchModalContent() {
                     </button>
                 )}
             </form>
-            <div className="max-h-96 h-fit overflow-y-auto p-2 animate-fade-in">
+            <div className="max-h-96 h-fit overflow-y-auto p-2 animate-fade-in flex flex-col gap-4">
                 {searchLoading && <Spinner size="2" className="mx-auto my-4" />}
                 {error && (
                     <p className="text-red-500 dark:text-red-400" role="alert">
