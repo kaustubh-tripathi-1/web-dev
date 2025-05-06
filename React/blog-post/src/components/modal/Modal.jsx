@@ -7,7 +7,7 @@ import { logoutUser, logout } from "../../slices/authSlice";
 import { deletePostFromDB } from "../../slices/postsSlice";
 import { deleteFile } from "../../slices/storageSlice";
 import { Spinner } from "../componentsIndex";
-import { setPreferences, setProfile } from "../../slices/userSlice";
+import { removeUserPost } from "../../slices/userSlice";
 import { SearchModalContent } from "../componentsIndex";
 
 /**
@@ -51,10 +51,10 @@ function Modal({ modalType, modalData, children }) {
     useEffect(() => {
         if (!isModalOpen) return;
 
-        const modal = modalRef.current;
-
         // Store the trigger element
         triggerRef.current = document.activeElement;
+
+        const modal = modalRef.current;
 
         // Function to update focusable elements
         const updateFocusableElements = () => {
@@ -130,7 +130,9 @@ function Modal({ modalType, modalData, children }) {
             mainContent.removeAttribute("inert");
             observer.disconnect();
             // Restore focus
-            triggerRef.current?.focus();
+            if (triggerRef.current) {
+                triggerRef.current?.focus();
+            }
         };
     }, [
         isModalOpen,
@@ -157,8 +159,7 @@ function Modal({ modalType, modalData, children }) {
                     })
                 );
             }
-            dispatch(setProfile(null));
-            dispatch(setPreferences(null));
+
             navigate("/login");
             handleClose();
         } catch (error) {
@@ -182,6 +183,10 @@ function Modal({ modalType, modalData, children }) {
             if (modalData.featureImage) {
                 await dispatch(deleteFile(modalData.featureImage)).unwrap();
             }
+
+            // Remove the post from userPosts if we're in the /profile route
+            dispatch(removeUserPost(modalData.postID));
+
             if (preferences?.notifications) {
                 dispatch(
                     addNotification({
@@ -190,7 +195,9 @@ function Modal({ modalType, modalData, children }) {
                     })
                 );
             }
-            navigate("/");
+            if (modalData.shouldNavigate) {
+                navigate(`/`);
+            }
             handleClose();
         } catch (error) {
             console.error("Delete Post failed:", error);
@@ -285,7 +292,7 @@ function Modal({ modalType, modalData, children }) {
                     <div className="flex justify-end gap-3">
                         <button
                             type="button"
-                            className="rounded-md bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer focus:outline-2 focus:outline-offset-2 focus:outline-gray-600"
+                            className="rounded-md bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 cursor-pointer focus:outline-2 focus:outline-offset-2 focus:outline-gray-600"
                             onClick={handleClose}
                             disabled={config.isLoading}
                         >
@@ -294,7 +301,7 @@ function Modal({ modalType, modalData, children }) {
                         {config.confirmText && (
                             <button
                                 type="button"
-                                className="rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-700 transition-colors cursor-pointer focus:outline-2 focus:outline-offset-2 focus:outline-red-600"
+                                className="rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-700 cursor-pointer focus:outline-2 focus:outline-offset-2 focus:outline-red-600"
                                 onClick={config.confirmAction}
                                 disabled={config.isLoading}
                             >
