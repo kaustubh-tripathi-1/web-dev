@@ -74,7 +74,7 @@ try {
     console.log("Error Cases: \n");
     Array.prototype.myMap.call(null, (x) => x);
 } catch (e) {
-    console.log("lol", e.message);
+    console.log(e.message);
 } // "this is null or undefined"
 try {
     [1].myMap("not a function");
