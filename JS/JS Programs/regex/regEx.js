@@ -203,7 +203,7 @@ const passRegex = /(?=\w{5,})(?=\D*\d{2,}$)/;
 console.log(passRegex.test(samplePassword));
 */
 
-//- Positive and Negative LOOKBEHINDS for earlier in the string
+//- Positive and Negative LOOKBEHINDS for earlier in the string (ES2018 new)
 //$ ?<= for if it is there earlier in the string (Positive)
 //$ ?<! for if it is not there earlier in the string (Negative)
 
@@ -328,7 +328,7 @@ console.log(urls.match(urlRegex));
  */
 
 //& Q8
-const phones =
+/* const phones =
     "9811656514 981-165-6514 981 165 6514 +91-9811656514 +91 9811656514";
 const singleLinePhoneRegex =
     /(?<country_code>\+\d{1,3}[ -])?(?:\d{10}|\d{3}([- ])\d{3}\2\d{4})\b/g; // Regex for multiple phone numbers in a single string
@@ -357,3 +357,72 @@ tests.forEach((test) => {
         console.log(`${test}: ${test.replace(extractPhoneRegex, "")}`);
     }
 });
+ */
+
+//& Q9
+/* const repeatedStr = "The the quick quick fox fox jumps.";
+const reRegex = /(\w+) \1/gi;
+
+console.log(repeatedStr.match(reRegex));
+ */
+
+//& Q11
+/* const testPasswords = [
+    "Passw0rd!",
+    "password1",
+    "PassWord",
+    "Pw1!",
+    "passworD@1",
+    "Abcd123!", // true (8 chars, all types)
+    "Pass w0rd!", // false (space not allowed)
+    "Ab1!", // false (too short)
+    "ABCDEFGH1!", // false (no lowercase)
+    "abcdefgh1!", // false (no uppercase)
+    "Abcdefgh!", // false (no digit)
+    "Abcdefgh1", // false (no special)
+];
+const strongPassRegex =
+    /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?!.*[ ])(?=.*[!@#$%^&*_\-+=?\/]).{8,}$/;
+testPasswords.forEach((password) => {
+    console.log(`${password}: ${strongPassRegex.test(password)}`);
+});
+ */
+
+//& Q12
+/* const hastagsAndMentions =
+    "I love #coding and @john_doe at #JSConf2025! Try #123 @user_name #_ @123-456 #JSConf!";
+const regex = /[@#](?![_])[a-zA-Z0-9_]+\b/g;
+console.log(hastagsAndMentions.match(regex));
+ */
+
+//& Q13
+/* const parentheses = `(a + b)", "(a + (b - c))", "(a + b", "((a) + b) Solve (a + b) and ((x * y)) or (2 * 3) at (x - 5) (hello) ()`;
+const pRegex = /(\((?:[^()]+|\([^()]*\))*\))/g;
+console.log(parentheses.match(pRegex));
+ */
+
+//& Q14
+// Assuming valid dates
+/* const dates = "Event on 12/25/2025 or 25-12-2025 or 25.12.2025";
+const dateRegex = /([\d]{2})[\/\.\-]([\d]{2})[\/\.\-]([\d]{4})/g;
+
+console.log(dates.match(dateRegex));
+console.log(dates.replace(dateRegex, "$2-$1-$3"));
+ */
+
+// Validation for valid dates (some validation, all will be too complex)
+/* const invalidDates =
+    "Event on 12/25/2025 or 25-12-2025 or 25.12.2025 31.14.2022 78.23.8321";
+const validDateRegex =
+    /\b(([0-1][0-2])|([0-3][0-9]))([\/\.\-])(([0-1][0-2])|([0-3][0-9]))\4([\d]{4})\b/g; // or \b(0[1-9]|1[0-2])([\/\-])(0[1-9]|[12]\d|3[01])\2(\d{4})\b 
+console.log(invalidDates.match(validDateRegex));
+console.log(invalidDates.replace(validDateRegex, "$5-$1-$8"));
+ */
+
+//& Q15
+/* const complexHtml = `Hello <div class="x">world</div> from <br/>Grok!`;
+const tagRegex = /<\/?[a-zA-Z]+[0-6]?[^>]*>/g;
+const contentRegex = /([^<]+)(?=<|$)/g;
+console.log(complexHtml.match(contentRegex)); // ["Hello ", "world", " from ", "Grok!"]
+console.log(complexHtml.replace(tagRegex, "")); // "Hello world from Grok!" 
+*/
