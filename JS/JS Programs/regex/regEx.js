@@ -422,7 +422,7 @@ console.log(invalidDates.replace(validDateRegex, "$5-$1-$8"));
 //& Q15
 /* const complexHtml = `Hello <div class="x">world</div> from <br/>Grok!`;
 const tagRegex = /<\/?[a-zA-Z]+[0-6]?[^>]*>/g;
-const contentRegex = /([^<]+)(?=<|$)/g;
+const contentRegex = /([^<>]+)(?=<|$)/g;
 console.log(complexHtml.match(contentRegex)); // ["Hello ", "world", " from ", "Grok!"]
-console.log(complexHtml.replace(tagRegex, "")); // "Hello world from Grok!" 
-*/
+console.log(complexHtml.replace(tagRegex, "")); // "Hello world from Grok!"
+ */
