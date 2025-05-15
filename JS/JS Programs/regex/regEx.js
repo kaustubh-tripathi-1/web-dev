@@ -207,7 +207,7 @@ console.log(passRegex.test(samplePassword));
 //$ ?<= for if it is there earlier in the string (Positive)
 //$ ?<! for if it is not there earlier in the string (Negative)
 
-const quit = "qu";
+/* const quit = "qu";
 const noQuit = "qt";
 const quRegex = /(?<=u)q/g;
 const qRegex = /(?<!u)q/g;
@@ -219,7 +219,7 @@ console.log(noQuit.match(qRegex));
 
 const samplePassword = "astronaut12";
 const passRegex = /(?=\w{5,})(?=\D*\d{2,}$)/;
-console.log(passRegex.test(samplePassword));
+console.log(passRegex.test(samplePassword)); */
 
 //- Reuse patterns using Capture groups - to avoid rewriting a group and save space
 /* const repeatStr = "regex regex regex";
@@ -236,6 +236,13 @@ console.log(reNumRegex.test(repeatNum));
 console.log(repeatNum.match(reNumRegex));
  */
 
+/* const str = "(123) 456-7890";
+const regex = /\((\d{3})\)\s(\d{3}-\d{4})/;
+const match = str.match(regex);
+console.log(match); // ["(123) 456-7890", "123", "456-7890"]
+console.log("Area Code:", match[1]); // "123"
+console.log("Number:", match[2]); // "456-7890"
+ */
 //- Search and replace using RegEx and String.prototype.replace
 /* const str =
     "This string with dog in it has multiple occurrences of Dog dog dog.";
@@ -256,3 +263,97 @@ const regex = /^\s*|\s*$/g;
 const reStr = str.replace(regex, "");
 console.log(reStr);
 console.log(reStr.length); */
+
+//- Assignments
+//$ Easy
+
+//& Q1
+/* const str = "The cat sat on the mat. Catch a catfish.";
+const regex = /\bcat\b/gi; // \b word -boundary and \B non-word-boundary
+console.log(str.match(regex)); */
+
+//& Q2
+/* const postalCodes =
+    "'123456', '12345', '1234', '12abc', '201005', '201003', '201017', 'jdisau832'";
+// const postalCodes = "123456 12345 1234 12abc 201005 201003 201017 jdisau832";
+const postalRegex = /\b\d{6}\b/g;
+console.log(postalCodes.match(postalRegex));
+ */
+
+//& Q3
+/* const digitsStr = "Room 42 has 3 chairs and 1 table.";
+const digitsRegex = /\d/g;
+console.log(digitsStr.match(digitsRegex));
+ */
+
+//& Q4
+/* const str = "hello world";
+const vowelRegEx = /[aeiou]/g;
+console.log(str.match(vowelRegEx));
+ */
+
+//& Q5
+/* const str = "   JavaScript    is   fun ";
+const regex = /(^\s+|\s+$)|((?<=\w+)\s+(?=\w+))/g;
+console.log(
+    str.replace(regex, (match, leadingOrTrailing, internal) => {
+        if (leadingOrTrailing) return "";
+        if (internal) return "-";
+        return match; // Fallback (shouldn’t hit)
+    })
+);
+ */
+
+//& Q6
+/* const email1 = "example@abc.com";
+const email2 = "invalid@.com";
+const emailRegex =
+    /^[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+(\.[a-zA-Z0-9-]+)*\.{1}[a-zA-Z]+$/;
+const tests = [
+    "john.doe@example.com",
+    "invalid@.com",
+    "@example.com",
+    "user@sub.domain.co",
+    "example@abc.com",
+    "____@___.____",
+];
+tests.forEach((email) => console.log(`${email}: ${emailRegex.test(email)}`));
+*/
+
+//& Q7
+/* const urls =
+    "Visit https://example.com, https://google.com, http://blogsmith-psi.vercel.app,  http://test.org now.";
+const urlRegex = /(http|https)\:\/\/[a-zA-Z0-9.-]+(\.[a-zA-Z]+)+(\/.*)?/g;
+console.log(urls.match(urlRegex));
+ */
+
+//& Q8
+const phones =
+    "9811656514 981-165-6514 981 165 6514 +91-9811656514 +91 9811656514";
+const singleLinePhoneRegex =
+    /(?<country_code>\+\d{1,3}[ -])?(?:\d{10}|\d{3}([- ])\d{3}\2\d{4})\b/g; // Regex for multiple phone numbers in a single string
+const phoneRegex = /^(?:\+\d{1,3}[- ]?)?(?:\d{10}|\d{3}([- ])\d{3}\1\d{4})$/; // Regex for only 1 phone number in a string
+const extractPhoneRegex = /(^\+\d{1,3}[ -]?)|[\D]/g;
+const nums = phones.match(singleLinePhoneRegex);
+console.log(`Extracted clean numbers:`);
+nums.forEach((test) => {
+    console.log(`${test}: ${test.replace(extractPhoneRegex, "")}`);
+});
+console.log(``);
+const tests = [
+    "9811656514", // true
+    "981-165-6514", // should be true but is false
+    "981 165 6514", // true
+    "+91-9811656514", // should be true but is false
+    "+91 9811656514", // true
+    "981165651", // false
+    "981-165 6514", // false
+    "9811656514abc", // false
+];
+tests.forEach((test) => console.log(`${test}: ${phoneRegex.test(test)}`));
+console.log(`\nExtracted clean numbers from each string:`);
+tests.forEach((test) => {
+    if (phoneRegex.test(test)) {
+        console.log(`${test}: ${test.replace(extractPhoneRegex, "")}`);
+    }
+});
